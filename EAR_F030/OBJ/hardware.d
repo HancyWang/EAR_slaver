@@ -16,7 +16,6 @@
 ..\obj\hardware.o: ..\STM32F03x_FWLib\inc\stm32f0xx_misc.h
 ..\obj\hardware.o: ..\STM32F03x_FWLib\inc\stm32f0xx_tim.h
 ..\obj\hardware.o: ..\STM32F03x_FWLib\inc\stm32f0xx_pwr.h
-..\obj\hardware.o: ..\STM32F03x_FWLib\inc\stm32f0xx_rtc.h
 ..\obj\hardware.o: ..\STM32F03x_FWLib\inc\stm32f0xx_dma.h
 ..\obj\hardware.o: ..\SYSTEM\delay.h
 ..\obj\hardware.o: ..\OS\os_cfg.h

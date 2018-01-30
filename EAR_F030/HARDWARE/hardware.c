@@ -18,7 +18,7 @@
 #include "stm32f0xx_tim.h"
 #include "stm32f0xx_rcc.h"
 #include "stm32f0xx_pwr.h"
-#include "stm32f0xx_rtc.h"
+//#include "stm32f0xx_rtc.h"
 #include "stm32f0xx_dma.h"
 
 #include "delay.h"
@@ -217,6 +217,7 @@ void set_led(LED_COLOR color)
 * RTC设置
 **************************************************************/
 //RTC RCC
+#if 0
 void init_rtc_rcc(void)
 {
 	//配置时钟
@@ -236,6 +237,7 @@ void config_rtc(void)
 	RCC_RTCCLKCmd(ENABLE);
 	RTC_WaitForSynchro();
 }
+#endif
 
 ////RTC初始化
 //void init_rtc(void)
@@ -411,6 +413,19 @@ void read_half_word_buf_from_eeprom(uint32_t Address, uint16_t* buf, uint16_t le
 {
 }
 
+void Key_WakeUp_Init(void)
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;
+  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
+
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+  //GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+  //GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
 void ADC1_Init(void)
 {
 		//ADC时钟
@@ -419,7 +434,7 @@ void ADC1_Init(void)
   
     //ADC IO配置
     GPIO_InitTypeDef PORT_ADC;  
-    PORT_ADC.GPIO_Pin=GPIO_Pin_0|GPIO_Pin_4;  
+    PORT_ADC.GPIO_Pin=GPIO_Pin_1|GPIO_Pin_4;  
     PORT_ADC.GPIO_Mode=GPIO_Mode_AN;  
     PORT_ADC.GPIO_PuPd=GPIO_PuPd_NOPULL;  
     GPIO_Init(GPIOA,&PORT_ADC);  
@@ -433,7 +448,7 @@ void ADC1_Init(void)
     ADC_InitStuctrue.ADC_ScanDirection=ADC_ScanDirection_Backward;//????  
     ADC_Init(ADC1,&ADC_InitStuctrue);  
   
-    ADC_ChannelConfig(ADC1,ADC_Channel_0,ADC_SampleTime_239_5Cycles);   
+    //ADC_ChannelConfig(ADC1,ADC_Channel_0,ADC_SampleTime_239_5Cycles);   
   
     //校验 
     ADC_GetCalibrationFactor(ADC1);  
@@ -443,13 +458,11 @@ void ADC1_Init(void)
     while(ADC_GetFlagStatus(ADC1,ADC_FLAG_ADEN)==RESET);  
 }
 
-
-
 uint16_t Adc_Switch(uint32_t ADC_Channel)
 {
 	//配置ADC采用的通道和采样周期
 	ADC_ChannelConfig(ADC1,ADC_Channel,ADC_SampleTime_239_5Cycles);  
-	
+	//Delay_ms(10);
 	//软件启动ADC转换
   ADC_StartOfConversion(ADC1);  
 

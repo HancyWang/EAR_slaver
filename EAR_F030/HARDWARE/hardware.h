@@ -86,6 +86,9 @@ BOOL save_half_word_buf_to_eeprom(uint32_t Address, uint16_t* buf, uint16_t len)
 void read_half_word_buf_from_eeprom(uint32_t Address, uint16_t* buf, uint16_t len);
 uint8_t get_bat_vol_per(void);
 
+//≈‰÷√∞¥º¸key_wakeup
+void Key_WakeUp_Init(void);
+
 //ADC
 void ADC1_Init(void);
 uint16_t Adc_Switch(uint32_t ADC_Channel);

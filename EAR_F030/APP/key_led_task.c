@@ -68,10 +68,8 @@ void key_led_task(void)
 	static uint8_t key_down_cnt = 0;
 	static uint16_t key_wakeup_value;
 
-	//static uint8_t high_level_cnt=0;
-	//static uint8_t low_level_cnt=0;
-	//static uint8_t cycle_cnt=0;
 	static uint8_t motor_shake_cnt=0;
+	
 	#if 0
 //	cur_status = get_key_status();
 //	
@@ -117,39 +115,19 @@ void key_led_task(void)
 
 	
 
-//	
-//	//根据按键ADC值,判断按键是否被按下
+	
+	//根据按键ADC值,判断按键是否被按下
 	if(key_down_cnt == 10)
 	{
 		key_state=KEY_DOWNING;
 		key_down_cnt=0;
-//		low_level_cnt=0;
-//		high_level_cnt=0;
-//		cycle_cnt=0;
 	}
-//	
+
 	if(key_state==KEY_DOWNING)
 	{
-		#if 0
-//		if(key_down_cnt==200) //按键时间过长，强制将按键置为UPING状态
-//		{
-//			key_down_cnt=0;
-//			key_state=KEY_UPING;
-//		}
-//		else
-//		{
-//			key_wakeup_value=Adc_Switch(ADC_Channel_0);
-//			if(key_wakeup_value>=1365)
-//			{
-//				key_state=KEY_DOWN_UP;
-//				key_down_cnt=0;				
-//			}
-//			key_down_cnt++;
-//		}	
-		//Delay_ms(3000);
-		#endif
-		key_wakeup_value=Adc_Switch(ADC_Channel_0);
-		if(key_wakeup_value>=1365)
+		//key_wakeup_value=Adc_Switch(ADC_Channel_0);
+		//if(key_wakeup_value>=2730)
+		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==1)
 		{
 			key_state=KEY_DOWN_UP;
 			//key_down_cnt=0;				
@@ -158,9 +136,9 @@ void key_led_task(void)
 	
 	if(key_state==KEY_UPING)
 	{
-		//ADC_ChannelConfig(ADC1,ADC_Channel_0,ADC_SampleTime_239_5Cycles);  //PA0
-		key_wakeup_value=Adc_Switch(ADC_Channel_0);
-		if(key_wakeup_value<=500)
+		//key_wakeup_value=Adc_Switch(ADC_Channel_0);
+		//if(key_wakeup_value<=500)
+		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0)
 		{
 			key_down_cnt++;	
 		}
@@ -170,12 +148,12 @@ void key_led_task(void)
 			key_down_cnt = 0;
 		}
 	}
-		//按键被按下，检查电池电压是否大于2.2V
+	//按键被按下，检查电池电压是否大于2.2V
 	if(key_state==KEY_DOWN_UP)
-	{
-			//ADC_ChannelConfig(ADC1,ADC_Channel_0,ADC_SampleTime_239_5Cycles);  //PA0
-			key_wakeup_value=Adc_Switch(ADC_Channel_0);
-			if(key_wakeup_value>=1365)
+	{	
+			key_wakeup_value=Adc_Switch(ADC_Channel_1);
+			//if(key_wakeup_value>=2730)
+			if(key_wakeup_value<2730)
 			{
 				//开机
 				if(motor_shake_cnt==25)
@@ -192,10 +170,10 @@ void key_led_task(void)
 					Motor_PWM_Freq_Dudy_Set(2,100,30);
 					motor_shake_cnt++;
 				}
-				
 			}
 			else	
 			{
+				//橙色LED闪3s，关机
 				for(int i=0;i<3;i++)
 				{
 					set_led(LED_RED);
@@ -204,43 +182,7 @@ void key_led_task(void)
 					Delay_ms(500);
 				}
 				key_state=KEY_UPING;
-				//橙色LED闪3s，关机
-				#if 0
 				mcu_state=POWER_OFF;
-				if(cycle_cnt==3)
-				{
-					//完成3个周期，key_pressed_down为false，让后面的程序继续检测按键是否按下
-					low_level_cnt=255;
-					high_level_cnt=255;
-					cycle_cnt=0;
-					key_state=KEY_UPING;
-				}
-				if(high_level_cnt==25)
-				{
-					//2.灯亮计数到25，关灯,关灯计数
-						set_led(LED_CLOSE);
-						low_level_cnt++;
-				}
-				if(low_level_cnt==25)
-				{
-					//3.关灯计数到25，完成一个周期，cnt加一
-					if(cycle_cnt<3)
-					{
-						low_level_cnt=0;
-						high_level_cnt=0;
-					}
-					cycle_cnt++;
-				}
-				if(low_level_cnt==0)
-				{
-					//1.红灯亮，灯亮计数
-					if(cycle_cnt<3)
-					{
-						set_led(LED_RED);
-						high_level_cnt++;
-					}
-				}	
-				#endif
 			}
 	}
 	

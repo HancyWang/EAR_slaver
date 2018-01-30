@@ -454,11 +454,6 @@
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\serial_port.c</FilePath>
             </File>
-            <File>
-              <FileName>store_fifo.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\fifo\store_fifo.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -533,11 +528,6 @@
               <FileName>stm32f0xx_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\STM32F03x_FWLib\src\stm32f0xx_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f0xx_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\STM32F03x_FWLib\src\stm32f0xx_rtc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f0xx_pwr.c</FileName>
