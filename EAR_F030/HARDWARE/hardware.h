@@ -39,6 +39,7 @@
 #define KEY_PWR_SAVE_PORT   GPIOA
 
 
+#define ADC1_DR_Address                0x40012440
 
 /***********************************
 * 全局变量
@@ -89,9 +90,12 @@ uint8_t get_bat_vol_per(void);
 //配置按键key_wakeup
 void Key_WakeUp_Init(void);
 
+////初始化flash中的参数
+//void Init_parameter_in_Flash(void);
+
 //ADC
 void ADC1_Init(void);
-uint16_t Adc_Switch(uint32_t ADC_Channel);
+//uint16_t Adc_Switch(uint32_t ADC_Channel);
 
 //I2C
 void ADS115_Init(void);

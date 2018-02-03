@@ -26,6 +26,8 @@
 #include "stdlib.h"
 #include "stm32f0xx_flash.h"
 #include "key_led_task.h"
+
+#include "common.h"
 /**********************************
 *宏定义
 ***********************************/
@@ -33,7 +35,7 @@
 /***********************************
 * 全局变量
 ***********************************/
-BOOL rcvParameters_from_PC=FALSE;
+//BOOL rcvParameters_from_PC=FALSE;
 
 //發送數據FIFO
 extern FIFO_TYPE send_fifo;
@@ -44,6 +46,7 @@ extern UINT16 check_sum;
 //当接收到上位机发送数据命令时，该变量置为TRUE,发送完毕置为FALSE
 //extern uint8_t send_exp_train_data_status;s
 extern MCU_STATE mcu_state;
+extern uint16_t RegularConvData_Tab[2];
 /***********************************
 * 局部变量
 ***********************************/
@@ -277,7 +280,20 @@ void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
 		
 		//FlashWrite(FLASH_WRITE_START_ADDR,(uint32_t*)&parameter_buf,PARAMETER_BUF_LEN/4);
 		FlashWrite(FLASH_WRITE_START_ADDR,parameter_buf,PARAMETER_BUF_LEN/4);
-		rcvParameters_from_PC=TRUE;
+		//rcvParameters_from_PC=TRUE;
+		
+		//快闪，表示接收数据完成
+		for(int i=0;i<10;i++)
+		{
+			set_led(LED_GREEN);
+			Delay_ms(50);
+			set_led(LED_CLOSE);
+			Delay_ms(50);
+		}
+		if(mcu_state==POWER_ON)
+		{
+			set_led(LED_GREEN);
+		}
 	}
 	else
 	{
@@ -333,6 +349,19 @@ void send_prameter_fram2_to_PC()
 	}
 	CalcCheckSum(buffer1);
 	fifoWriteData(&send_fifo, buffer1, buffer1[1]+2);
+	
+	//快闪，表示接收发送完成
+	for(int i=0;i<5;i++)
+	{
+		set_led(LED_GREEN);
+		Delay_ms(30);
+		set_led(LED_CLOSE);
+		Delay_ms(30);
+	}
+	if(mcu_state==POWER_ON)
+	{
+		set_led(LED_GREEN);
+	}
 }
 
 uint16_t FlashWrite(uint32_t addr, uint8_t *p_data, uint16_t len)
@@ -423,24 +452,26 @@ uint8_t FlashReadByte(uint32_t addr)
 //得到按键模式
 uint16_t GetModeSelected(void)
 {
-	static uint16_t res;
-	res=Adc_Switch(ADC_Channel_4);
-	if(res>=1661&&res<=2061)
+	uint16_t res;
+	res=RegularConvData_Tab[1];
+//	for(uint8_t i=0;i<3;i++)
+//	{
+//		res=Adc_Switch(ADC_Channel_4);
+//	}
+	
+	if(res>=1500)
 	{
-		return 1;
+		return 1;  //返回模式1
 	}
-	else if(res>=990&&res<=1390)
+	else if(res>=700&&res<1500)
+	//else if(res>=mod2_base_vol-200&&res<=mod2_base_vol+200)
 	{
-		return 2;
+		return 2;	//返回模式2
 	}
-	else if(res>=118&&res<=538)
-	{
-		return 3;
-	}
+	//else if(res>=138&&res<=538)
 	else
 	{
-		//do nothing
-		return 0;
+		return 3; //返回模式3
 	}
 }
 
@@ -453,11 +484,11 @@ void protocol_module_process(uint8_t* pdata)
 
 //	uint8_t bat_per;//电池电量
 	
-	//如果没有上电，直接返回
-	if(mcu_state!=POWER_ON)
-	{
-		return;
-	}
+//	//如果没有上电，直接返回
+//	if(mcu_state!=POWER_ON)
+//	{
+//		return;
+//	}
 	
 	//pCmdPacketData = pdata;
 	//byFrameID = pCmdPacketData[3];

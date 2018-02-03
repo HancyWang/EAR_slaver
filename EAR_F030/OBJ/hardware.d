@@ -23,3 +23,5 @@
 ..\obj\hardware.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\time.h
 ..\obj\hardware.o: ..\APP\i2c.h
 ..\obj\hardware.o: ..\APP\common.h
+..\obj\hardware.o: ..\APP\comm_task.h
+..\obj\hardware.o: ..\MODULE\protocol_module.h

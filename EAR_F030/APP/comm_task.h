@@ -5,7 +5,8 @@
 
 #include "datatype.h"
 
-#define SEND_BUF_LEN  255
+//#define SEND_BUF_LEN  255
+#define SEND_BUF_LEN  248
 
 //434是数据，2是两个校验位
 #define PARAMETER_BUF_LEN 436

@@ -42,6 +42,8 @@ extern CMD_Receive g_CmdReceive;
 extern FIFO_TYPE send_fifo;
 extern uint8_t send_buf[SEND_BUF_LEN];
 
+
+
 //±£´æ”µ“þ
 //extern FIFO_TYPE train_store_fifo;
 //extern STORE_HEAD exp_store_head;

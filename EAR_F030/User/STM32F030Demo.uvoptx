@@ -160,18 +160,34 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>493</LineNumber>
+          <LineNumber>567</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134220012</Address>
+          <Address>134219560</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\椤圭洰\EAR_F030\MODULE\protocol_module.c</Filename>
+          <Filename>D:\椤圭洰\EAR_F030\APP\comm_task.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\STM32F030Demo\../MODULE/protocol_module.c\493</Expression>
+          <Expression>\\STM32F030Demo\../APP/comm_task.c\567</Expression>
+        </Bp>
+        <Bp>
+          <Number>1</Number>
+          <Type>0</Type>
+          <LineNumber>154</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134220024</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>D:\椤圭洰\EAR_F030\APP\key_led_task.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\STM32F030Demo\../APP/key_led_task.c\154</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -250,17 +266,22 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>result,0x0A</ItemText>
+          <ItemText>key_wakeup_value,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>state</ItemText>
+          <ItemText>buffer,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>buffer</ItemText>
+          <ItemText>result,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>key_wakeup_value</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
@@ -271,12 +292,20 @@
           <AccSizeX>0</AccSizeX>
         </Mm>
       </MemoryWindow1>
+      <MemoryWindow4>
+        <Mm>
+          <WinNumber>4</WinNumber>
+          <SubType>0</SubType>
+          <ItemText>mcu_state</ItemText>
+          <AccSizeX>0</AccSizeX>
+        </Mm>
+      </MemoryWindow4>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
       <DebugFlag>
         <trace>0</trace>
-        <periodic>0</periodic>
+        <periodic>1</periodic>
         <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
@@ -366,7 +395,7 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>4</FileNumber>
       <FileType>1</FileType>
-      <tvExp>0</tvExp>
+      <tvExp>1</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\APP\app.c</PathWithFileName>

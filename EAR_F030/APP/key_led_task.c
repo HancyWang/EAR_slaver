@@ -24,6 +24,8 @@
 
 #include "i2c.h"
 #include "Motor_pwm.h"
+
+
 /**********************************
 *宏定义
 ***********************************/
@@ -55,20 +57,26 @@ typedef enum {
 MCU_STATE mcu_state=POWER_OFF;
 //mcu_state=POWER_OFF;
 
+//extern uint8_t OUTPUT_FINISH;
 
 volatile KEY_STATE key_state=KEY_UPING;
+
+extern uint16_t RegularConvData_Tab[2];
 /***********************************
 * 局部函数
 ***********************************/
 //
 void key_led_task(void)
 {
+	
+	//set_led(LED_GREEN);
 //	 uint8_t LED_cnt;
 //	 uint16_t res;
 	static uint8_t key_down_cnt = 0;
-	static uint16_t key_wakeup_value;
+	static uint8_t key_up_cnt=0;
+//	static uint16_t key_wakeup_value;
 
-	static uint8_t motor_shake_cnt=0;
+	//static uint8_t motor_shake_cnt=0;
 	
 	#if 0
 //	cur_status = get_key_status();
@@ -113,9 +121,6 @@ void key_led_task(void)
 	#endif
 	
 
-	
-
-	
 	//根据按键ADC值,判断按键是否被按下
 	if(key_down_cnt == 10)
 	{
@@ -129,8 +134,14 @@ void key_led_task(void)
 		//if(key_wakeup_value>=2730)
 		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==1)
 		{
+			key_up_cnt++;
+//			key_state=KEY_DOWN_UP;
+//			key_down_cnt=0;				
+		}
+		if(key_up_cnt==10)
+		{
 			key_state=KEY_DOWN_UP;
-			//key_down_cnt=0;				
+			key_up_cnt=0;
 		}
 	}
 	
@@ -148,44 +159,43 @@ void key_led_task(void)
 			key_down_cnt = 0;
 		}
 	}
+		
 	//按键被按下，检查电池电压是否大于2.2V
 	if(key_state==KEY_DOWN_UP)
 	{	
-			key_wakeup_value=Adc_Switch(ADC_Channel_1);
-			//if(key_wakeup_value>=2730)
-			if(key_wakeup_value<2730)
+//		for(uint8_t i=0;i<3;i++)
+//		{
+//			key_wakeup_value=Adc_Switch(ADC_Channel_1);
+//		}
+		
+		//if(key_wakeup_value>=2730)
+		if(RegularConvData_Tab[0]>=2730)
+		{
+			//开机
+			set_led(LED_GREEN);
+			Motor_PWM_Freq_Dudy_Set(1,100,30);
+			Motor_PWM_Freq_Dudy_Set(2,100,30);
+			Delay_ms(500);
+			Motor_PWM_Freq_Dudy_Set(1,100,0);
+			Motor_PWM_Freq_Dudy_Set(2,100,0);
+			key_state=KEY_UPING;
+			mcu_state=POWER_ON;
+		}
+		else	
+		{
+			//橙色LED闪3s，关机
+			for(int i=0;i<3;i++)
 			{
-				//开机
-				if(motor_shake_cnt==25)
-				{
-					key_state=KEY_UPING;
-					Motor_PWM_Freq_Dudy_Set(1,100,0);
-					Motor_PWM_Freq_Dudy_Set(2,100,0);
-					motor_shake_cnt=0;
-					mcu_state=POWER_ON;
-				}
-				if(key_state==KEY_DOWN_UP)
-				{
-					Motor_PWM_Freq_Dudy_Set(1,100,30);
-					Motor_PWM_Freq_Dudy_Set(2,100,30);
-					motor_shake_cnt++;
-				}
+				set_led(LED_RED);
+				Delay_ms(500);
+				set_led(LED_CLOSE);
+				Delay_ms(500);
 			}
-			else	
-			{
-				//橙色LED闪3s，关机
-				for(int i=0;i<3;i++)
-				{
-					set_led(LED_RED);
-					Delay_ms(500);
-					set_led(LED_CLOSE);
-					Delay_ms(500);
-				}
-				key_state=KEY_UPING;
-				mcu_state=POWER_OFF;
-			}
+			key_state=KEY_UPING;
+			mcu_state=POWER_OFF;
+		}
 	}
-	
+
 #if 0
 //	LED_cnt++;
 //	if(LED_cnt >= 5)
@@ -199,14 +209,18 @@ void key_led_task(void)
 //	}	
 #endif 
 //	//debug
-//	static uint16_t res;
-//	res=GetModeSelected();
+//	static uint16_t result;
+//	result=GetModeSelected();
 ////	
 //	//初始化ADS115,I2C
 //	ADS115_Init();
 //	
 //	static uint16_t buffer;
 //	buffer=ADS115_readByte(0x90);
-
+//		static uint16_t result1;
+//		static uint16_t result2;
+//		 result1=Adc_Switch(ADC_Channel_1);
+//		 
+//		 result2=Adc_Switch(ADC_Channel_4);
 	os_delay_ms(KEY_LED_TASK_ID, KEY_LED_PERIOD);
 }

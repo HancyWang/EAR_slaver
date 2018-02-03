@@ -22,11 +22,95 @@ CMD_Receive g_CmdReceive;  // 命令接收控制对象
 FIFO_TYPE send_fifo;//發送數據FIFO
 UINT8 send_buf[SEND_BUF_LEN];
 
-UINT8 parameter_buf[PARAMETER_BUF_LEN]; //用来接收上位机传过来的参数
+
+
+//用来接收上位机传过来的参数
+UINT8 parameter_buf[PARAMETER_BUF_LEN]=
+{
+		#if 1
+		//common para
+		1,5,
+		//Mode1
+		0x11,1,100,50,1,1,1,1,
+		0x12,1,100,50,1,1,1,1,
+		0x13,1,100,50,1,1,1,1,
+		0x14,1,100,50,1,1,1,1,
+		0x15,1,100,50,1,1,1,1,
+		0x16,1,100,50,1,1,1,1,
+		
+		0x21,1,100,50,1,1,1,1,
+		0x22,1,100,50,1,1,1,1,
+		0x23,1,100,50,1,1,1,1,
+		0x24,1,100,50,1,1,1,1,
+		0x25,1,100,50,1,1,1,1,
+		0x26,1,100,50,1,1,1,1,
+		
+		0x31,1,100,50,1,1,1,1,
+		0x32,1,100,50,1,1,1,1,
+		0x33,1,100,50,1,1,1,1,
+		0x34,1,100,50,1,1,1,1,
+		0x35,1,100,50,1,1,1,1,
+		0x36,1,100,50,1,1,1,1,
+		
+		//Mode2
+		0x11,1,100,50,1,1,1,1,
+		0x12,1,100,50,1,1,1,1,
+		0x13,1,100,50,1,1,1,1,
+		0x14,1,100,50,1,1,1,1,
+		0x15,1,100,50,1,1,1,1,
+		0x16,1,100,50,1,1,1,1,
+		
+		0x21,1,100,50,1,1,1,1,
+		0x22,1,100,50,1,1,1,1,
+		0x23,1,100,50,1,1,1,1,
+		0x24,1,100,50,1,1,1,1,
+		0x25,1,100,50,1,1,1,1,
+		0x26,1,100,50,1,1,1,1,
+		
+		0x31,1,100,50,1,1,1,1,
+		0x32,1,100,50,1,1,1,1,
+		0x33,1,100,50,1,1,1,1,
+		0x34,1,100,50,1,1,1,1,
+		0x35,1,100,50,1,1,1,1,
+		0x36,1,100,50,1,1,1,1,
+		
+		//Mode3
+		0x11,1,100,50,1,1,1,1,
+		0x12,1,100,50,1,1,1,1,
+		0x13,1,100,50,1,1,1,1,
+		0x14,1,100,50,1,1,1,1,
+		0x15,1,100,50,1,1,1,1,
+		0x16,1,100,50,1,1,1,1,
+		
+		0x21,1,100,50,1,1,1,1,
+		0x22,1,100,50,1,1,1,1,
+		0x23,1,100,50,1,1,1,1,
+		0x24,1,100,50,1,1,1,1,
+		0x25,1,100,50,1,1,1,1,
+		0x26,1,100,50,1,1,1,1,
+		
+		0x31,1,100,50,1,1,1,1,
+		0x32,1,100,50,1,1,1,1,
+		0x33,1,100,50,1,1,1,1,
+		0x34,1,100,50,1,1,1,1,
+		0x35,1,100,50,1,1,1,1,
+		0x36,1,100,50,1,1,1,1,
+		//checksum
+		0,0
+		#endif
+}; 
+
 UINT16 check_sum;
 extern MCU_STATE mcu_state;
 extern BOOL rcvParameters_from_PC;
 extern KEY_STATE key_state;
+extern const uint8_t default_parameter_buf[PARAMETER_BUF_LEN];
+
+extern uint16_t RegularConvData_Tab[2];
+
+uint16_t prev_cnt;
+uint16_t cnt;
+
 //局部变量
 typedef enum
 {
@@ -73,7 +157,7 @@ static uint16_t* p_PWM_waitAfter_cnt;
 static uint8_t* p_PWM_numOfCycle;
 static uint8_t* p_PWM_serial_cnt;
 
-
+//uint8_t OUTPUT_FINISH=FALSE;
 
 
 //typedef enum
@@ -508,6 +592,63 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 	}
 }
 
+void ResetParameter(uint8_t* buffer)
+{
+	//将代码段中flash数据拷贝到buffer中
+	for(int i=0;i<PARAMETER_BUF_LEN;i++)
+	{
+		buffer[i]=default_parameter_buf[i];
+	}
+	//更新flash
+	FlashWrite(FLASH_WRITE_START_ADDR,buffer,PARAMETER_BUF_LEN/4);
+}
+
+void CheckFlashData(uint8_t* buffer)
+{
+	uint16_t j=0;
+	//如果数据出错就用默认的数据
+	if(buffer[0]<1||buffer[0]>50)
+	{
+		ResetParameter(buffer);
+		return;
+	}
+	for(int i=0;i<54;i++)
+	{
+		j++;                 //1.跳过第一个
+		if(buffer[2+j++]>1) //2.enable
+		{
+			ResetParameter(buffer);
+			return;
+		}
+		if(buffer[2+j++]==0)  //3.freq
+		{
+			ResetParameter(buffer);
+			return;
+		}
+		if(buffer[2+j]<10||buffer[2+j]>90) //4.duty cycle
+		{
+			ResetParameter(buffer);
+			return;
+		}
+		j++;
+		if(buffer[2+j++]==0)            //5.period
+		{
+			ResetParameter(buffer);
+			return;
+		}
+		if(buffer[2+j]<1||buffer[2+j]>250)            //6.number of cycle
+		{
+			ResetParameter(buffer);
+			return;
+		}
+		j++;
+		
+		j++;                                  //7.wait between
+		j++;																	//8.wait after
+	}
+}
+
+
 /*******************************************************************************
 ** 函数名称: check_selectedMode_ouputPWM
 ** 功能描述: 检查模式，并对应的输出PWM波形
@@ -516,32 +657,42 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 ** 全局变量: 无
 ** 调用模块: 无
 *******************************************************************************/
-
 void check_selectedMode_ouputPWM()
 {
-	static uint16_t result=0; 
-	if(mcu_state==POWER_ON&&rcvParameters_from_PC==TRUE) //上电了并且上位机发送的参数处理ok了
-	//if(TRUE) 
+//			static uint16_t result3;
+//		static uint16_t result4;
+//		 result3=Adc_Switch(ADC_Channel_1);
+//		 
+//		 result4=Adc_Switch(ADC_Channel_4);
+	
+	uint16_t result=0; 
+	if(mcu_state==POWER_ON)
+	//if(TRUE)
+		//if(FALSE)
 	{
+		//1.从flash中加载参数到内存
 		if(state==LOAD_PARA)      //从flash中加载参数到内存
 		{
 			uint8_t len=PARAMETER_BUF_LEN/4;  
-			uint32_t tmp[PARAMETER_BUF_LEN/4]={0};                       
+			uint32_t tmp[PARAMETER_BUF_LEN/4]={0};   		
+			
 			//读取flash数据到buffer中
 			FlashRead(FLASH_WRITE_START_ADDR,tmp,len);
 			memcpy(buffer,tmp,PARAMETER_BUF_LEN);
+			CheckFlashData(buffer);
 			state=GET_MODE;
 		}
+		//2.获得开关对应的模式
 		if(state==GET_MODE)    //flash参数加载内存之后，获取开关对应的模式
 		{
 			mode=GetModeSelected();  //得到模式
+			//mode=1;
 			Delay_ms(10);
 			result=ADS115_readByte(0x90); //0x90,ADS115器件地址 ,得到I2C转换的值，用于对比压力是否达到threshold
 			Delay_ms(10);
 			state=CPY_PARA_TO_BUFFER;
-			//state=CHECK_PRESSURE;
 		}
-		
+		//3.根据选择的模式将数据拷贝到pwm_buffer
 		if(state==CPY_PARA_TO_BUFFER)  //根据选择的模式，将para填充到pwm_buffer中
 		{
 			switch(mode)
@@ -558,43 +709,23 @@ void check_selectedMode_ouputPWM()
 				default:
 					break;
 			}
-			//state=OUTPUT_PWM;
 			state=CHECK_PRESSURE;
 		}
-		
+		//4.检测压力
 		if(state==CHECK_PRESSURE) //检测压力
 		{
-			if(result>=buffer[0])  //压力达到threshold，进入输出PWM模式
+			if(result>=buffer[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
 			//if(result>=0)
 			{
-				//state=PREV_OUTPUT_PWM;
 				state=PREV_OUTPUT_PWM;
 			}
 			else
 			{
 				state=CHECK_PRESSURE_AGAIN;
-				
 			}
 		}
-
-		if(state==CHECK_PRESSURE_AGAIN) //再次检测压力
-		{
-			if(50*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
-			{
-				checkPressAgain_cnt=0;
-				mcu_state=POWER_OFF;
-			}
-			if(result<pwm_buffer[0])
-			{
-				checkPressAgain_cnt++;
-			}
-			else	
-			{
-				checkPressAgain_cnt=0;
-				rcvParameters_from_PC=FALSE; //重新接收参数设置
-			}
-		}
-
+		
+		//5.检测压力Ok,则预备输出波形，先定时waitBeforeStart这么长时间
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 				//Delay_ms(buffer[1]*1000);//这个定时最多定时2s，3s就出问题了
@@ -610,6 +741,7 @@ void check_selectedMode_ouputPWM()
 				}
 		}
 		
+		//6.开始输出波形
 		if(state==OUTPUT_PWM) //按照设定的参数，输出PWM1,PWM2,PWM3
 		{
 			if(pwm1_state==PWM_OUTPUT_FINISH&&pwm2_state==PWM_OUTPUT_FINISH&&pwm3_state==PWM_OUTPUT_FINISH)
@@ -618,27 +750,40 @@ void check_selectedMode_ouputPWM()
 				PWM2_serial_cnt=0;
 				PWM3_serial_cnt=0;
 				state=CHECK_BAT_VOL;
-				rcvParameters_from_PC=FALSE;
-			}			
-			PaintPWM(1,pwm_buffer);
-			PaintPWM(2,pwm_buffer);
-			PaintPWM(3,pwm_buffer);
+			}		
+			else
+			{
+//				PaintPWM(1,pwm_buffer);
+//				PaintPWM(2,pwm_buffer);
+//				PaintPWM(3,pwm_buffer);
+				
+					//重新画PWM波形
+				
+				
+				
+				
+			}
 		}
-	
+		
+		
+		//7.波形输出完毕，检测电池电压
 		if(state==CHECK_BAT_VOL) 
 		{
-			//Delay_ms(10);
-			//ADC1_Init();
-			uint16_t result=Adc_Switch(ADC_Channel_1);
+			uint16_t result;
+//			for(uint8_t i=0;i<3;i++)
+//			{
+//				result=Adc_Switch(ADC_Channel_1);
+//			}
+			result=RegularConvData_Tab[0];
+			//uint16_t result=3000;
 			if(result<2730) //如果电压小于2.2v,（基准3.3v）
-			//if(result>1365)
+			//if(result>2730)
 			{
 				//闪灯，进入POWER_OFF
 				state=LED_RED_BLINK;
 			}
 			else
 			{
-				rcvParameters_from_PC=FALSE; //重新接收参数设置
 				state=LOAD_PARA;
 				pwm1_state=PWM_START;
 				pwm2_state=PWM_START;
@@ -646,6 +791,25 @@ void check_selectedMode_ouputPWM()
 			}
 		}
 		
+		//对应4，压力检测，如果检测压力不ok，则再次检测压力
+		if(state==CHECK_PRESSURE_AGAIN) //再次检测压力
+		{
+			if(50*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
+			{
+				checkPressAgain_cnt=0;
+				mcu_state=POWER_OFF;
+			}
+			if(result<pwm_buffer[0]*70)
+			{
+				checkPressAgain_cnt++;
+			}
+			else	
+			{
+				checkPressAgain_cnt=0;
+			}
+		}
+
+		//对应7，如果检测电池电压小于2.2V，则闪灯
 		if(state==LED_RED_BLINK)
 		{
 			//橙色LED闪3s
@@ -661,7 +825,7 @@ void check_selectedMode_ouputPWM()
 			pwm1_state=PWM_START;
 			pwm2_state=PWM_START;
 			pwm3_state=PWM_START;
-			//mcu_state=POWER_OFF;
+			mcu_state=POWER_OFF;
 		}
 	}
 	os_delay_ms(TASK_OUTPUT_PWM, 50);
@@ -684,5 +848,5 @@ void CMD_ProcessTask (void)
 	//循環
 	ReceiveData(&g_CmdReceive);//接收数据到缓冲区
 	ModuleUnPackFrame();//命令处理
-	os_delay_ms(RECEIVE_TASK_ID, 120);
+	os_delay_ms(RECEIVE_TASK_ID, 100);
 }

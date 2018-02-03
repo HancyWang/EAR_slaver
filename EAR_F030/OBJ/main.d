@@ -19,3 +19,4 @@
 ..\obj\main.o: ..\HARDWARE\hardware.h
 ..\obj\main.o: ..\SYSTEM\fifo\datatype.h
 ..\obj\main.o: ..\APP\app.h
+..\obj\main.o: ..\APP\comm_task.h

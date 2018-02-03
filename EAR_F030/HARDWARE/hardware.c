@@ -27,6 +27,8 @@
 
 #include "time.h"
 #include "i2c.h"
+#include "comm_task.h"
+#include "protocol_module.h"
 /**********************************
 *ºê¶¨Òå
 ***********************************/
@@ -35,6 +37,13 @@
 * È«¾Ö±äÁ¿
 ***********************************/
 unsigned short inner_adc_result[SAMPLING_CNT];
+ uint16_t RegularConvData_Tab[2];
+
+
+extern uint8_t parameter_buf[PARAMETER_BUF_LEN];
+
+
+extern const uint8_t default_parameter_buf[PARAMETER_BUF_LEN];
 /***********************************
 * ¾Ö²¿±äÁ¿
 ***********************************/
@@ -43,6 +52,7 @@ unsigned short inner_adc_result[SAMPLING_CNT];
 /***********************************
 * ¾Ö²¿º¯Êý
 ***********************************/
+
 
 ////Íâ²¿º¯Êý
 //extern void I2C_SendByte(INT8U dat);
@@ -152,10 +162,40 @@ void init_hardware(void)
 	
 	//³õÊ¼»¯ADS115,I2C
 	ADS115_Init();
+	
+	//³õÊ¼»¯flashÖÐµÄ²ÎÊý,Õâ¸ö±ØÐë·ÅÔÚADC1_Init()ºóÃæ£¬²»È»»á³öÎÊÌâ£¬why£¿
+	//Init_parameter_in_Flash();  
 }
 
+////³õÊ¼»¯flashÖÐµÄ²ÎÊý
+//void Init_parameter_in_Flash(void)
+//{
+////	uint16_t sum=0;
+////	for(int i=0;i<PARAMETER_BUF_LEN;i++)
+////	{
+////		sum+=default_parameter_buf[i];
+////		//default_parameter_buf[i]=i;
+////	}
+////	default_parameter_buf[PARAMETER_BUF_LEN-2]=sum/256;
+////	default_parameter_buf[PARAMETER_BUF_LEN-1]=sum%256;
+//	//¿½±´µ½flashÖÐ,Ð£ÑéÎ»
+//	FlashWrite(FLASH_WRITE_START_ADDR,(uint8_t*)default_parameter_buf,PARAMETER_BUF_LEN/4);
+//}
 
-
+//³õÊ¼»¯default_parameter_buf
+//void Default_parameter_buf_Init()
+//{
+//	uint16_t sum=0;
+//	for(int i=0;i<PARAMETER_BUF_LEN;i++)
+//	{
+//		sum+=parameter_buf[i];
+//		//default_parameter_buf[i]=i;
+//	}
+//	parameter_buf[PARAMETER_BUF_LEN-2]=sum/256;
+//	parameter_buf[PARAMETER_BUF_LEN-1]=sum%256;
+//	//¿½±´µ½flashÖÐ
+//	FlashWrite(FLASH_WRITE_START_ADDR,parameter_buf,PARAMETER_BUF_LEN/4);
+//}
 
 /**************************************************************
 * °å¼¶Ó²¼þ×ÊÔ´¿ØÖÆ
@@ -238,7 +278,7 @@ void config_rtc(void)
 	RTC_WaitForSynchro();
 }
 #endif
-
+#if 0
 ////RTC³õÊ¼»¯
 //void init_rtc(void)
 //{
@@ -379,6 +419,7 @@ void config_rtc(void)
 //	
 //	return (uint32_t)(RTC->TR & RTC_TR_RESERVED_MASK); 
 //}
+#endif
 /**************************************************************
 * FLASH×xŒ‘ÉèÖÃ
 **************************************************************/
@@ -428,49 +469,127 @@ void Key_WakeUp_Init(void)
 
 void ADC1_Init(void)
 {
-		//ADCÊ±ÖÓ
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);  
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);  
+//		//ADCÊ±ÖÓ
+//    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);  
+//    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);  
+//  
+//    //ADC IOÅäÖÃ
+//    GPIO_InitTypeDef PORT_ADC;  
+//    PORT_ADC.GPIO_Pin=GPIO_Pin_1|GPIO_Pin_4;  
+//    PORT_ADC.GPIO_Mode=GPIO_Mode_AN; 
+//		//PORT_ADC.GPIO_Mode=GPIO_Mode_IN	;
+//    PORT_ADC.GPIO_PuPd=GPIO_PuPd_NOPULL;  
+//    GPIO_Init(GPIOA,&PORT_ADC); 
+//	
+//		//ADC_DeInit(ADC1);
+//    //ADC ²ÎÊýÅäÖÃ
+//    ADC_InitTypeDef ADC_InitStuctrue;  
+//    ADC_InitStuctrue.ADC_Resolution=ADC_Resolution_12b;//12???  
+//    ADC_InitStuctrue.ADC_ContinuousConvMode=DISABLE;//??ADC 
+//		//ADC_InitStuctrue.ADC_ContinuousConvMode=ENABLE;//??ADC 	
+//    ADC_InitStuctrue.ADC_ExternalTrigConvEdge=ADC_ExternalTrigConvEdge_None;  
+//    ADC_InitStuctrue.ADC_DataAlign=ADC_DataAlign_Right;//?????  
+//    ADC_InitStuctrue.ADC_ScanDirection=ADC_ScanDirection_Backward;//????  
+//    ADC_Init(ADC1,&ADC_InitStuctrue);  
+//  
+//    //ADC_ChannelConfig(ADC1,ADC_Channel_0,ADC_SampleTime_239_5Cycles);   
+//  
+//    //Ð£Ñé 
+//    ADC_GetCalibrationFactor(ADC1);  
+//    //Ê¹ÄÜ
+//    ADC_Cmd(ADC1,ENABLE);  
+//    //µÈ´ýADC×¼±¸
+//    while(ADC_GetFlagStatus(ADC1,ADC_FLAG_ADEN)==RESET);  
+
+	GPIO_InitTypeDef    GPIO_InitStructure;
+	DMA_InitTypeDef     DMA_InitStructure;
+	ADC_InitTypeDef     ADC_InitStructure;
+
+	
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_4;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);	
+		
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1 , ENABLE);		
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1 , ENABLE);
+	
+	ADC_DeInit(ADC1);//ADC???'??è?éè??		
+
+  DMA_DeInit(DMA1_Channel1);	/* DMA1 Channel1 Config */
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)ADC1_DR_Address;//íaéèµ??·
+  DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)RegularConvData_Tab;//?ú'?µ??·
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralSRC;//íaéè×÷?aêy?Y'?ê?µ?à'?'
+  DMA_InitStructure.DMA_BufferSize = 2;//
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;//íaéèµ??·??'??÷2?±?
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;//?ú'?µ??·??'??÷2?±?
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;//êy?Y?í?è?a16??
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;//êy?Y?í?è?a16??
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;//DMA_Priorityéè?¨DMAí¨µàxµ?èí?tó??è??
+  DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;//DMAí¨µàx??óDéè???a?ú'?µ??ú'?'?ê?
+  DMA_Init(DMA1_Channel1, &DMA_InitStructure);
+		  
   
-    //ADC IOÅäÖÃ
-    GPIO_InitTypeDef PORT_ADC;  
-    PORT_ADC.GPIO_Pin=GPIO_Pin_1|GPIO_Pin_4;  
-    PORT_ADC.GPIO_Mode=GPIO_Mode_AN;  
-    PORT_ADC.GPIO_PuPd=GPIO_PuPd_NOPULL;  
-    GPIO_Init(GPIOA,&PORT_ADC);  
-  
-    //ADC ²ÎÊýÅäÖÃ
-    ADC_InitTypeDef ADC_InitStuctrue;  
-    ADC_InitStuctrue.ADC_Resolution=ADC_Resolution_12b;//12???  
-    ADC_InitStuctrue.ADC_ContinuousConvMode=DISABLE;//??ADC  
-    ADC_InitStuctrue.ADC_ExternalTrigConvEdge=ADC_ExternalTrigConvEdge_None;  
-    ADC_InitStuctrue.ADC_DataAlign=ADC_DataAlign_Right;//?????  
-    ADC_InitStuctrue.ADC_ScanDirection=ADC_ScanDirection_Backward;//????  
-    ADC_Init(ADC1,&ADC_InitStuctrue);  
-  
-    //ADC_ChannelConfig(ADC1,ADC_Channel_0,ADC_SampleTime_239_5Cycles);   
-  
-    //Ð£Ñé 
-    ADC_GetCalibrationFactor(ADC1);  
-    //Ê¹ÄÜ
-    ADC_Cmd(ADC1,ENABLE);  
-    //µÈ´ýADC×¼±¸
-    while(ADC_GetFlagStatus(ADC1,ADC_FLAG_ADEN)==RESET);  
+	
+	DMA_Cmd(DMA1_Channel1, ENABLE);/* DMA1 Channel1 enable */			
+	ADC_DMARequestModeConfig(ADC1, ADC_DMAMode_Circular); /* Enable ADC_DMA */	
+  ADC_DMACmd(ADC1, ENABLE);  
+	
+		
+
+	ADC_StructInit(&ADC_InitStructure);//3?ê??¯ADC?á11
+	
+	ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;//12?????è
+  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE; //1??¨??ê?×°??1¤×÷?úá?D???ê?
+  ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None; 
+  ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;//êy?Y?????aóò????
+  ADC_InitStructure.ADC_ScanDirection = ADC_ScanDirection_Backward; //ADCµ?é¨?è·??ò
+  ADC_Init(ADC1, &ADC_InitStructure); 
+	 
+  ADC_ChannelConfig(ADC1, ADC_Channel_1 , ADC_SampleTime_239_5Cycles); /* Convert the ADC1 Channel 11 with 239.5 Cycles as sampling time */  
+  ADC_ChannelConfig(ADC1, ADC_Channel_4 , ADC_SampleTime_239_5Cycles); /* Convert the ADC1 Channel 11 with 239.5 Cycles as sampling time */  
+
+//  ADC_ChannelConfig(ADC1, ADC_Channel_Vrefint ,ADC_SampleTime_239_5Cycles); 
+//  ADC_VrefintCmd(ENABLE);
+//	
+//	ADC_ChannelConfig(ADC1, ADC_Channel_TempSensor ,ADC_SampleTime_239_5Cycles);
+//	ADC_TempSensorCmd(ENABLE);
+//	
+//	ADC_ChannelConfig(ADC1, ADC_Channel_Vbat ,ADC_SampleTime_239_5Cycles);
+//	ADC_VbatCmd(ENABLE);
+	
+	ADC_GetCalibrationFactor(ADC1); /* ADC Calibration */  
+  ADC_Cmd(ADC1, ENABLE);  /* Enable ADCperipheral[PerIdx] */	  
+  while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_ADEN)); /* Wait the ADCEN falg */
+  ADC_StartOfConversion(ADC1); /* ADC1 regular Software Start Conv */ 
 }
 
-uint16_t Adc_Switch(uint32_t ADC_Channel)
-{
-	//ÅäÖÃADC²ÉÓÃµÄÍ¨µÀºÍ²ÉÑùÖÜÆÚ
-	ADC_ChannelConfig(ADC1,ADC_Channel,ADC_SampleTime_239_5Cycles);  
-	//Delay_ms(10);
-	//Èí¼þÆô¶¯ADC×ª»»
-  ADC_StartOfConversion(ADC1);  
 
-	//µÈ´ýADC×ª»»Íê³É
-	while(!ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC))
-	{
-		//do nothing
-	}
-  return ADC_GetConversionValue(ADC1) ; 
-}
+
+
+
+
+
+
+//uint16_t Adc_Switch(uint32_t ADC_Channel)
+//{
+//	
+//	//while(ADC_GetFlagStatus(ADC1,ADC_FLAG_ADEN)==RESET); 
+//	//ÅäÖÃADC²ÉÓÃµÄÍ¨µÀºÍ²ÉÑùÖÜÆÚ
+//	ADC_ChannelConfig(ADC1,ADC_Channel,ADC_SampleTime_239_5Cycles);  
+//	
+//	//Delay_ms(10);
+//	//Èí¼þÆô¶¯ADC×ª»»
+//  ADC_StartOfConversion(ADC1);  
+
+//	//µÈ´ýADC×ª»»Íê³É
+//	while(!ADC_GetFlagStatus(ADC1,ADC_FLAG_EOC))
+//	{
+//		//do nothing
+//	}
+//  return ADC_GetConversionValue(ADC1) ; 
+//}
 
