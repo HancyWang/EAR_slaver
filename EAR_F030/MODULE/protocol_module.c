@@ -282,18 +282,18 @@ void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
 		FlashWrite(FLASH_WRITE_START_ADDR,parameter_buf,PARAMETER_BUF_LEN/4);
 		//rcvParameters_from_PC=TRUE;
 		
-		//快闪，表示接收数据完成
-		for(int i=0;i<10;i++)
-		{
-			set_led(LED_GREEN);
-			Delay_ms(50);
-			set_led(LED_CLOSE);
-			Delay_ms(50);
-		}
-		if(mcu_state==POWER_ON)
-		{
-			set_led(LED_GREEN);
-		}
+//		//快闪，表示接收数据完成
+//		for(int i=0;i<10;i++)
+//		{
+//			set_led(LED_GREEN);
+//			Delay_ms(50);
+//			set_led(LED_CLOSE);
+//			Delay_ms(50);
+//		}
+//		if(mcu_state==POWER_ON)
+//		{
+//			set_led(LED_GREEN);
+//		}
 	}
 	else
 	{
@@ -305,7 +305,7 @@ void send_prameter_fram1_to_PC()
 {
 	uint8_t buffer[CMD_BUFFER_LENGTH];
 	
-	memset(parameter_buf,0,PARAMETER_BUF_LEN);  //清空parameter_buf
+	//memset(parameter_buf,0,PARAMETER_BUF_LEN);  //清空parameter_buf
 	//填充parameter_buf
 	uint8_t len=PARAMETER_BUF_LEN/4;                          
 	uint32_t tmp[PARAMETER_BUF_LEN/4]={0};
@@ -350,18 +350,18 @@ void send_prameter_fram2_to_PC()
 	CalcCheckSum(buffer1);
 	fifoWriteData(&send_fifo, buffer1, buffer1[1]+2);
 	
-	//快闪，表示接收发送完成
-	for(int i=0;i<5;i++)
-	{
-		set_led(LED_GREEN);
-		Delay_ms(30);
-		set_led(LED_CLOSE);
-		Delay_ms(30);
-	}
-	if(mcu_state==POWER_ON)
-	{
-		set_led(LED_GREEN);
-	}
+//	//快闪，表示接收发送完成
+//	for(int i=0;i<5;i++)
+//	{
+//		set_led(LED_GREEN);
+//		Delay_ms(30);
+//		set_led(LED_CLOSE);
+//		Delay_ms(30);
+//	}
+//	if(mcu_state==POWER_ON)
+//	{
+//		set_led(LED_GREEN);
+//	}
 }
 
 uint16_t FlashWrite(uint32_t addr, uint8_t *p_data, uint16_t len)

@@ -25,80 +25,7 @@ UINT8 send_buf[SEND_BUF_LEN];
 
 
 //用来接收上位机传过来的参数
-UINT8 parameter_buf[PARAMETER_BUF_LEN]=
-{
-		#if 1
-		//common para
-		1,5,
-		//Mode1
-		0x11,1,100,50,1,1,1,1,
-		0x12,1,100,50,1,1,1,1,
-		0x13,1,100,50,1,1,1,1,
-		0x14,1,100,50,1,1,1,1,
-		0x15,1,100,50,1,1,1,1,
-		0x16,1,100,50,1,1,1,1,
-		
-		0x21,1,100,50,1,1,1,1,
-		0x22,1,100,50,1,1,1,1,
-		0x23,1,100,50,1,1,1,1,
-		0x24,1,100,50,1,1,1,1,
-		0x25,1,100,50,1,1,1,1,
-		0x26,1,100,50,1,1,1,1,
-		
-		0x31,1,100,50,1,1,1,1,
-		0x32,1,100,50,1,1,1,1,
-		0x33,1,100,50,1,1,1,1,
-		0x34,1,100,50,1,1,1,1,
-		0x35,1,100,50,1,1,1,1,
-		0x36,1,100,50,1,1,1,1,
-		
-		//Mode2
-		0x11,1,100,50,1,1,1,1,
-		0x12,1,100,50,1,1,1,1,
-		0x13,1,100,50,1,1,1,1,
-		0x14,1,100,50,1,1,1,1,
-		0x15,1,100,50,1,1,1,1,
-		0x16,1,100,50,1,1,1,1,
-		
-		0x21,1,100,50,1,1,1,1,
-		0x22,1,100,50,1,1,1,1,
-		0x23,1,100,50,1,1,1,1,
-		0x24,1,100,50,1,1,1,1,
-		0x25,1,100,50,1,1,1,1,
-		0x26,1,100,50,1,1,1,1,
-		
-		0x31,1,100,50,1,1,1,1,
-		0x32,1,100,50,1,1,1,1,
-		0x33,1,100,50,1,1,1,1,
-		0x34,1,100,50,1,1,1,1,
-		0x35,1,100,50,1,1,1,1,
-		0x36,1,100,50,1,1,1,1,
-		
-		//Mode3
-		0x11,1,100,50,1,1,1,1,
-		0x12,1,100,50,1,1,1,1,
-		0x13,1,100,50,1,1,1,1,
-		0x14,1,100,50,1,1,1,1,
-		0x15,1,100,50,1,1,1,1,
-		0x16,1,100,50,1,1,1,1,
-		
-		0x21,1,100,50,1,1,1,1,
-		0x22,1,100,50,1,1,1,1,
-		0x23,1,100,50,1,1,1,1,
-		0x24,1,100,50,1,1,1,1,
-		0x25,1,100,50,1,1,1,1,
-		0x26,1,100,50,1,1,1,1,
-		
-		0x31,1,100,50,1,1,1,1,
-		0x32,1,100,50,1,1,1,1,
-		0x33,1,100,50,1,1,1,1,
-		0x34,1,100,50,1,1,1,1,
-		0x35,1,100,50,1,1,1,1,
-		0x36,1,100,50,1,1,1,1,
-		//checksum
-		0,0
-		#endif
-}; 
+UINT8 parameter_buf[PARAMETER_BUF_LEN]; 
 
 UINT16 check_sum;
 extern MCU_STATE mcu_state;
@@ -126,16 +53,6 @@ typedef enum
 }CHCKMODE_OUTPUT_PWM;
 
 
-//#define	LOAD_PARA 							0x01
-//#define	GET_MODE  							0x02
-//#define	CHECK_PRESSURE 					0x03
-//#define	CHECK_PRESSURE_AGAIN 		0x04
-//#define	PREV_OUTPUT_PWM 				0x05
-//#define	CPY_PARA_TO_BUFFER      0x06
-//#define	OUTPUT_PWM							0x07
-//#define	CHECK_BAT_VOL						0x08
-//#define	LED_RED_BLINK						0x09
-
 typedef enum
 {
 	PWM_START,
@@ -157,140 +74,38 @@ static uint16_t* p_PWM_waitAfter_cnt;
 static uint8_t* p_PWM_numOfCycle;
 static uint8_t* p_PWM_serial_cnt;
 
-//uint8_t OUTPUT_FINISH=FALSE;
 
 
-//typedef enum
-//{
-//	PWM1_START,
-//	PWM1_PERIOD,
-//	PWM1_WAIT_BETWEEN,
-//	PWM1_WAIT_AFTER,
-//	PWM1_OUTPUT_FINISH
-//}PWM1_STATE;
+uint16_t PWM_waitBeforeStart_cnt=0;
 
-//typedef enum
-//{
-//	PWM2_START,
-//	PWM2_PERIOD,
-//	PWM2_WAIT_BETWEEN,
-//	PWM2_WAIT_AFTER,
-//	PWM2_OUTPUT_FINISH
-//}PWM2_STATE;
+uint16_t PWM1_period_cnt=0;
+uint16_t PWM2_period_cnt=0;
+uint16_t PWM3_period_cnt=0;
 
-//typedef enum
-//{
-//	PWM3_START,
-//	PWM3_PERIOD,
-//	PWM3_WAIT_BETWEEN,
-//	PWM3_WAIT_AFTER,
-//	PWM3_OUTPUT_FINISH
-//}PWM3_STATE;
+uint16_t PWM1_waitBetween_cnt=0;
+uint16_t PWM2_waitBetween_cnt=0;
+uint16_t PWM3_waitBetween_cnt=0;
 
-// PWM1_STATE pwm1_state=PWM1_START;
-// PWM2_STATE pwm2_state=PWM2_START;
-// PWM3_STATE pwm3_state=PWM3_START;
+uint16_t PWM1_waitAfter_cnt=0;
+uint16_t PWM2_waitAfter_cnt=0;
+uint16_t PWM3_waitAfter_cnt=0;
 
- uint16_t PWM_waitBeforeStart_cnt=0;
+uint8_t PWM1_numOfCycle=0;
+uint8_t PWM2_numOfCycle=0;
+uint8_t PWM3_numOfCycle=0;
 
- uint16_t PWM1_period_cnt=0;
- uint16_t PWM2_period_cnt=0;
- uint16_t PWM3_period_cnt=0;
-
- uint16_t PWM1_waitBetween_cnt=0;
- uint16_t PWM2_waitBetween_cnt=0;
- uint16_t PWM3_waitBetween_cnt=0;
-
- uint16_t PWM1_waitAfter_cnt=0;
- uint16_t PWM2_waitAfter_cnt=0;
- uint16_t PWM3_waitAfter_cnt=0;
-
- uint8_t PWM1_numOfCycle=0;
- uint8_t PWM2_numOfCycle=0;
- uint8_t PWM3_numOfCycle=0;
-
- uint8_t PWM1_serial_cnt=0;
- uint8_t PWM2_serial_cnt=0;
- uint8_t PWM3_serial_cnt=0;
+uint8_t PWM1_serial_cnt=0;
+uint8_t PWM2_serial_cnt=0;
+uint8_t PWM3_serial_cnt=0;
 
 volatile CHCKMODE_OUTPUT_PWM state=LOAD_PARA;
- //uint8_t state=LOAD_PARA;
- uint16_t mode;                      
+uint16_t mode;                      
 
- uint8_t buffer[PARAMETER_BUF_LEN]={
-	 0
-//	 0x05,0x03,
-//	 //PWM1
-//	0x11,	1,80,30,2,2,1,1,
-//	0x12,	0,100,50,1,2,1,2,
-//	0x13,	0,100,50,1,3,1,3,
-//	0x14,	0,100,30,1,4,1,4,
-//	0x15,	0,100,80,1,5,1,5,
-//	0x16,	0,100,90,1,6,1,6,
-//	 
-//	0x21,	0,80,30,2,1,1,1,
-//	0x22,	0,100,50,1,2,1,2,
-//	0x23,	0,100,50,1,3,1,3,
-//	0x24,	0,100,30,1,4,1,4,
-//	0x25,	0,100,80,1,5,1,5,
-//	0x26,	0,100,90,1,6,1,6,
-//	 
-//	0x31,	0,80,30,2,1,1,1,
-//	0x32,	0,100,50,1,2,1,2,
-//	0x33,	0,100,50,1,3,1,3,
-//	0x34,	0,100,30,1,4,1,4,
-//	0x35,	0,100,80,1,5,1,5,
-//	0x36,	0,100,90,1,6,1,6,
-//	  
-//	//PWM2
-//	0x11,	1,80,30,2,1,1,1,
-//	0x12,	1,100,50,1,2,1,2,
-//	0x13,	1,100,50,1,3,1,3,
-//	0x14,	1,100,30,1,4,1,4,
-//	0x15,	1,100,80,1,5,1,5,
-//	0x16,	1,100,90,1,6,1,6,
-//	 
-//	0x21,	1,80,30,2,1,1,1,
-//	0x22,	1,100,50,1,2,1,2,
-//	0x23,	1,100,50,1,3,1,3,
-//	0x24,	1,100,30,1,4,1,4,
-//	0x25,	1,100,80,1,5,1,5,
-//	0x26,	1,100,90,1,6,1,6,
-//	 
-//	0x31,	1,80,30,2,1,1,1,
-//	0x32,	1,100,50,1,2,1,2,
-//	0x33,	1,100,50,1,3,1,3,
-//	0x34,	1,100,30,1,4,1,4,
-//	0x35,	1,100,80,1,5,1,5,
-//	0x36,	1,100,90,1,6,1,6,
-//	
-//	//PWM3
-//	0x11,	1,80,30,2,1,1,1,
-//	0x12,	1,100,50,1,2,1,2,
-//	0x13,	1,100,50,1,3,1,3,
-//	0x14,	1,100,30,1,4,1,4,
-//	0x15,	1,100,80,1,5,1,5,
-//	0x16,	1,100,90,1,6,1,6,
-//	 
-//	0x21,	1,80,30,2,1,1,1,
-//	0x22,	1,100,50,1,2,1,2,
-//	0x23,	1,100,50,1,3,1,3,
-//	0x24,	1,100,30,1,4,1,4,
-//	0x25,	1,100,80,1,5,1,5,
-//	0x26,	1,100,90,1,6,1,6,
-//	 
-//	0x31,	1,80,30,2,1,1,1,
-//	0x32,	1,100,50,1,2,1,2,
-//	0x33,	1,100,50,1,3,1,3,
-//	0x34,	1,100,30,1,4,1,4,
-//	0x35,	1,100,80,1,5,1,5,
-//	0x36,	1,100,90,1,6,1,6
-};
- uint8_t pwm_buffer[144]={0};
- uint16_t	mode;
+uint8_t pwm_buffer[144]={0};
+//uint16_t	mode;
 
- uint16_t checkPressAgain_cnt=0;
- uint8_t wait_cnt=0;
+uint16_t checkPressAgain_cnt=0;
+uint8_t wait_cnt=0;
 /*******************************************************************************
 *                                内部函数声明
 *******************************************************************************/
@@ -614,6 +429,7 @@ void CheckFlashData(uint8_t* buffer)
 	}
 	for(int i=0;i<54;i++)
 	{
+		
 		j++;                 //1.跳过第一个
 		if(buffer[2+j++]>1) //2.enable
 		{
@@ -666,8 +482,8 @@ void check_selectedMode_ouputPWM()
 //		 result4=Adc_Switch(ADC_Channel_4);
 	
 	uint16_t result=0; 
-	if(mcu_state==POWER_ON)
-	//if(TRUE)
+	//if(mcu_state==POWER_ON)
+	if(TRUE)
 		//if(FALSE)
 	{
 		//1.从flash中加载参数到内存
@@ -678,8 +494,8 @@ void check_selectedMode_ouputPWM()
 			
 			//读取flash数据到buffer中
 			FlashRead(FLASH_WRITE_START_ADDR,tmp,len);
-			memcpy(buffer,tmp,PARAMETER_BUF_LEN);
-			CheckFlashData(buffer);
+			memcpy(parameter_buf,tmp,PARAMETER_BUF_LEN);
+			CheckFlashData(parameter_buf);
 			state=GET_MODE;
 		}
 		//2.获得开关对应的模式
@@ -698,13 +514,13 @@ void check_selectedMode_ouputPWM()
 			switch(mode)
 			{
 				case 1:
-					memcpy(pwm_buffer,buffer+2,144);            
+					memcpy(pwm_buffer,parameter_buf+2,144);            
 					break;
 				case 2:
-					memcpy(pwm_buffer,buffer+146,144);
+					memcpy(pwm_buffer,parameter_buf+146,144);
 					break;
 				case 3:
-					memcpy(pwm_buffer,buffer+290,144);
+					memcpy(pwm_buffer,parameter_buf+290,144);
 					break;
 				default:
 					break;
@@ -714,7 +530,7 @@ void check_selectedMode_ouputPWM()
 		//4.检测压力
 		if(state==CHECK_PRESSURE) //检测压力
 		{
-			if(result>=buffer[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
+			if(result>=parameter_buf[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
 			//if(result>=0)
 			{
 				state=PREV_OUTPUT_PWM;
@@ -729,7 +545,7 @@ void check_selectedMode_ouputPWM()
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 				//Delay_ms(buffer[1]*1000);//这个定时最多定时2s，3s就出问题了
-			  if(PWM_waitBeforeStart_cnt*50==buffer[1]*1000)
+			  if(PWM_waitBeforeStart_cnt*50==parameter_buf[1]*1000)
 				{
 					PWM_waitBeforeStart_cnt=0;
 					//state=CPY_PARA_TO_BUFFER;
