@@ -356,8 +356,19 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 	
 	if(*p_pwm_state==PWM_PERIOD)
 	{
-		if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
+		static uint16_t cnt;
+		if(p_PWM_waitBetween_cnt!=0)
 		{
+			cnt=(*p_PWM_period_cnt+1)*CHECK_MODE_OUTPUT_PWM;
+		}
+		else
+		{
+			cnt=(*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM;
+		}
+		//if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
+		if(cnt==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
+		{
+			cnt=0;
 			++(*p_PWM_numOfCycle);
 			*p_PWM_period_cnt=0;
 			*p_pwm_state=PWM_WAIT_BETWEEN;
@@ -378,7 +389,7 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 		}
 		else
 		{
-			if((*p_PWM_waitBetween_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+6]*1000)
+			if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+6]*1000)
 			{ 
 				Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]); //打开输出PWM
 				*p_PWM_waitBetween_cnt=0;
@@ -398,7 +409,7 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 //			*p_pwm_state=PWM_OUTPUT_FINISH;
 //			//*p_PWM_serial_cnt=0;
 //		}
-		if((*p_PWM_waitAfter_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
+		if((*p_PWM_waitAfter_cnt+2)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
 		{
 			*p_PWM_numOfCycle=0;
 			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
@@ -424,7 +435,7 @@ void ResetParameter(uint8_t* buffer)
 	FlashWrite(FLASH_WRITE_START_ADDR,buffer,PARAMETER_BUF_LEN/4);
 }
 
-void CheckFlashData(uint8_t* buffer)
+void CheckFlashData(unsigned char* buffer)
 {
 	uint16_t j=0;
 	//如果数据出错就用默认的数据

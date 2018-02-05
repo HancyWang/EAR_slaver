@@ -17,4 +17,5 @@ void CMD_ProcessTask (void);
 void CalcCheckSum(UINT8* pPacket);
 void check_selectedMode_ouputPWM(void);
 void PaintPWM(unsigned char num,unsigned char* pwm_buffer);
+void CheckFlashData(unsigned char* buffer);
 #endif

@@ -304,7 +304,7 @@ void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
 void send_prameter_fram1_to_PC()
 {
 	uint8_t buffer[CMD_BUFFER_LENGTH];
-	
+	CheckFlashData(parameter_buf); //检测flash数据是否是正确的，第一次会检测flash时，会将默认的数据填充到flash中
 	//memset(parameter_buf,0,PARAMETER_BUF_LEN);  //清空parameter_buf
 	//填充parameter_buf
 	uint8_t len=PARAMETER_BUF_LEN/4;                          
