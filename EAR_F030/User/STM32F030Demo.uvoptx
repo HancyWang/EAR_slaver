@@ -162,7 +162,7 @@
           <Type>0</Type>
           <LineNumber>567</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134219560</Address>
+          <Address>134219792</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -178,7 +178,7 @@
           <Type>0</Type>
           <LineNumber>154</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134220024</Address>
+          <Address>134220080</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -282,6 +282,11 @@
           <count>3</count>
           <WinNumber>2</WinNumber>
           <ItemText>key_wakeup_value</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>mode</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>
@@ -395,7 +400,7 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>4</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\APP\app.c</PathWithFileName>

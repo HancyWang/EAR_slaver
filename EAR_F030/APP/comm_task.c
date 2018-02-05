@@ -332,28 +332,31 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 
 	if(*p_pwm_state==PWM_START)
 	{
-		if(pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+1]==1) //如果是enable
-		{
-			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]);
-			*p_pwm_state=PWM_PERIOD;
-		}
-		else
-		{
-			++(*p_PWM_serial_cnt);   //如果不是enable，查看下一个
-			//*p_PWM_serial_cnt=*p_PWM_serial_cnt+1;
-			//*p_pwm_state=PWM_START;
-		}
 		if(*p_PWM_serial_cnt>5)
 		{
 			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);
 			*p_pwm_state=PWM_OUTPUT_FINISH;
 			*p_PWM_serial_cnt=0;
 		}
+		else
+		{
+			if(pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+1]==1) //如果是enable
+			{
+				Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]);
+				*p_pwm_state=PWM_PERIOD;
+			}
+			else
+			{
+				++(*p_PWM_serial_cnt);   //如果不是enable，查看下一个
+				//*p_PWM_serial_cnt=*p_PWM_serial_cnt+1;
+				//*p_pwm_state=PWM_START;
+			}
+		}
 	}
 	
 	if(*p_pwm_state==PWM_PERIOD)
 	{
-		if((*p_PWM_period_cnt)*50==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
+		if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
 		{
 			++(*p_PWM_numOfCycle);
 			*p_PWM_period_cnt=0;
@@ -373,15 +376,18 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 			*p_pwm_state=PWM_WAIT_AFTER;
 			*p_PWM_numOfCycle=0;
 		}
-		if((*p_PWM_waitBetween_cnt)*50==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+6]*1000)
-		{ 
-			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]); //打开输出PWM
-			*p_PWM_waitBetween_cnt=0;
-			*p_pwm_state=PWM_PERIOD;
-		}
 		else
 		{
-			++(*p_PWM_waitBetween_cnt);
+			if((*p_PWM_waitBetween_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+6]*1000)
+			{ 
+				Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]); //打开输出PWM
+				*p_PWM_waitBetween_cnt=0;
+				*p_pwm_state=PWM_PERIOD;
+			}
+			else
+			{
+				++(*p_PWM_waitBetween_cnt);
+			}
 		}
 	}
 	
@@ -392,7 +398,7 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 //			*p_pwm_state=PWM_OUTPUT_FINISH;
 //			//*p_PWM_serial_cnt=0;
 //		}
-		if((*p_PWM_waitAfter_cnt)*50==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
+		if((*p_PWM_waitAfter_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
 		{
 			*p_PWM_numOfCycle=0;
 			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
@@ -429,7 +435,6 @@ void CheckFlashData(uint8_t* buffer)
 	}
 	for(int i=0;i<54;i++)
 	{
-		
 		j++;                 //1.跳过第一个
 		if(buffer[2+j++]>1) //2.enable
 		{
@@ -482,8 +487,8 @@ void check_selectedMode_ouputPWM()
 //		 result4=Adc_Switch(ADC_Channel_4);
 	
 	uint16_t result=0; 
-	//if(mcu_state==POWER_ON)
-	if(TRUE)
+	if(mcu_state==POWER_ON)
+	//if(TRUE)
 		//if(FALSE)
 	{
 		//1.从flash中加载参数到内存
@@ -505,7 +510,7 @@ void check_selectedMode_ouputPWM()
 			//mode=1;
 			Delay_ms(10);
 			result=ADS115_readByte(0x90); //0x90,ADS115器件地址 ,得到I2C转换的值，用于对比压力是否达到threshold
-			Delay_ms(10);
+			//Delay_ms(10);
 			state=CPY_PARA_TO_BUFFER;
 		}
 		//3.根据选择的模式将数据拷贝到pwm_buffer
@@ -545,7 +550,7 @@ void check_selectedMode_ouputPWM()
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 				//Delay_ms(buffer[1]*1000);//这个定时最多定时2s，3s就出问题了
-			  if(PWM_waitBeforeStart_cnt*50==parameter_buf[1]*1000)
+			  if(PWM_waitBeforeStart_cnt*CHECK_MODE_OUTPUT_PWM==parameter_buf[1]*1000)
 				{
 					PWM_waitBeforeStart_cnt=0;
 					//state=CPY_PARA_TO_BUFFER;
@@ -569,15 +574,11 @@ void check_selectedMode_ouputPWM()
 			}		
 			else
 			{
-//				PaintPWM(1,pwm_buffer);
-//				PaintPWM(2,pwm_buffer);
-//				PaintPWM(3,pwm_buffer);
+				PaintPWM(1,pwm_buffer);
+				PaintPWM(2,pwm_buffer);
+				PaintPWM(3,pwm_buffer);
 				
 					//重新画PWM波形
-				
-				
-				
-				
 			}
 		}
 		
@@ -610,7 +611,7 @@ void check_selectedMode_ouputPWM()
 		//对应4，压力检测，如果检测压力不ok，则再次检测压力
 		if(state==CHECK_PRESSURE_AGAIN) //再次检测压力
 		{
-			if(50*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
+			if(CHECK_MODE_OUTPUT_PWM*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
 			{
 				checkPressAgain_cnt=0;
 				mcu_state=POWER_OFF;
@@ -644,11 +645,8 @@ void check_selectedMode_ouputPWM()
 			mcu_state=POWER_OFF;
 		}
 	}
-	os_delay_ms(TASK_OUTPUT_PWM, 50);
+	os_delay_ms(TASK_OUTPUT_PWM, CHECK_MODE_OUTPUT_PWM);
 }
-
-
-
 
 
 /*******************************************************************************

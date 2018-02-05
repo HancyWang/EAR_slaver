@@ -570,10 +570,6 @@ void ADC1_Init(void)
 
 
 
-
-
-
-
 //uint16_t Adc_Switch(uint32_t ADC_Channel)
 //{
 //	

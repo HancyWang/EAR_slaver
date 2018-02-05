@@ -170,15 +170,21 @@ void key_led_task(void)
 		
 		//if(key_wakeup_value>=2730)
 		if(RegularConvData_Tab[0]>=2730)
+		//	if(TRUE)
 		{
 			//¿ª»ú
-			set_led(LED_GREEN);
-			Motor_PWM_Freq_Dudy_Set(1,100,30);
-			Motor_PWM_Freq_Dudy_Set(2,100,30);
+			
+			Motor_PWM_Freq_Dudy_Set(1,100,80);
+			Motor_PWM_Freq_Dudy_Set(2,100,80);
+			Motor_PWM_Freq_Dudy_Set(3,100,80);
 			Delay_ms(500);
 			Motor_PWM_Freq_Dudy_Set(1,100,0);
 			Motor_PWM_Freq_Dudy_Set(2,100,0);
+			Motor_PWM_Freq_Dudy_Set(3,100,0);
+			
 			key_state=KEY_UPING;
+			set_led(LED_GREEN);
+			
 			mcu_state=POWER_ON;
 		}
 		else	

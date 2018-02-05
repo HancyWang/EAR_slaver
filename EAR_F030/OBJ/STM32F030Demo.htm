@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F030Demo.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F030Demo.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Sun Feb 04 20:09:03 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Mon Feb 05 15:26:10 2018
 <BR><P>
 <H3>Maximum Stack Usage =        760 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -298,8 +298,12 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[5d]"></a>PaintPWM</STRONG> (Thumb, 464 bytes, Stack size 32 bytes, comm_task.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
+<P><STRONG><a name="[5d]"></a>PaintPWM</STRONG> (Thumb, 452 bytes, Stack size 32 bytes, comm_task.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = PaintPWM &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
+</UL>
+<BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
+</UL>
+<BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
 <P><STRONG><a name="[5f]"></a>ResetParameter</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, comm_task.o(.text))
@@ -318,8 +322,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 432 bytes, Stack size 456 bytes, comm_task.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 524<LI>Call Chain = check_selectedMode_ouputPWM &rArr; ADS115_readByte &rArr; I2C_RecByte &rArr; I2C_SDA_IN &rArr; GPIO_Init
+<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 470 bytes, Stack size 456 bytes, comm_task.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 548<LI>Call Chain = check_selectedMode_ouputPWM &rArr; PaintPWM &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetModeSelected
@@ -327,6 +331,7 @@ Global Symbols
 <LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS115_readByte
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckFlashData
+<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
 <LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
@@ -343,7 +348,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[2b]"></a>key_led_task</STRONG> (Thumb, 216 bytes, Stack size 24 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[2b]"></a>key_led_task</STRONG> (Thumb, 236 bytes, Stack size 24 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = key_led_task &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
