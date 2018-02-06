@@ -160,25 +160,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>567</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134219792</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>D:\椤圭洰\EAR_F030\APP\comm_task.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\STM32F030Demo\../APP/comm_task.c\567</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
           <LineNumber>154</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134220080</Address>
+          <Address>134220196</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>

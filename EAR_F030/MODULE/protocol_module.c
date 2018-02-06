@@ -303,14 +303,17 @@ void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
 
 void send_prameter_fram1_to_PC()
 {
+	//CMD_BUFFER_LENGTH定义为255的时候，PWM2波形老是不见了，也不知道为什么
+	//现在将CMD_BUFFER_LENGTH长度定义为300，就OK了，原因不知道
 	uint8_t buffer[CMD_BUFFER_LENGTH];
 	CheckFlashData(parameter_buf); //检测flash数据是否是正确的，第一次会检测flash时，会将默认的数据填充到flash中
+	
 	//memset(parameter_buf,0,PARAMETER_BUF_LEN);  //清空parameter_buf
 	//填充parameter_buf
 	uint8_t len=PARAMETER_BUF_LEN/4;                          
 	uint32_t tmp[PARAMETER_BUF_LEN/4]={0};
 	FlashRead(FLASH_WRITE_START_ADDR,tmp,len);
-	memcpy(parameter_buf,tmp,len*4);
+	//memcpy(parameter_buf,tmp,len*4);
 	
 	//发送第一帧
 	//公共信息2Bytes, (Mode1-PWM1, Mode1-PWM2, Mode1-PWM3),Mode2-PWM1,Mode2-PWM2

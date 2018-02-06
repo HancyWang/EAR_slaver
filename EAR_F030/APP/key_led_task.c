@@ -173,7 +173,7 @@ void key_led_task(void)
 		//	if(TRUE)
 		{
 			//¿ª»ú
-			
+			set_led(LED_GREEN);
 			Motor_PWM_Freq_Dudy_Set(1,100,80);
 			Motor_PWM_Freq_Dudy_Set(2,100,80);
 			Motor_PWM_Freq_Dudy_Set(3,100,80);
@@ -183,7 +183,7 @@ void key_led_task(void)
 			Motor_PWM_Freq_Dudy_Set(3,100,0);
 			
 			key_state=KEY_UPING;
-			set_led(LED_GREEN);
+			//set_led(LED_GREEN);
 			
 			mcu_state=POWER_ON;
 		}
@@ -228,5 +228,22 @@ void key_led_task(void)
 //		 result1=Adc_Switch(ADC_Channel_1);
 //		 
 //		 result2=Adc_Switch(ADC_Channel_4);
+//static uint16_t test=0;
+//if(test==10)
+//{
+//	test=0;
+//	Motor_PWM_Freq_Dudy_Set(1,50,30);
+//	Motor_PWM_Freq_Dudy_Set(2,100,50);
+//	Motor_PWM_Freq_Dudy_Set(3,100,70);	
+//}
+//else
+//{
+//	test++;
+//	Motor_PWM_Freq_Dudy_Set(1,50,0);
+//	Motor_PWM_Freq_Dudy_Set(2,100,0);
+//	Motor_PWM_Freq_Dudy_Set(3,100,0);
+//	
+//}
+//os_delay_ms(KEY_LED_TASK_ID, 80);
 	os_delay_ms(KEY_LED_TASK_ID, KEY_LED_PERIOD);
 }

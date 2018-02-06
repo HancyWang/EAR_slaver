@@ -73,7 +73,7 @@ static uint16_t* p_PWM_waitBetween_cnt;
 static uint16_t* p_PWM_waitAfter_cnt;
 static uint8_t* p_PWM_numOfCycle;
 static uint8_t* p_PWM_serial_cnt;
-
+//static uint8_t* buffer;
 
 
 uint16_t PWM_waitBeforeStart_cnt=0;
@@ -98,12 +98,16 @@ uint8_t PWM1_serial_cnt=0;
 uint8_t PWM2_serial_cnt=0;
 uint8_t PWM3_serial_cnt=0;
 
-volatile CHCKMODE_OUTPUT_PWM state=LOAD_PARA;
+//volatile CHCKMODE_OUTPUT_PWM state=LOAD_PARA;
+CHCKMODE_OUTPUT_PWM state=LOAD_PARA;
 uint16_t mode;                      
 
-uint8_t pwm_buffer[144]={0};
+//uint8_t pwm_buffer[144]={0};
 //uint16_t	mode;
-
+static uint8_t pwm1_buffer[49];
+static uint8_t pwm2_buffer[49];
+static uint8_t pwm3_buffer[49];
+uint8_t pressure;
 uint16_t checkPressAgain_cnt=0;
 uint8_t wait_cnt=0;
 /*******************************************************************************
@@ -288,7 +292,7 @@ void TaskDataSend (void)
 				UartSendNBytes(send_data_buf, len);
 		}
 		
-		os_delay_ms(SEND_TASK_ID, 23);
+		os_delay_ms(SEND_TASK_ID, 24);  //mark一下
 }
 
 /*******************************************************************************
@@ -298,7 +302,7 @@ void TaskDataSend (void)
 * 输出参数 : 无
 * 返回参数 : 无
 *******************************************************************************/
-void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
+void PaintPWM(unsigned char num,unsigned char* buffer)
 {
 	switch(num)
 	{
@@ -309,6 +313,7 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 			p_PWM_waitAfter_cnt=&PWM1_waitAfter_cnt;
 			p_PWM_numOfCycle=&PWM1_numOfCycle;
 			p_PWM_serial_cnt=&PWM1_serial_cnt;
+			//buffer=pwm1_buffer;
 			break;
 		case 2:
 			p_pwm_state=&pwm2_state;
@@ -317,6 +322,7 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 			p_PWM_waitAfter_cnt=&PWM2_waitAfter_cnt;
 			p_PWM_numOfCycle=&PWM2_numOfCycle;
 			p_PWM_serial_cnt=&PWM2_serial_cnt;
+			//buffer=pwm2_buffer;
 			break;
 		case 3:
 			p_pwm_state=&pwm3_state;
@@ -325,6 +331,7 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 			p_PWM_waitAfter_cnt=&PWM3_waitAfter_cnt;
 			p_PWM_numOfCycle=&PWM3_numOfCycle;
 			p_PWM_serial_cnt=&PWM3_serial_cnt;
+			//buffer=pwm3_buffer;
 			break;
 		default:
 			break;
@@ -332,47 +339,74 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 
 	if(*p_pwm_state==PWM_START)
 	{
-		if(*p_PWM_serial_cnt>5)
+//		if(*p_PWM_serial_cnt>5)
+//		//if(*p_PWM_serial_cnt>pwm_buffer[0]-1)
+//		{
+//			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);
+//			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[1+8*(*p_PWM_serial_cnt)+2],0);
+//			*p_pwm_state=PWM_OUTPUT_FINISH;
+//			*p_PWM_serial_cnt=0;
+//		}
+//		else
+//		{
+//			//if(pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+1]==1) //如果是enable
+//			if(pwm_buffer[1+8*(*p_PWM_serial_cnt)]==1)
+//			{
+//				Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]);
+//				//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[1+8*(*p_PWM_serial_cnt)+2],pwm_buffer[1+8*(*p_PWM_serial_cnt)+3]);
+//				*p_pwm_state=PWM_PERIOD;
+//			}
+//			else
+//			{
+//				++(*p_PWM_serial_cnt);   //如果不是enable，查看下一个
+//				//*p_PWM_serial_cnt=*p_PWM_serial_cnt+1;
+//				//*p_pwm_state=PWM_START;
+//			}
+//		}
+		
+
+		//if(*p_PWM_serial_cnt>5)
+		if(*p_PWM_serial_cnt>buffer[0]-1)
 		{
-			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);
+			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);
+			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
 			*p_pwm_state=PWM_OUTPUT_FINISH;
 			*p_PWM_serial_cnt=0;
 		}
 		else
 		{
-			if(pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+1]==1) //如果是enable
-			{
-				Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]);
-				*p_pwm_state=PWM_PERIOD;
-			}
-			else
-			{
-				++(*p_PWM_serial_cnt);   //如果不是enable，查看下一个
-				//*p_PWM_serial_cnt=*p_PWM_serial_cnt+1;
-				//*p_pwm_state=PWM_START;
-			}
+			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]);
+			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],buffer[1+8*(*p_PWM_serial_cnt)+3]);
+			*p_pwm_state=PWM_PERIOD;
+			//p_PWM_serial_cnt++;
 		}
+		
+		
 	}
 	
 	if(*p_pwm_state==PWM_PERIOD)
 	{
-		static uint16_t cnt;
-		if(p_PWM_waitBetween_cnt!=0)
-		{
-			cnt=(*p_PWM_period_cnt+1)*CHECK_MODE_OUTPUT_PWM;
-		}
-		else
-		{
-			cnt=(*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM;
-		}
+//		static uint16_t cnt;
+//		if(p_PWM_waitBetween_cnt!=0)
+//		{
+//			cnt=(*p_PWM_period_cnt+1)*CHECK_MODE_OUTPUT_PWM;
+//		}
+//		else
+//		{
+//			cnt=(*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM;
+//		}
+//		if(cnt==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
+		
+		
 		//if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
-		if(cnt==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
+		if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+4]*1000)
 		{
-			cnt=0;
+			//cnt=0;
 			++(*p_PWM_numOfCycle);
 			*p_PWM_period_cnt=0;
 			*p_pwm_state=PWM_WAIT_BETWEEN;
-			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
+			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
+			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
 		}
 		else
 		{
@@ -382,16 +416,19 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 	
 	if(*p_pwm_state==PWM_WAIT_BETWEEN)
 	{
-		if(*p_PWM_numOfCycle==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+5])
+		//if(*p_PWM_numOfCycle==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+5])
+		if(*p_PWM_numOfCycle==buffer[1+8*(*p_PWM_serial_cnt)+5])
 		{
 			*p_pwm_state=PWM_WAIT_AFTER;
 			*p_PWM_numOfCycle=0;
 		}
 		else
 		{
-			if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+6]*1000)
+			//if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+6]*1000)
+			if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+6]*1000)
 			{ 
-				Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]); //打开输出PWM
+				//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]); //打开输出PWM
+				Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],buffer[1+8*(*p_PWM_serial_cnt)+3]); 
 				*p_PWM_waitBetween_cnt=0;
 				*p_pwm_state=PWM_PERIOD;
 			}
@@ -409,10 +446,26 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 //			*p_pwm_state=PWM_OUTPUT_FINISH;
 //			//*p_PWM_serial_cnt=0;
 //		}
-		if((*p_PWM_waitAfter_cnt+2)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
+		
+		
+		//明天把这个代码加上去试一试，并且去掉period中的最开始的if...else,看看效果
+//		static uint16_t cnt1;
+//		if(p_PWM_waitBetween_cnt!=0)
+//		{
+//			cnt1=(*p_PWM_period_cnt+1)*CHECK_MODE_OUTPUT_PWM;
+//		}
+//		else
+//		{
+//			cnt1=(*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM;
+//		}
+//		if(cnt1==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
+		
+		//if((*p_PWM_waitAfter_cnt+2)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
+		if((*p_PWM_waitAfter_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+7]*1000)
 		{
 			*p_PWM_numOfCycle=0;
-			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
+			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
+			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
 			++(*p_PWM_serial_cnt);
 			*p_pwm_state=PWM_START;
 			*p_PWM_waitAfter_cnt=0;
@@ -424,7 +477,7 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer)
 	}
 }
 
-void ResetParameter(uint8_t* buffer)
+void ResetParameter(unsigned char* buffer)
 {
 	//将代码段中flash数据拷贝到buffer中
 	for(int i=0;i<PARAMETER_BUF_LEN;i++)
@@ -480,6 +533,33 @@ void CheckFlashData(unsigned char* buffer)
 	}
 }
 
+/*******************************************************************************
+** 函数名称: FillUpPWMbuffer
+** 功能描述: 按照serial的有和无来填充pwm1_buffer,pwm2_buffer,pwm3_buffer
+** 输　  入: 无
+** 输　  出: 无
+** 全局变量: 无
+** 调用模块: 无
+*******************************************************************************/
+void FillUpPWMbuffer(uint8_t* dest,uint8_t* src)
+{
+	uint8_t serial_cnt=0;
+	uint8_t j=1;
+	for(int i=0;i<6;i++)
+	{
+		if(src[8*i+1]==0x01)
+		{
+			uint8_t k;
+			for(k=0;k<8;k++)
+			{
+				dest[j++]=src[8*i+k];
+			}
+			serial_cnt++;
+		}
+	}
+	dest[0]=serial_cnt;
+}
+
 
 /*******************************************************************************
 ** 函数名称: check_selectedMode_ouputPWM
@@ -527,6 +607,12 @@ void check_selectedMode_ouputPWM()
 		//3.根据选择的模式将数据拷贝到pwm_buffer
 		if(state==CPY_PARA_TO_BUFFER)  //根据选择的模式，将para填充到pwm_buffer中
 		{
+			uint8_t pwm_buffer[144];
+			
+			memset(pwm1_buffer,0,49);
+			memset(pwm2_buffer,0,49);
+			memset(pwm3_buffer,0,49);
+			
 			switch(mode)
 			{
 				case 1:
@@ -541,6 +627,9 @@ void check_selectedMode_ouputPWM()
 				default:
 					break;
 			}
+			FillUpPWMbuffer(pwm1_buffer,pwm_buffer);
+			FillUpPWMbuffer(pwm2_buffer,pwm_buffer+48);
+			FillUpPWMbuffer(pwm3_buffer,pwm_buffer+96);
 			state=CHECK_PRESSURE;
 		}
 		//4.检测压力
@@ -561,7 +650,7 @@ void check_selectedMode_ouputPWM()
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 				//Delay_ms(buffer[1]*1000);//这个定时最多定时2s，3s就出问题了
-			  if(PWM_waitBeforeStart_cnt*CHECK_MODE_OUTPUT_PWM==parameter_buf[1]*1000)
+			  if((PWM_waitBeforeStart_cnt-4)*CHECK_MODE_OUTPUT_PWM==parameter_buf[1]*1000)
 				{
 					PWM_waitBeforeStart_cnt=0;
 					//state=CPY_PARA_TO_BUFFER;
@@ -575,7 +664,7 @@ void check_selectedMode_ouputPWM()
 		
 		//6.开始输出波形
 		if(state==OUTPUT_PWM) //按照设定的参数，输出PWM1,PWM2,PWM3
-		{
+		{			
 			if(pwm1_state==PWM_OUTPUT_FINISH&&pwm2_state==PWM_OUTPUT_FINISH&&pwm3_state==PWM_OUTPUT_FINISH)
 			{
 				PWM1_serial_cnt=0;
@@ -585,11 +674,12 @@ void check_selectedMode_ouputPWM()
 			}		
 			else
 			{
-				PaintPWM(1,pwm_buffer);
-				PaintPWM(2,pwm_buffer);
-				PaintPWM(3,pwm_buffer);
-				
-					//重新画PWM波形
+				PaintPWM(1,pwm1_buffer); 
+				PaintPWM(2,pwm2_buffer);
+				PaintPWM(3,pwm3_buffer);
+//				PaintPWM(1); 
+//				PaintPWM(2); 
+//				PaintPWM(3); 
 			}
 		}
 		
@@ -627,7 +717,7 @@ void check_selectedMode_ouputPWM()
 				checkPressAgain_cnt=0;
 				mcu_state=POWER_OFF;
 			}
-			if(result<pwm_buffer[0]*70)
+			if(result<parameter_buf[0]*70)
 			{
 				checkPressAgain_cnt++;
 			}
