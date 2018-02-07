@@ -36,7 +36,7 @@
 * 全局变量
 ***********************************/
 //BOOL rcvParameters_from_PC=FALSE;
-
+uint8_t rcvParaSuccess=0x00;
 //發送數據FIFO
 extern FIFO_TYPE send_fifo;
 extern uint8_t send_buf[SEND_BUF_LEN];
@@ -130,16 +130,10 @@ void get_comm_para_to_buf(uint8_t* pdata)
 	memset(parameter_buf,0,PARAMETER_BUF_LEN);
 	check_sum=0;
 	UINT8* pPos=(UINT8*)&parameter_buf;
-	memset(&parameter_buf,0,PARAMETER_BUF_LEN);
+	memset(parameter_buf,0,PARAMETER_BUF_LEN);
 	memcpy(pPos,pdata+4,1);
 	memcpy(pPos+1,pdata+5,1);
 	check_sum+=*pPos+*(pPos+1);
-//	//debug
-//	uint8_t buffer[2]={0};
-//	buffer[0]=0x11;	
-//	buffer[1]=0x22;	
-//	fifoWriteData(&send_fifo, (UINT8*)&parameter_buf, 1);
-//	fifoWriteData(&send_fifo, (UINT8*)(&parameter_buf+1), 1);
 }
 
 void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
@@ -280,6 +274,7 @@ void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
 		
 		//FlashWrite(FLASH_WRITE_START_ADDR,(uint32_t*)&parameter_buf,PARAMETER_BUF_LEN/4);
 		FlashWrite(FLASH_WRITE_START_ADDR,parameter_buf,PARAMETER_BUF_LEN/4);
+		rcvParaSuccess=0x01;
 		//rcvParameters_from_PC=TRUE;
 		
 //		//快闪，表示接收数据完成
@@ -299,6 +294,19 @@ void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
 	{
 		//do nothing
 	}
+}
+
+void send_para_rcv_result()
+{
+	uint8_t buffer[7];
+	buffer[0] = PACK_HEAD_BYTE;       //0xFF，头
+	buffer[1] = 0x05;            			//长度
+	buffer[2] = MODULE_CMD_TYPE;      //0x00，下位机像上位机发送命令的标志
+	buffer[3] = SEND_PARA_RCV_RESULT; //0x08，FrameID
+	buffer[4]	=	rcvParaSuccess;       //0x01表示接收数据完成，0x00表示未完成接收
+	CalcCheckSum(buffer);
+	fifoWriteData(&send_fifo, buffer, buffer[1]+2);
+	rcvParaSuccess=0x00;   //复位，为下次接收
 }
 
 void send_prameter_fram1_to_PC()
@@ -365,6 +373,8 @@ void send_prameter_fram2_to_PC()
 //	{
 //		set_led(LED_GREEN);
 //	}
+	
+	
 }
 
 uint16_t FlashWrite(uint32_t addr, uint8_t *p_data, uint16_t len)
@@ -552,6 +562,9 @@ void protocol_module_process(uint8_t* pdata)
 		break;
 	case MODE3_PWM3_ID:
 		get_parameter_to_buf_by_frameId(pdata,MODE3_PWM3_ID);
+		break;
+	case IS_RCV_PARA_FINISHED:
+		send_para_rcv_result();
 		break;
 	case GET_FLASH_DATA_1_ID:
 		send_prameter_fram1_to_PC();

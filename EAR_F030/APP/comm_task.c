@@ -27,7 +27,10 @@ UINT8 send_buf[SEND_BUF_LEN];
 //用来接收上位机传过来的参数
 UINT8 parameter_buf[PARAMETER_BUF_LEN]; 
 
+UINT8 buffer[PARAMETER_BUF_LEN];
+
 UINT16 check_sum;
+extern BOOL b_Is_PCB_PowerOn;
 extern MCU_STATE mcu_state;
 extern BOOL rcvParameters_from_PC;
 extern KEY_STATE key_state;
@@ -35,8 +38,8 @@ extern const uint8_t default_parameter_buf[PARAMETER_BUF_LEN];
 
 extern uint16_t RegularConvData_Tab[2];
 
-uint16_t prev_cnt;
-uint16_t cnt;
+//uint16_t prev_cnt;
+//uint16_t cnt;
 
 //局部变量
 typedef enum
@@ -73,8 +76,6 @@ static uint16_t* p_PWM_waitBetween_cnt;
 static uint16_t* p_PWM_waitAfter_cnt;
 static uint8_t* p_PWM_numOfCycle;
 static uint8_t* p_PWM_serial_cnt;
-//static uint8_t* buffer;
-
 
 uint16_t PWM_waitBeforeStart_cnt=0;
 
@@ -313,7 +314,6 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 			p_PWM_waitAfter_cnt=&PWM1_waitAfter_cnt;
 			p_PWM_numOfCycle=&PWM1_numOfCycle;
 			p_PWM_serial_cnt=&PWM1_serial_cnt;
-			//buffer=pwm1_buffer;
 			break;
 		case 2:
 			p_pwm_state=&pwm2_state;
@@ -322,7 +322,6 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 			p_PWM_waitAfter_cnt=&PWM2_waitAfter_cnt;
 			p_PWM_numOfCycle=&PWM2_numOfCycle;
 			p_PWM_serial_cnt=&PWM2_serial_cnt;
-			//buffer=pwm2_buffer;
 			break;
 		case 3:
 			p_pwm_state=&pwm3_state;
@@ -331,150 +330,94 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 			p_PWM_waitAfter_cnt=&PWM3_waitAfter_cnt;
 			p_PWM_numOfCycle=&PWM3_numOfCycle;
 			p_PWM_serial_cnt=&PWM3_serial_cnt;
-			//buffer=pwm3_buffer;
 			break;
 		default:
 			break;
 	}
-
-	if(*p_pwm_state==PWM_START)
+	if(b_Is_PCB_PowerOn==FALSE)
 	{
-//		if(*p_PWM_serial_cnt>5)
-//		//if(*p_PWM_serial_cnt>pwm_buffer[0]-1)
-//		{
-//			Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);
-//			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[1+8*(*p_PWM_serial_cnt)+2],0);
-//			*p_pwm_state=PWM_OUTPUT_FINISH;
-//			*p_PWM_serial_cnt=0;
-//		}
-//		else
-//		{
-//			//if(pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+1]==1) //如果是enable
-//			if(pwm_buffer[1+8*(*p_PWM_serial_cnt)]==1)
-//			{
-//				Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]);
-//				//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[1+8*(*p_PWM_serial_cnt)+2],pwm_buffer[1+8*(*p_PWM_serial_cnt)+3]);
-//				*p_pwm_state=PWM_PERIOD;
-//			}
-//			else
-//			{
-//				++(*p_PWM_serial_cnt);   //如果不是enable，查看下一个
-//				//*p_PWM_serial_cnt=*p_PWM_serial_cnt+1;
-//				//*p_pwm_state=PWM_START;
-//			}
-//		}
-		
-
-		//if(*p_PWM_serial_cnt>5)
-		if(*p_PWM_serial_cnt>buffer[0]-1)
-		{
-			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);
-			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
-			*p_pwm_state=PWM_OUTPUT_FINISH;
-			*p_PWM_serial_cnt=0;
-		}
-		else
-		{
-			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]);
-			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],buffer[1+8*(*p_PWM_serial_cnt)+3]);
-			*p_pwm_state=PWM_PERIOD;
-			//p_PWM_serial_cnt++;
-		}
-		
-		
+		mcu_state=POWER_OFF;
+		state=LOAD_PARA;
+		*p_pwm_state=PWM_START;
+		*p_PWM_period_cnt=0;
+		*p_PWM_waitBetween_cnt=0;
+		*p_PWM_waitAfter_cnt=0;
+		*p_PWM_numOfCycle=0;
+		*p_PWM_serial_cnt=0;
+		//Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
+		Motor_PWM_Freq_Dudy_Set(num,100,0);
 	}
-	
-	if(*p_pwm_state==PWM_PERIOD)
+	else
 	{
-//		static uint16_t cnt;
-//		if(p_PWM_waitBetween_cnt!=0)
-//		{
-//			cnt=(*p_PWM_period_cnt+1)*CHECK_MODE_OUTPUT_PWM;
-//		}
-//		else
-//		{
-//			cnt=(*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM;
-//		}
-//		if(cnt==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
-		
-		
-		//if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+4]*1000)
-		if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+4]*1000)
+		if(*p_pwm_state==PWM_START)
 		{
-			//cnt=0;
-			++(*p_PWM_numOfCycle);
-			*p_PWM_period_cnt=0;
-			*p_pwm_state=PWM_WAIT_BETWEEN;
-			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
-			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
-		}
-		else
-		{
-			++(*p_PWM_period_cnt);
-		}
-	}
-	
-	if(*p_pwm_state==PWM_WAIT_BETWEEN)
-	{
-		//if(*p_PWM_numOfCycle==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+5])
-		if(*p_PWM_numOfCycle==buffer[1+8*(*p_PWM_serial_cnt)+5])
-		{
-			*p_pwm_state=PWM_WAIT_AFTER;
-			*p_PWM_numOfCycle=0;
-		}
-		else
-		{
-			//if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+6]*1000)
-			if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+6]*1000)
-			{ 
-				//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+3]); //打开输出PWM
-				Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],buffer[1+8*(*p_PWM_serial_cnt)+3]); 
-				*p_PWM_waitBetween_cnt=0;
-				*p_pwm_state=PWM_PERIOD;
+			if(*p_PWM_serial_cnt>buffer[0]-1)
+			{
+				Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
+				*p_pwm_state=PWM_OUTPUT_FINISH;
+				*p_PWM_serial_cnt=0;
 			}
 			else
 			{
-				++(*p_PWM_waitBetween_cnt);
+				Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],buffer[1+8*(*p_PWM_serial_cnt)+3]);
+				*p_pwm_state=PWM_PERIOD;
+			}
+		}
+		
+		if(*p_pwm_state==PWM_PERIOD)
+		{
+			if((*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+4]*1000)
+			{
+				++(*p_PWM_numOfCycle);
+				*p_PWM_period_cnt=0;
+				*p_pwm_state=PWM_WAIT_BETWEEN;
+				Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
+			}
+			else
+			{
+				++(*p_PWM_period_cnt);
+			}
+		}
+		
+		if(*p_pwm_state==PWM_WAIT_BETWEEN)
+		{
+			if(*p_PWM_numOfCycle==buffer[1+8*(*p_PWM_serial_cnt)+5])
+			{
+				*p_pwm_state=PWM_WAIT_AFTER;
+				*p_PWM_numOfCycle=0;
+			}
+			else
+			{
+				if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+6]*1000)
+				{ 
+					Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],buffer[1+8*(*p_PWM_serial_cnt)+3]); 
+					*p_PWM_waitBetween_cnt=0;
+					*p_pwm_state=PWM_PERIOD;
+				}
+				else
+				{
+					++(*p_PWM_waitBetween_cnt);
+				}
+			}
+		}
+		
+		if(*p_pwm_state==PWM_WAIT_AFTER)
+		{
+			if((*p_PWM_waitAfter_cnt+1)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+7]*1000)
+			{
+				*p_PWM_numOfCycle=0;
+				Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
+				++(*p_PWM_serial_cnt);
+				*p_pwm_state=PWM_START;
+				*p_PWM_waitAfter_cnt=0;
+			}
+			else	
+			{
+				++(*p_PWM_waitAfter_cnt);
 			}
 		}
 	}
-	
-	if(*p_pwm_state==PWM_WAIT_AFTER)
-	{
-//		if(*p_PWM_serial_cnt>=5)
-//		{
-//			*p_pwm_state=PWM_OUTPUT_FINISH;
-//			//*p_PWM_serial_cnt=0;
-//		}
-		
-		
-		//明天把这个代码加上去试一试，并且去掉period中的最开始的if...else,看看效果
-//		static uint16_t cnt1;
-//		if(p_PWM_waitBetween_cnt!=0)
-//		{
-//			cnt1=(*p_PWM_period_cnt+1)*CHECK_MODE_OUTPUT_PWM;
-//		}
-//		else
-//		{
-//			cnt1=(*p_PWM_period_cnt)*CHECK_MODE_OUTPUT_PWM;
-//		}
-//		if(cnt1==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
-		
-		//if((*p_PWM_waitAfter_cnt+2)*CHECK_MODE_OUTPUT_PWM==pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+7]*1000)
-		if((*p_PWM_waitAfter_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+7]*1000)
-		{
-			*p_PWM_numOfCycle=0;
-			//Motor_PWM_Freq_Dudy_Set(num,pwm_buffer[(num-1)*48+8*(*p_PWM_serial_cnt)+2],0);   //关闭输出PWM
-			Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
-			++(*p_PWM_serial_cnt);
-			*p_pwm_state=PWM_START;
-			*p_PWM_waitAfter_cnt=0;
-		}
-		else	
-		{
-			++(*p_PWM_waitAfter_cnt);
-		}
-	}
+
 }
 
 void ResetParameter(unsigned char* buffer)
@@ -560,7 +503,6 @@ void FillUpPWMbuffer(uint8_t* dest,uint8_t* src)
 	dest[0]=serial_cnt;
 }
 
-
 /*******************************************************************************
 ** 函数名称: check_selectedMode_ouputPWM
 ** 功能描述: 检查模式，并对应的输出PWM波形
@@ -571,27 +513,19 @@ void FillUpPWMbuffer(uint8_t* dest,uint8_t* src)
 *******************************************************************************/
 void check_selectedMode_ouputPWM()
 {
-//			static uint16_t result3;
-//		static uint16_t result4;
-//		 result3=Adc_Switch(ADC_Channel_1);
-//		 
-//		 result4=Adc_Switch(ADC_Channel_4);
-	
-	uint16_t result=0; 
+	static uint16_t pressure_result; 
 	if(mcu_state==POWER_ON)
-	//if(TRUE)
-		//if(FALSE)
 	{
 		//1.从flash中加载参数到内存
-		if(state==LOAD_PARA)      //从flash中加载参数到内存
+		if(state==LOAD_PARA)      
 		{
 			uint8_t len=PARAMETER_BUF_LEN/4;  
 			uint32_t tmp[PARAMETER_BUF_LEN/4]={0};   		
 			
 			//读取flash数据到buffer中
 			FlashRead(FLASH_WRITE_START_ADDR,tmp,len);
-			memcpy(parameter_buf,tmp,PARAMETER_BUF_LEN);
-			CheckFlashData(parameter_buf);
+			memcpy(buffer,tmp,PARAMETER_BUF_LEN);
+			CheckFlashData(buffer);
 			state=GET_MODE;
 		}
 		//2.获得开关对应的模式
@@ -599,8 +533,8 @@ void check_selectedMode_ouputPWM()
 		{
 			mode=GetModeSelected();  //得到模式
 			//mode=1;
-			Delay_ms(10);
-			result=ADS115_readByte(0x90); //0x90,ADS115器件地址 ,得到I2C转换的值，用于对比压力是否达到threshold
+			//Delay_ms(10);
+			//pressure_result=ADS115_readByte(0x90); //0x90,ADS115器件地址 ,得到I2C转换的值，用于对比压力是否达到threshold
 			//Delay_ms(10);
 			state=CPY_PARA_TO_BUFFER;
 		}
@@ -616,13 +550,13 @@ void check_selectedMode_ouputPWM()
 			switch(mode)
 			{
 				case 1:
-					memcpy(pwm_buffer,parameter_buf+2,144);            
+					memcpy(pwm_buffer,buffer+2,144);            
 					break;
 				case 2:
-					memcpy(pwm_buffer,parameter_buf+146,144);
+					memcpy(pwm_buffer,buffer+146,144);
 					break;
 				case 3:
-					memcpy(pwm_buffer,parameter_buf+290,144);
+					memcpy(pwm_buffer,buffer+290,144);
 					break;
 				default:
 					break;
@@ -632,11 +566,12 @@ void check_selectedMode_ouputPWM()
 			FillUpPWMbuffer(pwm3_buffer,pwm_buffer+96);
 			state=CHECK_PRESSURE;
 		}
+		
 		//4.检测压力
 		if(state==CHECK_PRESSURE) //检测压力
 		{
-			if(result>=parameter_buf[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
-			//if(result>=0)
+			pressure_result=ADS115_readByte(0x90);
+			if(pressure_result>=buffer[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
 			{
 				state=PREV_OUTPUT_PWM;
 			}
@@ -650,7 +585,8 @@ void check_selectedMode_ouputPWM()
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 				//Delay_ms(buffer[1]*1000);//这个定时最多定时2s，3s就出问题了
-			  if((PWM_waitBeforeStart_cnt-4)*CHECK_MODE_OUTPUT_PWM==parameter_buf[1]*1000)
+				//PWM_waitBeforeStart_cnt+4，之前是PWM_waitBeforeStart_cnt-4，写错了
+			  if((PWM_waitBeforeStart_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1]*1000)
 				{
 					PWM_waitBeforeStart_cnt=0;
 					//state=CPY_PARA_TO_BUFFER;
@@ -677,25 +613,15 @@ void check_selectedMode_ouputPWM()
 				PaintPWM(1,pwm1_buffer); 
 				PaintPWM(2,pwm2_buffer);
 				PaintPWM(3,pwm3_buffer);
-//				PaintPWM(1); 
-//				PaintPWM(2); 
-//				PaintPWM(3); 
 			}
 		}
-		
 		
 		//7.波形输出完毕，检测电池电压
 		if(state==CHECK_BAT_VOL) 
 		{
 			uint16_t result;
-//			for(uint8_t i=0;i<3;i++)
-//			{
-//				result=Adc_Switch(ADC_Channel_1);
-//			}
 			result=RegularConvData_Tab[0];
-			//uint16_t result=3000;
 			if(result<2730) //如果电压小于2.2v,（基准3.3v）
-			//if(result>2730)
 			{
 				//闪灯，进入POWER_OFF
 				state=LED_RED_BLINK;
@@ -716,15 +642,26 @@ void check_selectedMode_ouputPWM()
 			{
 				checkPressAgain_cnt=0;
 				mcu_state=POWER_OFF;
+				state=LOAD_PARA;
+				set_led(LED_CLOSE);
 			}
-			if(result<parameter_buf[0]*70)
+			else
 			{
-				checkPressAgain_cnt++;
+				pressure_result=ADS115_readByte(0x90);
+				//特别注意，这里不能用全局变量buffer,而应该用parameter_buf
+				//理由：如果进入60s倒计时状态，此时的buffer的值在CHECK_PRESSURE_AGAIN状态已经固定了
+				//如果此时上位机更新了参数，parameter_buf[0]会改变，应该用这个变化了的值来判断
+				if(pressure_result<parameter_buf[0]*70) 
+				{
+					checkPressAgain_cnt++;
+				}
+				else	
+				{
+					checkPressAgain_cnt=0;
+					state=LOAD_PARA;
+				}
 			}
-			else	
-			{
-				checkPressAgain_cnt=0;
-			}
+			
 		}
 
 		//对应7，如果检测电池电压小于2.2V，则闪灯
@@ -748,8 +685,6 @@ void check_selectedMode_ouputPWM()
 	}
 	os_delay_ms(TASK_OUTPUT_PWM, CHECK_MODE_OUTPUT_PWM);
 }
-
-
 /*******************************************************************************
 ** 函数名称: CMD_ProcessTask
 ** 功能描述: 命令解析任务

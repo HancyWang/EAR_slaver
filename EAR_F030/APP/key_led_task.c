@@ -37,8 +37,6 @@
 /***********************************
 * 局部变量
 ***********************************/
-//static uint8_t cur_status = FALSE;
-//static uint8_t pre_status = FALSE;
 
 
 //KEY值，这里点按为确认蓝牙连接
@@ -46,18 +44,12 @@ typedef enum {
 	NO_KEY,
 	BLUE_CHECK
 }KEY_VAL;
-//static uint8_t key_val = NO_KEY;
-
-//typedef enum
-//{
-//	POWER_ON,
-//	POWER_OFF
-//}MCU_STATE;
 
 MCU_STATE mcu_state=POWER_OFF;
 //mcu_state=POWER_OFF;
 
 //extern uint8_t OUTPUT_FINISH;
+BOOL b_Is_PCB_PowerOn=FALSE;
 
 volatile KEY_STATE key_state=KEY_UPING;
 
@@ -74,9 +66,6 @@ void key_led_task(void)
 //	 uint16_t res;
 	static uint8_t key_down_cnt = 0;
 	static uint8_t key_up_cnt=0;
-//	static uint16_t key_wakeup_value;
-
-	//static uint8_t motor_shake_cnt=0;
 	
 	#if 0
 //	cur_status = get_key_status();
@@ -126,29 +115,24 @@ void key_led_task(void)
 	{
 		key_state=KEY_DOWNING;
 		key_down_cnt=0;
+		b_Is_PCB_PowerOn=!b_Is_PCB_PowerOn;
 	}
-
+	
 	if(key_state==KEY_DOWNING)
 	{
-		//key_wakeup_value=Adc_Switch(ADC_Channel_0);
-		//if(key_wakeup_value>=2730)
 		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==1)
 		{
-			key_up_cnt++;
-//			key_state=KEY_DOWN_UP;
-//			key_down_cnt=0;				
+			key_up_cnt++;		
 		}
 		if(key_up_cnt==10)
 		{
 			key_state=KEY_DOWN_UP;
 			key_up_cnt=0;
-		}
+		}				
 	}
 	
 	if(key_state==KEY_UPING)
 	{
-		//key_wakeup_value=Adc_Switch(ADC_Channel_0);
-		//if(key_wakeup_value<=500)
 		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0)
 		{
 			key_down_cnt++;	
@@ -163,29 +147,30 @@ void key_led_task(void)
 	//按键被按下，检查电池电压是否大于2.2V
 	if(key_state==KEY_DOWN_UP)
 	{	
-//		for(uint8_t i=0;i<3;i++)
-//		{
-//			key_wakeup_value=Adc_Switch(ADC_Channel_1);
-//		}
-		
-		//if(key_wakeup_value>=2730)
 		if(RegularConvData_Tab[0]>=2730)
-		//	if(TRUE)
 		{
-			//开机
-			set_led(LED_GREEN);
-			Motor_PWM_Freq_Dudy_Set(1,100,80);
-			Motor_PWM_Freq_Dudy_Set(2,100,80);
-			Motor_PWM_Freq_Dudy_Set(3,100,80);
-			Delay_ms(500);
-			Motor_PWM_Freq_Dudy_Set(1,100,0);
-			Motor_PWM_Freq_Dudy_Set(2,100,0);
-			Motor_PWM_Freq_Dudy_Set(3,100,0);
+			if(b_Is_PCB_PowerOn)
+			{
+				//开机
+				set_led(LED_GREEN);
+				Motor_PWM_Freq_Dudy_Set(1,100,80);
+				Motor_PWM_Freq_Dudy_Set(2,100,80);
+				Motor_PWM_Freq_Dudy_Set(3,100,80);
+				Delay_ms(500);
+				Motor_PWM_Freq_Dudy_Set(1,100,0);
+				Motor_PWM_Freq_Dudy_Set(2,100,0);
+				Motor_PWM_Freq_Dudy_Set(3,100,0);
+				
+				key_state=KEY_UPING;
+				mcu_state=POWER_ON;
+			}
+			else
+			{
+				key_state=KEY_UPING;
+				mcu_state=POWER_OFF;
+				set_led(LED_CLOSE);
+			}
 			
-			key_state=KEY_UPING;
-			//set_led(LED_GREEN);
-			
-			mcu_state=POWER_ON;
 		}
 		else	
 		{
