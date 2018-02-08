@@ -296,6 +296,22 @@ void TaskDataSend (void)
 		os_delay_ms(SEND_TASK_ID, 24);  //mark一下
 }
 
+//void ResetAllState()
+//{
+//		mcu_state=POWER_OFF;
+//		state=LOAD_PARA;
+//		*p_pwm_state=PWM_START;
+//		*p_PWM_period_cnt=0;
+//		*p_PWM_waitBetween_cnt=0;
+//		*p_PWM_waitAfter_cnt=0;
+//		*p_PWM_numOfCycle=0;
+//		*p_PWM_serial_cnt=0;
+//		//PWM_waitBeforeStart_cnt=0;
+//		Motor_PWM_Freq_Dudy_Set(1,100,0);
+//		Motor_PWM_Freq_Dudy_Set(2,100,0);
+//		Motor_PWM_Freq_Dudy_Set(3,100,0);
+//}
+
 /*******************************************************************************
 * 函数名称 : TaskDataSend
 * 功能描述 : 数据发送任务，5ms执行一次
@@ -336,6 +352,7 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 	}
 	if(b_Is_PCB_PowerOn==FALSE)
 	{
+//		ResetAllState();
 		mcu_state=POWER_OFF;
 		state=LOAD_PARA;
 		*p_pwm_state=PWM_START;
@@ -344,7 +361,7 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 		*p_PWM_waitAfter_cnt=0;
 		*p_PWM_numOfCycle=0;
 		*p_PWM_serial_cnt=0;
-		//Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
+		//PWM_waitBeforeStart_cnt=0;
 		Motor_PWM_Freq_Dudy_Set(num,100,0);
 	}
 	else
@@ -388,7 +405,7 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 			}
 			else
 			{
-				if((*p_PWM_waitBetween_cnt+1)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+6]*1000)
+				if((*p_PWM_waitBetween_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+6]*1000)
 				{ 
 					Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],buffer[1+8*(*p_PWM_serial_cnt)+3]); 
 					*p_PWM_waitBetween_cnt=0;
@@ -403,7 +420,7 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 		
 		if(*p_pwm_state==PWM_WAIT_AFTER)
 		{
-			if((*p_PWM_waitAfter_cnt+1)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+7]*1000)
+			if((*p_PWM_waitAfter_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1+8*(*p_PWM_serial_cnt)+7]*1000)
 			{
 				*p_PWM_numOfCycle=0;
 				Motor_PWM_Freq_Dudy_Set(num,buffer[1+8*(*p_PWM_serial_cnt)+2],0);
@@ -584,9 +601,14 @@ void check_selectedMode_ouputPWM()
 		//5.检测压力Ok,则预备输出波形，先定时waitBeforeStart这么长时间
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
-				//Delay_ms(buffer[1]*1000);//这个定时最多定时2s，3s就出问题了
-				//PWM_waitBeforeStart_cnt+4，之前是PWM_waitBeforeStart_cnt-4，写错了
-			  if((PWM_waitBeforeStart_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1]*1000)
+			//如果不加if(b_Is_PCB_PowerOn==FALSE)会导致开关重新开机waitbeforestart定时不到想要的秒数
+			if(b_Is_PCB_PowerOn==FALSE)
+			{
+				PWM_waitBeforeStart_cnt=0;
+			}
+			else
+			{
+				if((PWM_waitBeforeStart_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1]*1000)
 				{
 					PWM_waitBeforeStart_cnt=0;
 					//state=CPY_PARA_TO_BUFFER;
@@ -596,6 +618,8 @@ void check_selectedMode_ouputPWM()
 				{
 					PWM_waitBeforeStart_cnt++;
 				}
+			}
+			  
 		}
 		
 		//6.开始输出波形
