@@ -17,8 +17,10 @@
 /**********************************
 *宏定义
 ***********************************/
-#define UART    USART1
-#define UART_CLKSRC   RCC_APB2Periph_USART1
+//#define UART    USART1
+//#define UART_CLKSRC   RCC_APB2Periph_USART1
+#define UART    USART2
+#define UART_CLKSRC RCC_APB1Periph_USART2
 
 #define UART_IO_PORT			GPIOA
 #define	UART_IO_CLKSRC		RCC_AHBPeriph_GPIOA
@@ -30,8 +32,10 @@
 #define UART_BAUDRATE   115200 
 
 #define DMA_CLKSRC RCC_AHBPeriph_DMA1
-#define UART_DMA_RX_CHANNEL   DMA1_Channel3
-#define UART_DMA_TX_CHANNEL   DMA1_Channel2
+//#define UART_DMA_RX_CHANNEL   DMA1_Channel3
+//#define UART_DMA_TX_CHANNEL   DMA1_Channel2
+#define UART_DMA_RX_CHANNEL   DMA1_Channel5
+#define UART_DMA_TX_CHANNEL   DMA1_Channel4
 
 /***********************************
 * 全局变量

@@ -275,20 +275,6 @@ void get_parameter_to_buf_by_frameId(uint8_t* pdata,char frameId)
 		//FlashWrite(FLASH_WRITE_START_ADDR,(uint32_t*)&parameter_buf,PARAMETER_BUF_LEN/4);
 		FlashWrite(FLASH_WRITE_START_ADDR,parameter_buf,PARAMETER_BUF_LEN/4);
 		rcvParaSuccess=0x01;
-		//rcvParameters_from_PC=TRUE;
-		
-//		//快闪，表示接收数据完成
-//		for(int i=0;i<10;i++)
-//		{
-//			set_led(LED_GREEN);
-//			Delay_ms(50);
-//			set_led(LED_CLOSE);
-//			Delay_ms(50);
-//		}
-//		if(mcu_state==POWER_ON)
-//		{
-//			set_led(LED_GREEN);
-//		}
 	}
 	else
 	{
@@ -314,14 +300,19 @@ void send_prameter_fram1_to_PC()
 	//CMD_BUFFER_LENGTH定义为255的时候，PWM2波形老是不见了，也不知道为什么
 	//现在将CMD_BUFFER_LENGTH长度定义为300，就OK了，原因不知道
 	uint8_t buffer[CMD_BUFFER_LENGTH];
-	CheckFlashData(parameter_buf); //检测flash数据是否是正确的，第一次会检测flash时，会将默认的数据填充到flash中
+
+
+	//读取flash数据到buffer中
+	//CheckFlashData(parameter_buf); //检测flash数据是否是正确的，第一次会检测flash时，会将默认的数据填充到flash中
 	
 	//memset(parameter_buf,0,PARAMETER_BUF_LEN);  //清空parameter_buf
 	//填充parameter_buf
 	uint8_t len=PARAMETER_BUF_LEN/4;                          
 	uint32_t tmp[PARAMETER_BUF_LEN/4]={0};
 	FlashRead(FLASH_WRITE_START_ADDR,tmp,len);
-	//memcpy(parameter_buf,tmp,len*4);
+	
+	memcpy(parameter_buf,tmp,len*4);
+	CheckFlashData(parameter_buf);
 	
 	//发送第一帧
 	//公共信息2Bytes, (Mode1-PWM1, Mode1-PWM2, Mode1-PWM3),Mode2-PWM1,Mode2-PWM2
@@ -360,21 +351,6 @@ void send_prameter_fram2_to_PC()
 	}
 	CalcCheckSum(buffer1);
 	fifoWriteData(&send_fifo, buffer1, buffer1[1]+2);
-	
-//	//快闪，表示接收发送完成
-//	for(int i=0;i<5;i++)
-//	{
-//		set_led(LED_GREEN);
-//		Delay_ms(30);
-//		set_led(LED_CLOSE);
-//		Delay_ms(30);
-//	}
-//	if(mcu_state==POWER_ON)
-//	{
-//		set_led(LED_GREEN);
-//	}
-	
-	
 }
 
 uint16_t FlashWrite(uint32_t addr, uint8_t *p_data, uint16_t len)

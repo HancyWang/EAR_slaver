@@ -71,6 +71,7 @@ typedef struct
 * 外部函数
 ***********************************/
 void init_hardware(void);
+//void init_hardware_byWakeUpOrNot(BOOL bWakeUp);
 void init_rtc(void);
 void init_tim(void);
 void convert_rtc(_calendar_obj* calendar, uint32_t rtc);
@@ -86,6 +87,11 @@ void read_half_word_from_flash(uint32_t Address, uint16_t* pdata);
 BOOL save_half_word_buf_to_eeprom(uint32_t Address, uint16_t* buf, uint16_t len);
 void read_half_word_buf_from_eeprom(uint32_t Address, uint16_t* buf, uint16_t len);
 uint8_t get_bat_vol_per(void);
+
+
+void Init_LED(void);
+
+void Init_PWRSAVE(void);
 
 //配置按键key_wakeup
 void Key_WakeUp_Init(void);

@@ -137,6 +137,7 @@ void Motor_PWM_Init(void)
 //	Motor_PWM_Freq_Dudy_Set(1,50,30);
 //	Motor_PWM_Freq_Dudy_Set(2,100,50);
 //	Motor_PWM_Freq_Dudy_Set(3,100,70);	
+//	delay_ms(500);
 //	Motor_PWM_Freq_Dudy_Set(1,50,0);
 //	Motor_PWM_Freq_Dudy_Set(2,100,0);
 //	Motor_PWM_Freq_Dudy_Set(3,100,0);

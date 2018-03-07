@@ -155,8 +155,38 @@ INT8U I2C_RecByte(void)
   return dat;
 }
 
+void ADS115_enter_power_down_mode()
+{
+	//配置为power-down模式
+	I2C_uConfiguration();
+  I2C_Start();
+  I2C_SendByte(0x00);
+	I2C_RecAck();
+	I2C_SendByte(0x06);
+	
+//	//设置PA9和PA10
+//	GPIO_InitTypeDef  GPIO_InitStructure;
+//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+//	GPIO_InitStructure.GPIO_PuPd=GPIO_PuPd_NOPULL;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
 void ADS115_Init(void)
 {
+//	//debug
+//	//配置为power-down模式
+//	I2C_uConfiguration();
+//  I2C_Start();
+//  I2C_SendByte(0x00);
+//	I2C_RecAck();
+//	I2C_SendByte(0x06);
+//	//I2C_RecAck();
+	
 	I2C_uConfiguration();
   I2C_Start();
   I2C_SendByte(0x90);

@@ -21,9 +21,10 @@ extern void SENSOR_IIC_uMultipleRead(INT8U slaveaddr,INT8U regaddr,INT8U len,INT
 //extern void AT24xx_uMultipleRead(INT8U slaveaddr,INT16U readaddr,INT8U len,INT8U *pBuffer);
 //extern void AT24xx_uMultipleWrite(INT8U slaveaddr,INT16U writeaddr,INT8U len,INT8U *pBuffer);
 
+extern void ADS115_enter_power_down_mode(void);
 extern void ADS115_Init(void);
 extern void ADS115_writeByte(INT8U slaveaddr,INT8U data);
 extern INT16U ADS115_readByte(INT8U slaveaddr);
-
+void ADS115_enter_power_down_mode(void);
 #endif
 

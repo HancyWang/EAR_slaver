@@ -42,7 +42,8 @@ void UARTInit(uint8_t* p_rec_buf, uint32_t rec_num)
 	
 	RCC_AHBPeriphClockCmd(UART_IO_CLKSRC, ENABLE);  //使能GPIOA的时钟
 	RCC_AHBPeriphClockCmd(DMA_CLKSRC, ENABLE);
-	RCC_APB2PeriphClockCmd(UART_CLKSRC, ENABLE);//使能USART的时钟
+	//RCC_APB2PeriphClockCmd(UART_CLKSRC, ENABLE);//使能USART的时钟
+	RCC_APB1PeriphClockCmd(UART_CLKSRC, ENABLE);//使能USART的时钟
 	
 	/* USART1的端口配置 */
 	GPIO_PinAFConfig(UART_IO_PORT, UART_RX_AF_PIN_SOURCE, GPIO_AF_1);//配置PA9成第二功能引脚	TX

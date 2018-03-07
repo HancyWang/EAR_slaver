@@ -55,7 +55,7 @@
 #define FLASH_PAGE_SIZE      			((uint16_t)0x400)  //flash一页的大小为1K
 #define FLASH_START_ADDR   				((uint32_t)0x08000000) //flash开始地址
 #define FLASH_END_ADDR						((uint32_t)0x08004000) //flash结束地址
-#define FLASH_WRITE_START_ADDR		((uint32_t)0x08000000+1024*15) //开始写入的开始地址
+#define FLASH_WRITE_START_ADDR		((uint32_t)0x08000000+1024*30) //开始写入的开始地址
 #define FLASH_WRITE_END_ADDR      ((uint32_t)0x08004000)  //flash写入的结束地址
 
 void FlashRead(uint32_t addr, uint32_t *p_data, uint16_t len);

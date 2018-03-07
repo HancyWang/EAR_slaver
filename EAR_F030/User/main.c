@@ -8,6 +8,10 @@
 #include "app.h"
 
 #include "comm_task.h"
+#include "key_led_task.h"
+#include "hardware.h"
+#include "i2c.h"
+#include "Motor_pwm.h"
  const uint8_t default_parameter_buf[PARAMETER_BUF_LEN] = {
 #if 1
 		//common para
@@ -85,8 +89,13 @@
 int main(void)
 {
   delay_init();
-	
 	os_init();
+
+	//进入stop模式
+	EnterStopMode();
+	//唤醒之后先初始化系统
+	init_system_afterWakeUp();
+	
 	os_create_task(init_task, OS_TRUE, INIT_TASK_ID);
 	os_start();
 

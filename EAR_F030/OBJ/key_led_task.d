@@ -23,3 +23,11 @@
 ..\obj\key_led_task.o: ..\APP\i2c.h
 ..\obj\key_led_task.o: ..\APP\common.h
 ..\obj\key_led_task.o: ..\HARDWARE\Motor_pwm.h
+..\obj\key_led_task.o: ..\STM32F03x_FWLib\inc\stm32f0xx_pwr.h
+..\obj\key_led_task.o: ..\STM32F03x_FWLib\inc\stm32f0xx_exti.h
+..\obj\key_led_task.o: ..\STM32F03x_FWLib\inc\stm32f0xx_syscfg.h
+..\obj\key_led_task.o: ..\STM32F03x_FWLib\inc\stm32f0xx_dma.h
+..\obj\key_led_task.o: ..\SYSTEM\serial_port.h
+..\obj\key_led_task.o: ..\SYSTEM\cmd\CMD_receive.h
+..\obj\key_led_task.o: ..\SYSTEM\delay.h
+..\obj\key_led_task.o: ..\APP\comm_task.h

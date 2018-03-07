@@ -11,6 +11,30 @@
 //434是数据，2是两个校验位
 #define PARAMETER_BUF_LEN 436
 
+//局部变量
+typedef enum
+{
+	LOAD_PARA,  //加载参数
+	GET_MODE,
+	CHECK_PRESSURE,
+	CHECK_PRESSURE_AGAIN,
+	PREV_OUTPUT_PWM,
+	CPY_PARA_TO_BUFFER,
+	OUTPUT_PWM,
+	CHECK_BAT_VOL,
+	LED_RED_BLINK
+}CHCKMODE_OUTPUT_PWM;
+
+typedef enum
+{
+	PWM_START,
+	PWM_PERIOD,
+	PWM_WAIT_BETWEEN,
+	PWM_WAIT_AFTER,
+	PWM_OUTPUT_FINISH
+}PWM_STATE;
+
+void init_PWMState(void);
 
 void TaskDataSend (void);
 void CMD_ProcessTask (void);

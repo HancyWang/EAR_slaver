@@ -18,12 +18,15 @@
 /***********************************
 * 類型定義
 ***********************************/
+#define BOOL unsigned char
 typedef enum{
 	INIT_TASK_ID = 0,
-	SEND_TASK_ID,
-	TASK_OUTPUT_PWM,
-	RECEIVE_TASK_ID,
 	KEY_LED_TASK_ID,
+	TASK_OUTPUT_PWM,
+	SEND_TASK_ID,
+	//TASK_OUTPUT_PWM,
+	RECEIVE_TASK_ID,
+	//KEY_LED_TASK_ID,
 	//TASK_OUTPUT_PWM,
 	EXP_DETECT_SAVE_TASK_ID,
 	EXP_READ_SEND_TASK_ID,
@@ -40,9 +43,6 @@ typedef struct{
 * 外部函数
 ***********************************/
 void init_task(void);
-
-
-
-
-
+//void init_system(void);
+void init_system(BOOL bWakeUp);
 #endif

@@ -17,12 +17,11 @@
 #include "key_led_task.h"
 #include "hardware.h"
 
+
 //全局变量
 CMD_Receive g_CmdReceive;  // 命令接收控制对象
 FIFO_TYPE send_fifo;//發送數據FIFO
 UINT8 send_buf[SEND_BUF_LEN];
-
-
 
 //用来接收上位机传过来的参数
 UINT8 parameter_buf[PARAMETER_BUF_LEN]; 
@@ -42,32 +41,32 @@ extern uint16_t RegularConvData_Tab[2];
 //uint16_t cnt;
 
 //局部变量
-typedef enum
-{
-	LOAD_PARA,  //加载参数
-	GET_MODE,
-	CHECK_PRESSURE,
-	CHECK_PRESSURE_AGAIN,
-	PREV_OUTPUT_PWM,
-	CPY_PARA_TO_BUFFER,
-	OUTPUT_PWM,
-	CHECK_BAT_VOL,
-	LED_RED_BLINK
-}CHCKMODE_OUTPUT_PWM;
+//typedef enum
+//{
+//	LOAD_PARA,  //加载参数
+//	GET_MODE,
+//	CHECK_PRESSURE,
+//	CHECK_PRESSURE_AGAIN,
+//	PREV_OUTPUT_PWM,
+//	CPY_PARA_TO_BUFFER,
+//	OUTPUT_PWM,
+//	CHECK_BAT_VOL,
+//	LED_RED_BLINK
+//}CHCKMODE_OUTPUT_PWM;
 
 
-typedef enum
-{
-	PWM_START,
-	PWM_PERIOD,
-	PWM_WAIT_BETWEEN,
-	PWM_WAIT_AFTER,
-	PWM_OUTPUT_FINISH
-}PWM_STATE;
+//typedef enum
+//{
+//	PWM_START,
+//	PWM_PERIOD,
+//	PWM_WAIT_BETWEEN,
+//	PWM_WAIT_AFTER,
+//	PWM_OUTPUT_FINISH
+//}PWM_STATE;
 
-static PWM_STATE pwm1_state=PWM_START;
-static PWM_STATE pwm2_state=PWM_START;
-static PWM_STATE pwm3_state=PWM_START;
+PWM_STATE pwm1_state=PWM_START;
+PWM_STATE pwm2_state=PWM_START;
+PWM_STATE pwm3_state=PWM_START;
 
 
 static PWM_STATE* p_pwm_state;
@@ -117,6 +116,36 @@ uint8_t wait_cnt=0;
 static BOOL ModuleUnPackFrame(void);
 static BOOL ModuleProcessPacket(UINT8 *pData);
 static UINT8 CheckCheckSum(UINT8* pData, UINT8 nLen);
+
+
+void init_PWMState(void)
+{
+	pwm1_state=PWM_START;
+	pwm2_state=PWM_START;
+	pwm3_state=PWM_START;
+
+	PWM_waitBeforeStart_cnt=0;
+
+	PWM1_period_cnt=0;
+	PWM2_period_cnt=0;
+	PWM3_period_cnt=0;
+
+	PWM1_waitBetween_cnt=0;
+	PWM2_waitBetween_cnt=0;
+	PWM3_waitBetween_cnt=0;
+
+	PWM1_waitAfter_cnt=0;
+	PWM2_waitAfter_cnt=0;
+	PWM3_waitAfter_cnt=0;
+
+	PWM1_numOfCycle=0;
+	PWM2_numOfCycle=0;
+	PWM3_numOfCycle=0;
+
+	PWM1_serial_cnt=0;
+	PWM2_serial_cnt=0;
+	PWM3_serial_cnt=0;
+}
 
 void CalcCheckSum(UINT8* pPacket)
 {
@@ -296,21 +325,7 @@ void TaskDataSend (void)
 		os_delay_ms(SEND_TASK_ID, 24);  //mark一下
 }
 
-//void ResetAllState()
-//{
-//		mcu_state=POWER_OFF;
-//		state=LOAD_PARA;
-//		*p_pwm_state=PWM_START;
-//		*p_PWM_period_cnt=0;
-//		*p_PWM_waitBetween_cnt=0;
-//		*p_PWM_waitAfter_cnt=0;
-//		*p_PWM_numOfCycle=0;
-//		*p_PWM_serial_cnt=0;
-//		//PWM_waitBeforeStart_cnt=0;
-//		Motor_PWM_Freq_Dudy_Set(1,100,0);
-//		Motor_PWM_Freq_Dudy_Set(2,100,0);
-//		Motor_PWM_Freq_Dudy_Set(3,100,0);
-//}
+
 
 /*******************************************************************************
 * 函数名称 : TaskDataSend
@@ -520,6 +535,9 @@ void FillUpPWMbuffer(uint8_t* dest,uint8_t* src)
 	dest[0]=serial_cnt;
 }
 
+
+
+
 /*******************************************************************************
 ** 函数名称: check_selectedMode_ouputPWM
 ** 功能描述: 检查模式，并对应的输出PWM波形
@@ -531,6 +549,7 @@ void FillUpPWMbuffer(uint8_t* dest,uint8_t* src)
 void check_selectedMode_ouputPWM()
 {
 	static uint16_t pressure_result; 
+	
 	if(mcu_state==POWER_ON)
 	{
 		//1.从flash中加载参数到内存
@@ -618,8 +637,7 @@ void check_selectedMode_ouputPWM()
 				{
 					PWM_waitBeforeStart_cnt++;
 				}
-			}
-			  
+			}  
 		}
 		
 		//6.开始输出波形
@@ -668,6 +686,9 @@ void check_selectedMode_ouputPWM()
 				mcu_state=POWER_OFF;
 				state=LOAD_PARA;
 				set_led(LED_CLOSE);
+				
+				EnterStopMode();
+				init_system_afterWakeUp();
 			}
 			else
 			{
@@ -685,7 +706,6 @@ void check_selectedMode_ouputPWM()
 					state=LOAD_PARA;
 				}
 			}
-			
 		}
 
 		//对应7，如果检测电池电压小于2.2V，则闪灯
@@ -705,7 +725,17 @@ void check_selectedMode_ouputPWM()
 			pwm2_state=PWM_START;
 			pwm3_state=PWM_START;
 			mcu_state=POWER_OFF;
+			
+			EnterStopMode();
+			init_system_afterWakeUp();
 		}
+	}
+	else
+	{
+		//进入低功耗模式
+//		EnterStopMode();
+//		init_system_afterWakeUp();
+//		Motor_PWM_Init();
 	}
 	os_delay_ms(TASK_OUTPUT_PWM, CHECK_MODE_OUTPUT_PWM);
 }

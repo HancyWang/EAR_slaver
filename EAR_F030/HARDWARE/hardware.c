@@ -29,6 +29,8 @@
 #include "i2c.h"
 #include "comm_task.h"
 #include "protocol_module.h"
+#include "key_led_task.h"
+#include "app.h"
 /**********************************
 *宏定义
 ***********************************/
@@ -44,6 +46,7 @@ extern uint8_t parameter_buf[PARAMETER_BUF_LEN];
 
 
 extern const uint8_t default_parameter_buf[PARAMETER_BUF_LEN];
+extern BOOL b_Is_PCB_PowerOn;
 /***********************************
 * 局部变量
 ***********************************/
@@ -115,22 +118,11 @@ void init_tim(void)
 }
 
 /**************************************************************
-* 初始化硬件管脚
+* 初始LED管脚
 **************************************************************/
-void init_hardware(void)
+void Init_LED(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStructure;
-  
-  RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
-
-	//输入检测
-  GPIO_InitStructure.GPIO_Pin = EXP_DETECT_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-  GPIO_Init(EXP_DETECT_PORT, &GPIO_InitStructure);
-	
-	GPIO_InitStructure.GPIO_Pin = KEY_DETECT_PIN;
-  GPIO_Init(KEY_DETECT_PORT, &GPIO_InitStructure);
-	
+	GPIO_InitTypeDef  GPIO_InitStructure;
 	//推挽输出
 	GPIO_InitStructure.GPIO_Pin = GREEN_LED_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -141,7 +133,11 @@ void init_hardware(void)
 	
 	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
   GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
-	
+}
+
+void Init_PWRSAVE(void)
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;
 	//电源PWR_SAVE
 	GPIO_InitStructure.GPIO_Pin = KEY_PWR_SAVE_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -150,52 +146,60 @@ void init_hardware(void)
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_Init(KEY_PWR_SAVE_PORT, &GPIO_InitStructure);
 	GPIO_ResetBits(KEY_PWR_SAVE_PORT,KEY_PWR_SAVE_PIN);
-	
-	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
-  GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
-	set_led(LED_CLOSE);
-//	GPIO_InitStructure.GPIO_Pin = BLUE_LED_PIN;
-//  GPIO_Init(BLUE_LED_PORT, &GPIO_InitStructure);
-
-	//初始化ADC
-	ADC1_Init();
-	
-	//初始化ADS115,I2C
-	ADS115_Init();
-	
-	//初始化flash中的参数,这个必须放在ADC1_Init()后面，不然会出问题，why？
-	//Init_parameter_in_Flash();  
 }
 
-////初始化flash中的参数
-//void Init_parameter_in_Flash(void)
-//{
-////	uint16_t sum=0;
-////	for(int i=0;i<PARAMETER_BUF_LEN;i++)
-////	{
-////		sum+=default_parameter_buf[i];
-////		//default_parameter_buf[i]=i;
-////	}
-////	default_parameter_buf[PARAMETER_BUF_LEN-2]=sum/256;
-////	default_parameter_buf[PARAMETER_BUF_LEN-1]=sum%256;
-//	//拷贝到flash中,校验位
-//	FlashWrite(FLASH_WRITE_START_ADDR,(uint8_t*)default_parameter_buf,PARAMETER_BUF_LEN/4);
-//}
+/**************************************************************
+* 初始化硬件管脚
+**************************************************************/
+void init_hardware()
+{
+	GPIO_InitTypeDef  GPIO_InitStructure;
 
-//初始化default_parameter_buf
-//void Default_parameter_buf_Init()
-//{
-//	uint16_t sum=0;
-//	for(int i=0;i<PARAMETER_BUF_LEN;i++)
-//	{
-//		sum+=parameter_buf[i];
-//		//default_parameter_buf[i]=i;
-//	}
-//	parameter_buf[PARAMETER_BUF_LEN-2]=sum/256;
-//	parameter_buf[PARAMETER_BUF_LEN-1]=sum%256;
-//	//拷贝到flash中
-//	FlashWrite(FLASH_WRITE_START_ADDR,parameter_buf,PARAMETER_BUF_LEN/4);
-//}
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
+
+	//输入检测
+	GPIO_InitStructure.GPIO_Pin = EXP_DETECT_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+	GPIO_Init(EXP_DETECT_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = KEY_DETECT_PIN;
+	GPIO_Init(KEY_DETECT_PORT, &GPIO_InitStructure);
+	
+	//推挽输出
+	GPIO_InitStructure.GPIO_Pin = GREEN_LED_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
+	GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
+	
+	//电源PWR_SAVE
+	GPIO_InitStructure.GPIO_Pin = KEY_PWR_SAVE_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(KEY_PWR_SAVE_PORT, &GPIO_InitStructure);
+	GPIO_ResetBits(KEY_PWR_SAVE_PORT,KEY_PWR_SAVE_PIN);
+	
+	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
+	GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
+	set_led(LED_CLOSE);
+	
+	//初始化ADC
+	ADC1_Init();
+//	//初始化ADS115,I2C
+	ADS115_Init();
+
+//	ADS115_enter_power_down_mode();
+//	//配置中断
+//	CfgPA0ASWFI();
+	//进入stop模式
+	//EnterStopMode();
+}
 
 /**************************************************************
 * 板级硬件资源控制
@@ -469,37 +473,6 @@ void Key_WakeUp_Init(void)
 
 void ADC1_Init(void)
 {
-//		//ADC时钟
-//    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);  
-//    RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);  
-//  
-//    //ADC IO配置
-//    GPIO_InitTypeDef PORT_ADC;  
-//    PORT_ADC.GPIO_Pin=GPIO_Pin_1|GPIO_Pin_4;  
-//    PORT_ADC.GPIO_Mode=GPIO_Mode_AN; 
-//		//PORT_ADC.GPIO_Mode=GPIO_Mode_IN	;
-//    PORT_ADC.GPIO_PuPd=GPIO_PuPd_NOPULL;  
-//    GPIO_Init(GPIOA,&PORT_ADC); 
-//	
-//		//ADC_DeInit(ADC1);
-//    //ADC 参数配置
-//    ADC_InitTypeDef ADC_InitStuctrue;  
-//    ADC_InitStuctrue.ADC_Resolution=ADC_Resolution_12b;//12???  
-//    ADC_InitStuctrue.ADC_ContinuousConvMode=DISABLE;//??ADC 
-//		//ADC_InitStuctrue.ADC_ContinuousConvMode=ENABLE;//??ADC 	
-//    ADC_InitStuctrue.ADC_ExternalTrigConvEdge=ADC_ExternalTrigConvEdge_None;  
-//    ADC_InitStuctrue.ADC_DataAlign=ADC_DataAlign_Right;//?????  
-//    ADC_InitStuctrue.ADC_ScanDirection=ADC_ScanDirection_Backward;//????  
-//    ADC_Init(ADC1,&ADC_InitStuctrue);  
-//  
-//    //ADC_ChannelConfig(ADC1,ADC_Channel_0,ADC_SampleTime_239_5Cycles);   
-//  
-//    //校验 
-//    ADC_GetCalibrationFactor(ADC1);  
-//    //使能
-//    ADC_Cmd(ADC1,ENABLE);  
-//    //等待ADC准备
-//    while(ADC_GetFlagStatus(ADC1,ADC_FLAG_ADEN)==RESET);  
 
 	GPIO_InitTypeDef    GPIO_InitStructure;
 	DMA_InitTypeDef     DMA_InitStructure;
