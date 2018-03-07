@@ -13,6 +13,7 @@
 ..\obj\serial_port.o: ..\STM32F03x_FWLib\inc\stm32f0xx_rcc.h
 ..\obj\serial_port.o: ..\STM32F03x_FWLib\inc\stm32f0xx_usart.h
 ..\obj\serial_port.o: ..\STM32F03x_FWLib\inc\stm32f0xx_misc.h
+..\obj\serial_port.o: ..\User\device_type.h
 ..\obj\serial_port.o: ..\HARDWARE\hardware.h
 ..\obj\serial_port.o: ..\SYSTEM\fifo\datatype.h
 ..\obj\serial_port.o: ..\STM32F03x_FWLib\inc\stm32f0xx_dma.h

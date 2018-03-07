@@ -23,6 +23,7 @@
 ..\obj\comm_task.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\comm_task.o: ..\APP\app.h
 ..\obj\comm_task.o: ..\SYSTEM\serial_port.h
+..\obj\comm_task.o: ..\User\device_type.h
 ..\obj\comm_task.o: ..\MODULE\protocol_module.h
 ..\obj\comm_task.o: ..\APP\key_led_task.h
 ..\obj\comm_task.o: ..\HARDWARE\Motor_pwm.h

@@ -15,6 +15,7 @@
 ..\obj\protocol_module.o: ..\STM32F03x_FWLib\inc\stm32f0xx_misc.h
 ..\obj\protocol_module.o: ..\SYSTEM\fifo\datatype.h
 ..\obj\protocol_module.o: ..\SYSTEM\serial_port.h
+..\obj\protocol_module.o: ..\User\device_type.h
 ..\obj\protocol_module.o: ..\HARDWARE\hardware.h
 ..\obj\protocol_module.o: ..\SYSTEM\fifo\fifo.h
 ..\obj\protocol_module.o: ..\MODULE\protocol_module.h

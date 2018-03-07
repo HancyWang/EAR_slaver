@@ -12,6 +12,8 @@
 #include "hardware.h"
 #include "i2c.h"
 #include "Motor_pwm.h"
+//#include "device_type.h"
+
  const uint8_t default_parameter_buf[PARAMETER_BUF_LEN] = {
 #if 1
 		//common para

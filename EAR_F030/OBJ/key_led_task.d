@@ -28,6 +28,7 @@
 ..\obj\key_led_task.o: ..\STM32F03x_FWLib\inc\stm32f0xx_syscfg.h
 ..\obj\key_led_task.o: ..\STM32F03x_FWLib\inc\stm32f0xx_dma.h
 ..\obj\key_led_task.o: ..\SYSTEM\serial_port.h
+..\obj\key_led_task.o: ..\User\device_type.h
 ..\obj\key_led_task.o: ..\SYSTEM\cmd\CMD_receive.h
 ..\obj\key_led_task.o: ..\SYSTEM\delay.h
 ..\obj\key_led_task.o: ..\APP\comm_task.h

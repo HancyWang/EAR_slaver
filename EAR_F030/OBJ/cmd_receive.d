@@ -15,3 +15,4 @@
 ..\obj\cmd_receive.o: ..\STM32F03x_FWLib\inc\stm32f0xx_rcc.h
 ..\obj\cmd_receive.o: ..\STM32F03x_FWLib\inc\stm32f0xx_usart.h
 ..\obj\cmd_receive.o: ..\STM32F03x_FWLib\inc\stm32f0xx_misc.h
+..\obj\cmd_receive.o: ..\User\device_type.h

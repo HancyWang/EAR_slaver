@@ -19,6 +19,7 @@
 ..\obj\app.o: ..\APP\comm_task.h
 ..\obj\app.o: ..\SYSTEM\cmd\CMD_Receive.h
 ..\obj\app.o: ..\SYSTEM\serial_port.h
+..\obj\app.o: ..\User\device_type.h
 ..\obj\app.o: ..\HARDWARE\hardware.h
 ..\obj\app.o: ..\HARDWARE\Motor_pwm.h
 ..\obj\app.o: ..\SYSTEM\fifo\fifo.h

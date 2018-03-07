@@ -13,14 +13,24 @@
 *                                 头文件包含
 *******************************************************************************/
 #include "stm32f0xx.h"
-
+#include "device_type.h"
 /**********************************
 *宏定义
 ***********************************/
-//#define UART    USART1
-//#define UART_CLKSRC   RCC_APB2Periph_USART1
+//#define STM32F030
+
+#ifdef STM32F030
+#define UART    USART1
+#define UART_CLKSRC   RCC_APB2Periph_USART1
+#define UART_DMA_RX_CHANNEL   DMA1_Channel3
+#define UART_DMA_TX_CHANNEL   DMA1_Channel2
+#else
 #define UART    USART2
 #define UART_CLKSRC RCC_APB1Periph_USART2
+#define UART_DMA_RX_CHANNEL   DMA1_Channel5
+#define UART_DMA_TX_CHANNEL   DMA1_Channel4
+#endif
+
 
 #define UART_IO_PORT			GPIOA
 #define	UART_IO_CLKSRC		RCC_AHBPeriph_GPIOA
@@ -34,8 +44,8 @@
 #define DMA_CLKSRC RCC_AHBPeriph_DMA1
 //#define UART_DMA_RX_CHANNEL   DMA1_Channel3
 //#define UART_DMA_TX_CHANNEL   DMA1_Channel2
-#define UART_DMA_RX_CHANNEL   DMA1_Channel5
-#define UART_DMA_TX_CHANNEL   DMA1_Channel4
+////#define UART_DMA_RX_CHANNEL   DMA1_Channel5
+////#define UART_DMA_TX_CHANNEL   DMA1_Channel4
 
 /***********************************
 * 全局变量

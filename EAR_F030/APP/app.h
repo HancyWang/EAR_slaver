@@ -19,6 +19,7 @@
 * Óê–Õ∂®¡x
 ***********************************/
 #define BOOL unsigned char
+
 typedef enum{
 	INIT_TASK_ID = 0,
 	KEY_LED_TASK_ID,
