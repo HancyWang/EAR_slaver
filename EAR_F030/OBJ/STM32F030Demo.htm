@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F030Demo.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F030Demo.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Wed Mar 07 16:30:23 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Fri Mar 09 15:58:18 2018
 <BR><P>
 <H3>Maximum Stack Usage =        852 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -403,7 +403,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f0xx.o(RESET)
 </UL>
-<P><STRONG><a name="[44]"></a>init_system_afterWakeUp</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[44]"></a>init_system_afterWakeUp</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 192<LI>Call Chain = init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemInit
@@ -416,8 +416,8 @@ Global Symbols
 <LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[7a]"></a>CfgALLPins4StopMode</STRONG> (Thumb, 222 bytes, Stack size 72 bytes, key_led_task.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = CfgALLPins4StopMode &rArr; GPIO_Init
+<P><STRONG><a name="[7a]"></a>CfgALLPins4StopMode</STRONG> (Thumb, 242 bytes, Stack size 80 bytes, key_led_task.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = CfgALLPins4StopMode &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
 <LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
@@ -431,7 +431,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[43]"></a>EnterStopMode</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, key_led_task.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = EnterStopMode &rArr; CfgALLPins4StopMode &rArr; GPIO_Init
+<BR><BR>[Stack]<UL><LI>Max Depth = 108<LI>Call Chain = EnterStopMode &rArr; CfgALLPins4StopMode &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
 <LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWR_EnterSTOPMode
@@ -950,7 +950,7 @@ Global Symbols
 <LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;test_task
 </UL>
 
-<P><STRONG><a name="[48]"></a>os_isr_ticks</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, os_core.o(.text))
+<P><STRONG><a name="[48]"></a>os_isr_ticks</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, os_core.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[1f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM16_IRQHandler
 </UL>
 

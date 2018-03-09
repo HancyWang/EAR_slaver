@@ -68,7 +68,6 @@ void init_task(void)
 	init_hardware();	
 	Motor_PWM_Init();
 	
-
 	//初始化通信相关
 	fifoInit(&send_fifo,send_buf,SEND_BUF_LEN);
 	UARTInit(g_CmdReceive.m_Buf1, BUF1_LENGTH);	

@@ -12,7 +12,6 @@ TCB_DATA task_array[OS_MAX_TASK];
 /*定义时钟计数*/
 uint32_t os_ticks = 0;
 
-uint8_t tmp_tick=0;
  uint16_t prev_pwm_tick_cnt;
  uint16_t pwm_tick_cnt;
 
@@ -114,13 +113,6 @@ void os_delay_ms(uint8_t r_id, uint32_t ms)
 void os_isr_ticks(void)
 {
   os_ticks ++;//时钟节拍计数加一
-	if(tmp_tick==10)
-	{
-		tmp_tick=0;
-		//prev_pwm_tick_cnt++;
-		pwm_tick_cnt++;
-	}
-	tmp_tick++;
 }
 
 /*

@@ -13,6 +13,7 @@
 #include "i2c.h"
 #include "Motor_pwm.h"
 //#include "device_type.h"
+#include "stm32f0xx_dma.h"
 
  const uint8_t default_parameter_buf[PARAMETER_BUF_LEN] = {
 #if 1
@@ -92,7 +93,7 @@ int main(void)
 {
   delay_init();
 	os_init();
-
+	
 	//进入stop模式
 	EnterStopMode();
 	//唤醒之后先初始化系统
@@ -108,7 +109,6 @@ int main(void)
 
 void assert_failed(uint8_t* file, uint32_t line)
 {
-
   while (1)
   {
   }

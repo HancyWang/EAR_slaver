@@ -44,6 +44,7 @@
 /***********************************
 * 局部变量
 ***********************************/
+extern uint32_t os_ticks;
 extern CMD_Receive g_CmdReceive;  // 命令接收控制对象
 
 extern FIFO_TYPE send_fifo;
@@ -182,6 +183,9 @@ void EXTI0_1_IRQHandler(void)
 
 void init_system_afterWakeUp()
 {
+	os_ticks = 0;
+	//os_ticks = 4294967290;
+	
 	delay_init();
 	os_init();
 	
@@ -263,6 +267,14 @@ void CfgALLPins4StopMode()
 	//GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOF, &GPIO_InitStructure_PF);
 	GPIO_SetBits(GPIOF, GPIO_Pin_0|GPIO_Pin_1);
+	
+	
+	//配置ADC1和ADC4
+	GPIO_InitTypeDef GPIO_InitStructure_PA_1_4;
+	GPIO_InitStructure_PA_1_4.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_4;
+  GPIO_InitStructure_PA_1_4.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure_PA_1_4.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure_PA_1_4);	
 	
 	//关闭ADC
 	DMA_Cmd(DMA1_Channel1, DISABLE);/* DMA1 Channel1 enable */			
