@@ -43,7 +43,7 @@ void UARTInit(uint8_t* p_rec_buf, uint32_t rec_num)
 	RCC_AHBPeriphClockCmd(UART_IO_CLKSRC, ENABLE);  //使能GPIOA的时钟
 	RCC_AHBPeriphClockCmd(DMA_CLKSRC, ENABLE);
 	
-	#ifdef STM32F030
+	#ifdef STM32F030F4P6
 	RCC_APB2PeriphClockCmd(UART_CLKSRC, ENABLE);//使能USART的时钟
 	#else
 	RCC_APB1PeriphClockCmd(UART_CLKSRC, ENABLE);//使能USART的时钟

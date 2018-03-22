@@ -47,6 +47,7 @@ extern uint8_t parameter_buf[PARAMETER_BUF_LEN];
 
 extern const uint8_t default_parameter_buf[PARAMETER_BUF_LEN];
 extern BOOL b_Is_PCB_PowerOn;
+extern uint8_t prev_mode;
 /***********************************
 * 局部变量
 ***********************************/
@@ -199,6 +200,7 @@ void init_hardware()
 //	CfgPA0ASWFI();
 	//进入stop模式
 	//EnterStopMode();
+	prev_mode=GetModeSelected(); //初始化的时候得到按键的模式
 }
 
 /**************************************************************

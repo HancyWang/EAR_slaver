@@ -17,9 +17,9 @@
 /**********************************
 *∫Í∂®“Â
 ***********************************/
-//#define STM32F030
+//#define STM32F030F4P6
 
-#ifdef STM32F030
+#ifdef STM32F030F4P6
 #define UART    USART1
 #define UART_CLKSRC   RCC_APB2Periph_USART1
 #define UART_DMA_RX_CHANNEL   DMA1_Channel3

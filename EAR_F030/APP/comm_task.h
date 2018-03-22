@@ -44,4 +44,5 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer);
 //void PaintPWM(unsigned char num );
 void CheckFlashData(unsigned char* buffer);
 void ResetParameter(unsigned char* buffer);
+void get_switch_mode(void);
 #endif

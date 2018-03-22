@@ -98,7 +98,7 @@ int main(void)
 	EnterStopMode();
 	//唤醒之后先初始化系统
 	init_system_afterWakeUp();
-	
+		
 	os_create_task(init_task, OS_TRUE, INIT_TASK_ID);
 	os_start();
 

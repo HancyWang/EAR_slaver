@@ -439,7 +439,7 @@ uint8_t FlashReadByte(uint32_t addr)
 }
 
 //得到按键模式
-uint16_t GetModeSelected(void)
+uint8_t GetModeSelected(void)
 {
 	uint16_t res;
 	res=RegularConvData_Tab[1];

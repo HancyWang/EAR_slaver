@@ -100,7 +100,8 @@ uint8_t PWM3_serial_cnt=0;
 
 //volatile CHCKMODE_OUTPUT_PWM state=LOAD_PARA;
 CHCKMODE_OUTPUT_PWM state=LOAD_PARA;
-uint16_t mode;                      
+uint8_t mode;                      
+uint8_t prev_mode;
 
 //uint8_t pwm_buffer[144]={0};
 //uint16_t	mode;
@@ -325,6 +326,45 @@ void TaskDataSend (void)
 		os_delay_ms(SEND_TASK_ID, 24);  //mark一下
 }
 
+
+
+/*******************************************************************************
+** 函数名称: get_switch_mode
+** 功能描述: 获取按键所对应的模式
+** 输　  入: 无
+** 输　  出: 无
+** 全局变量: 无
+** 调用模块: 无
+*******************************************************************************/
+void get_switch_mode()
+{
+	static uint8_t switch_mode_cnt=0;
+	mode=GetModeSelected();
+	
+	if(mode!=prev_mode)
+	{
+		if(switch_mode_cnt==5)
+		{
+			prev_mode=mode;
+			switch_mode_cnt=0;
+			init_PWMState();
+			state=LOAD_PARA;
+			Motor_PWM_Freq_Dudy_Set(1,100,0);
+			Motor_PWM_Freq_Dudy_Set(2,100,0);
+			Motor_PWM_Freq_Dudy_Set(3,100,0);
+		}
+		else
+		{
+			switch_mode_cnt++;
+		}
+	}
+	else
+	{
+		switch_mode_cnt=0;
+	}
+	
+	os_delay_ms(TASK_GET_SWITCH_MODE, 20);
+}
 
 
 /*******************************************************************************
@@ -567,7 +607,7 @@ void check_selectedMode_ouputPWM()
 		//2.获得开关对应的模式
 		if(state==GET_MODE)    //flash参数加载内存之后，获取开关对应的模式
 		{
-			mode=GetModeSelected();  //得到模式
+			//mode=GetModeSelected();  //得到模式
 			//mode=1;
 			//Delay_ms(10);
 			//pressure_result=ADS115_readByte(0x90); //0x90,ADS115器件地址 ,得到I2C转换的值，用于对比压力是否达到threshold
