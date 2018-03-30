@@ -33,6 +33,7 @@
 #include "app.h"
 #include "delay.h"
 #include "comm_task.h"
+#include "iwtdg.h"
 /**********************************
 *宏定义
 ***********************************/
@@ -121,13 +122,13 @@ void CfgPA0ASWFI()
 //检测PA0(WAKE_UP)是否被按下
 BOOL Check_wakeUpKey_pressed(void)
 {
-	uint32_t cnt=0;
+	//uint32_t cnt=0;
 	while(TRUE)
 	{
 		//读取PA0的电平
 		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0)
 		{
-			cnt++;
+			//cnt++;
 			delay_ms(30);
 			if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0)
 			{
@@ -183,6 +184,7 @@ void EXTI0_1_IRQHandler(void)
 
 void init_system_afterWakeUp()
 {
+	Init_iWtdg(4,1250);  //4*2^4=64分频，1250(大概是1250*1.6ms=2s)
 	os_ticks = 0;
 	//os_ticks = 4294967290;
 	
@@ -393,6 +395,7 @@ void key_led_task(void)
 					Delay_ms(500);
 					set_led(LED_CLOSE);
 					Delay_ms(500);
+					IWDG_Feed();   //喂狗
 				}
 				//key_state=KEY_UPING;
 				//key_state=KEY_STOP_MODE;
@@ -416,6 +419,6 @@ void key_led_task(void)
 		
 	}
 
-
+	//IWDG_Feed();   //喂狗
 	os_delay_ms(KEY_LED_TASK_ID, KEY_LED_PERIOD);
 }

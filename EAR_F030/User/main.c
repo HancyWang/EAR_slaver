@@ -14,6 +14,7 @@
 #include "Motor_pwm.h"
 //#include "device_type.h"
 #include "stm32f0xx_dma.h"
+#include "iwtdg.h"
 
  const uint8_t default_parameter_buf[PARAMETER_BUF_LEN] = {
 #if 1
@@ -91,6 +92,7 @@
 	
 int main(void)
 {
+	
   delay_init();
 	os_init();
 	

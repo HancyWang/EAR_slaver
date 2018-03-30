@@ -16,7 +16,7 @@
 #include "i2c.h"
 #include "key_led_task.h"
 #include "hardware.h"
-
+#include "iwtdg.h"
 
 //全局变量
 CMD_Receive g_CmdReceive;  // 命令接收控制对象
@@ -847,6 +847,7 @@ void check_selectedMode_ouputPWM()
 				Delay_ms(500);
 				set_led(LED_CLOSE);
 				Delay_ms(500);
+				IWDG_Feed();   //喂狗
 			}
 			//Delay_ms(10);
 			state=LOAD_PARA;
@@ -866,6 +867,7 @@ void check_selectedMode_ouputPWM()
 //		init_system_afterWakeUp();
 //		Motor_PWM_Init();
 	}
+	IWDG_Feed();   //喂狗
 	os_delay_ms(TASK_OUTPUT_PWM, CHECK_MODE_OUTPUT_PWM);
 }
 /*******************************************************************************
