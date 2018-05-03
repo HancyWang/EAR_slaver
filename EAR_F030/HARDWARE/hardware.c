@@ -194,7 +194,7 @@ void init_hardware()
 	ADC1_Init();
 //	//≥ı ºªØADS115,I2C
 	ADS115_Init();
-
+//ADS115_cfg4ThermalCheck();
 //	ADS115_enter_power_down_mode();
 //	//≈‰÷√÷–∂œ
 //	CfgPA0ASWFI();

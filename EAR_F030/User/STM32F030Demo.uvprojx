@@ -394,6 +394,11 @@
               <FileType>1</FileType>
               <FilePath>.\system_stm32f0xx.c</FilePath>
             </File>
+            <File>
+              <FileName>iwtdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\iwtdg.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -553,6 +558,11 @@
               <FileName>stm32f0xx_syscfg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\STM32F03x_FWLib\src\stm32f0xx_syscfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f0xx_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32F03x_FWLib\src\stm32f0xx_iwdg.c</FilePath>
             </File>
           </Files>
         </Group>

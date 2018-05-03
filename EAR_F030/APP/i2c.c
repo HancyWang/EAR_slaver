@@ -206,6 +206,21 @@ void ADS115_Init(void)
   I2C_Stop();
 }
 
+//配置成检测温度,使用AIN1和GND
+void ADS115_cfg4ThermalCheck()
+{
+	I2C_uConfiguration();
+  I2C_Start();
+  I2C_SendByte(0x90);
+	I2C_RecAck();
+  I2C_SendByte(0x01);
+	I2C_RecAck();
+	I2C_SendByte(0xD4);  		  //1101 0100，  101 : AIN P = AIN1 and AIN N = GND
+	I2C_RecAck();
+	I2C_SendByte(0x83);
+	I2C_RecAck();
+  I2C_Stop();
+}
 
 
 INT16U ADS115_readByte(INT8U slaveaddr)

@@ -98,6 +98,12 @@ static uint8_t pwm3_buffer[49];
 uint8_t pressure;
 uint16_t checkPressAgain_cnt=0;
 uint8_t wait_cnt=0;
+
+
+THERMAL_STATE thermal_state=THERMAL_NONE;
+
+uint16_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
+uint8_t adc_state=1;
 /*******************************************************************************
 *                                内部函数声明
 *******************************************************************************/
@@ -313,9 +319,11 @@ void TaskDataSend (void)
 		if(len)
 		{
 				UartSendNBytes(send_data_buf, len);
+				delay_ms(30);
 		}
 		
-		os_delay_ms(SEND_TASK_ID, 24);  //mark一下
+		os_delay_ms(SEND_TASK_ID, 30);  //mark一下
+		//os_delay_ms(SEND_TASK_ID, 28);
 }
 
 //定时x毫秒,n_ms最大就255s，255000
@@ -379,6 +387,85 @@ BOOL Is_timing_Xmillisec(uint32_t n_ms,uint8_t num)
 	
 	return FALSE;
 }
+
+
+void adc_value_sample()
+{
+	if(thermal_state==THERMAL_NONE)
+	{
+		switch(adc_state)
+		{
+			case 1:
+				ADS115_cfg4ThermalCheck();
+				adc_state=2;
+				break;
+			case 2:
+				adc_value[0]=ADS115_readByte(0x90);
+				ADS115_Init();
+				if(adc_value[0]<=7247)
+				//if(adc_value[0]<=22500)  //debug
+				{
+					thermal_state=THERMAL_OVER_HEATING;
+				}
+				adc_state=3;
+				break;
+			case 3:
+				adc_value[1]=ADS115_readByte(0x90);
+				ADS115_cfg4ThermalCheck();
+				adc_state=2;
+				break;
+		}
+		
+		if(thermal_state==THERMAL_OVER_HEATING)
+		{
+			Motor_PWM_Freq_Dudy_Set(1,100,0);
+			Motor_PWM_Freq_Dudy_Set(2,100,0);
+			Motor_PWM_Freq_Dudy_Set(3,100,0);
+			//橙色LED闪3s
+			for(int i=0;i<3;i++)
+			{
+				set_led(LED_RED);
+				Delay_ms(500);
+				set_led(LED_CLOSE);
+				Delay_ms(500);
+				IWDG_Feed();   //喂狗
+			}
+			EnterStopMode();
+			init_system_afterWakeUp();
+		}
+	}
+	os_delay_ms(TASK_ADC_VALUE_SAMPLE, 15);
+}
+
+//void thermal_check()
+//{
+//	static uint16_t test;
+//	ADS115_cfg4ThermalCheck();
+//	delay_ms(15);
+//	test=ADS115_readByte(0x90);
+//	if(test<=7248)
+//	{
+//		//橙色LED闪3s
+//		for(int i=0;i<3;i++)
+//		{
+//			set_led(LED_RED);
+//			Delay_ms(500);
+//			set_led(LED_CLOSE);
+//			Delay_ms(500);
+//			IWDG_Feed();   //喂狗
+//		}
+
+//		EnterStopMode();
+//		init_system_afterWakeUp();
+//	}
+//	else
+//	{
+//		ADS115_Init();
+//	}
+
+//	os_delay_ms(TASK_THERMAL_CHECK, 100);
+//}
+
 
 /*******************************************************************************
 ** 函数名称: get_switch_mode
@@ -673,7 +760,7 @@ void FillUpPWMbuffer(uint8_t* dest,uint8_t* src)
 *******************************************************************************/
 void check_selectedMode_ouputPWM()
 {
-	static uint16_t pressure_result; 
+//	static uint16_t pressure_result; 
 	
 	if(mcu_state==POWER_ON)
 	{
@@ -731,8 +818,9 @@ void check_selectedMode_ouputPWM()
 		//4.检测压力
 		if(state==CHECK_PRESSURE) //检测压力
 		{
-			pressure_result=ADS115_readByte(0x90);
-			if(pressure_result>=buffer[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
+			//pressure_result=ADS115_readByte(0x90);
+			//adc_value[1]=ADS115_readByte(0x90);
+			if(adc_value[1]>=buffer[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
 			{
 				state=PREV_OUTPUT_PWM;
 			}
@@ -821,11 +909,12 @@ void check_selectedMode_ouputPWM()
 			}
 			else
 			{
-				pressure_result=ADS115_readByte(0x90);
+				//pressure_result=ADS115_readByte(0x90);
+				//adc_value[1]=ADS115_readByte(0x90);
 				//特别注意，这里不能用全局变量buffer,而应该用parameter_buf
 				//理由：如果进入60s倒计时状态，此时的buffer的值在CHECK_PRESSURE_AGAIN状态已经固定了
 				//如果此时上位机更新了参数，parameter_buf[0]会改变，应该用这个变化了的值来判断
-				if(pressure_result<parameter_buf[0]*70) 
+				if(adc_value[1]<parameter_buf[0]*70) 
 				{
 					checkPressAgain_cnt++;
 				}
@@ -884,4 +973,5 @@ void CMD_ProcessTask (void)
 	ReceiveData(&g_CmdReceive);//接收数据到缓冲区
 	ModuleUnPackFrame();//命令处理
 	os_delay_ms(RECEIVE_TASK_ID, 100);
+	//os_delay_ms(RECEIVE_TASK_ID, 300);
 }

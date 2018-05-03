@@ -79,6 +79,8 @@ void init_task(void)
 	os_create_task(key_led_task, OS_TRUE, KEY_LED_TASK_ID);
 	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
 	os_create_task(get_switch_mode,OS_TRUE,TASK_GET_SWITCH_MODE);
+	os_create_task(adc_value_sample,OS_TRUE,TASK_ADC_VALUE_SAMPLE);
+	//os_create_task(thermal_check,OS_TRUE,TASK_THERMAL_CHECK);  不需要这个任务
 	os_pend_task(INIT_TASK_ID);
 
 }

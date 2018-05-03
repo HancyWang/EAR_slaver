@@ -70,6 +70,8 @@ BOOL b_Is_PCB_PowerOn=FALSE;
 volatile KEY_STATE key_state=KEY_STOP_MODE;
 
 extern uint16_t RegularConvData_Tab[2];
+extern uint8_t adc_state;
+extern THERMAL_STATE thermal_state;
 /***********************************
 * 局部函数
 ***********************************/
@@ -348,6 +350,8 @@ void CfgALLPins4StopMode()
 //进入stop模式，采用中断唤醒
 void EnterStopMode()
 {
+	thermal_state=THERMAL_NONE;
+	adc_state=1;
 	//配置中断
 	CfgPA0ASWFI();
 	//I2C芯片ADS115进入power-down模式

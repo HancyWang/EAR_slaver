@@ -34,6 +34,16 @@ typedef enum
 	PWM_OUTPUT_FINISH
 }PWM_STATE;
 
+typedef enum
+{
+	THERMAL_NONE,
+	//THERMAL_DELAY,
+//	THERMAL_CFG,
+//	THERMAL_GET_VALUE,
+//	THERMAL_START_CHECK,
+	THERMAL_OVER_HEATING,
+}THERMAL_STATE;
+
 void init_PWMState(void);
 
 void TaskDataSend (void);
@@ -45,4 +55,6 @@ void PaintPWM(unsigned char num,unsigned char* pwm_buffer);
 void CheckFlashData(unsigned char* buffer);
 void ResetParameter(unsigned char* buffer);
 void get_switch_mode(void);
+void thermal_check(void);
+void adc_value_sample(void);
 #endif

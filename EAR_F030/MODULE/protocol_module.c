@@ -301,7 +301,6 @@ void send_prameter_fram1_to_PC()
 	//现在将CMD_BUFFER_LENGTH长度定义为300，就OK了，原因不知道
 	uint8_t buffer[CMD_BUFFER_LENGTH];
 
-
 	//读取flash数据到buffer中
 	//CheckFlashData(parameter_buf); //检测flash数据是否是正确的，第一次会检测flash时，会将默认的数据填充到flash中
 	
@@ -331,7 +330,10 @@ void send_prameter_fram1_to_PC()
 	}
 	CalcCheckSum(buffer);
 	fifoWriteData(&send_fifo, buffer, buffer[1]+2);
+//	UartSendNBytes(buffer, buffer[1]+2);
+	//Delay_ms(30);
 }
+
 
 void send_prameter_fram2_to_PC()
 {
@@ -351,6 +353,8 @@ void send_prameter_fram2_to_PC()
 	}
 	CalcCheckSum(buffer1);
 	fifoWriteData(&send_fifo, buffer1, buffer1[1]+2);
+//	UartSendNBytes(buffer1, buffer1[1]+2);
+//	Delay_ms(30);
 }
 
 uint16_t FlashWrite(uint32_t addr, uint8_t *p_data, uint16_t len)

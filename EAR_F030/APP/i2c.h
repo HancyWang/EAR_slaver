@@ -26,5 +26,6 @@ extern void ADS115_Init(void);
 extern void ADS115_writeByte(INT8U slaveaddr,INT8U data);
 extern INT16U ADS115_readByte(INT8U slaveaddr);
 void ADS115_enter_power_down_mode(void);
+void ADS115_cfg4ThermalCheck(void);
 #endif
 
