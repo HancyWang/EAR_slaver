@@ -395,17 +395,30 @@ void key_led_task(void)
 			}
 			else
 			{
-				//橙色LED闪3s，关机
-				for(int i=0;i<3;i++)
-				{
-					set_led(LED_RED);
-					Delay_ms(500);
-					set_led(LED_CLOSE);
-					Delay_ms(500);
-					IWDG_Feed();   //喂狗
-				}
-				//key_state=KEY_UPING;
+//				//橙色LED闪3s，关机
+//				for(int i=0;i<3;i++)
+//				{
+//					set_led(LED_RED);
+//					Delay_ms(500);
+//					set_led(LED_CLOSE);
+//					Delay_ms(500);
+//					IWDG_Feed();   //喂狗
+//				}
+//				//key_state=KEY_UPING;
 				//key_state=KEY_STOP_MODE;
+				set_led(LED_RED);
+				for(int i=0;i<5;i++)
+				{
+					Motor_PWM_Freq_Dudy_Set(1,100,0);
+					Motor_PWM_Freq_Dudy_Set(2,100,0);
+					Motor_PWM_Freq_Dudy_Set(3,100,0);
+					Delay_ms(500);
+					Motor_PWM_Freq_Dudy_Set(1,100,50);
+					Motor_PWM_Freq_Dudy_Set(2,100,50);
+					Motor_PWM_Freq_Dudy_Set(3,100,50);
+					Delay_ms(500);
+					IWDG_Feed();
+				}
 				mcu_state=POWER_OFF;
 				
 				//进入stop模式
