@@ -18,6 +18,10 @@
 #include "hardware.h"
 #include "iwtdg.h"
 
+#define PRESSURE_RATE 70
+#define PRESSURE_SAFETY_THRESHOLD 20
+
+
 //全局变量
 CMD_Receive g_CmdReceive;  // 命令接收控制对象
 FIFO_TYPE send_fifo;//發送數據FIFO
@@ -111,6 +115,28 @@ static BOOL ModuleUnPackFrame(void);
 static BOOL ModuleProcessPacket(UINT8 *pData);
 static UINT8 CheckCheckSum(UINT8* pData, UINT8 nLen);
 
+
+//void Motor_shake_for_sleep()
+//{
+//	//LED orange solid
+//	//vibration x5 0.5HZ 
+//	//auto shutdown
+//	set_led(LED_RED);
+//	
+//	for(uint8_t i=0;i<5;i++)
+//	{
+//		Motor_PWM_Freq_Dudy_Set(1,100,0);
+//		Motor_PWM_Freq_Dudy_Set(2,100,0);
+//		Motor_PWM_Freq_Dudy_Set(3,100,0);
+//		Delay_ms(500);
+//		//IWDG_Feed();
+//		Motor_PWM_Freq_Dudy_Set(1,100,50);
+//		Motor_PWM_Freq_Dudy_Set(2,100,50);
+//		Motor_PWM_Freq_Dudy_Set(3,100,50);
+//		Delay_ms(500);
+//		IWDG_Feed();
+//	}
+//}
 
 void init_PWMState(void)
 {
@@ -774,18 +800,15 @@ void check_selectedMode_ouputPWM()
 			FlashRead(FLASH_WRITE_START_ADDR,tmp,len);
 			memcpy(buffer,tmp,PARAMETER_BUF_LEN);
 			CheckFlashData(buffer);
-			state=GET_MODE;
-		}
-		//2.获得开关对应的模式
-		if(state==GET_MODE)    //flash参数加载内存之后，获取开关对应的模式
-		{
-			//mode=GetModeSelected();  //得到模式
-			//mode=1;
-			//Delay_ms(10);
-			//pressure_result=ADS115_readByte(0x90); //0x90,ADS115器件地址 ,得到I2C转换的值，用于对比压力是否达到threshold
-			//Delay_ms(10);
+			//state=GET_MODE;
 			state=CPY_PARA_TO_BUFFER;
 		}
+//		//2.获得开关对应的模式
+//		if(state==GET_MODE)    //flash参数加载内存之后，获取开关对应的模式
+//		{
+//			state=CPY_PARA_TO_BUFFER;
+//		}
+		
 		//3.根据选择的模式将数据拷贝到pwm_buffer
 		if(state==CPY_PARA_TO_BUFFER)  //根据选择的模式，将para填充到pwm_buffer中
 		{
@@ -818,18 +841,44 @@ void check_selectedMode_ouputPWM()
 		//4.检测压力
 		if(state==CHECK_PRESSURE) //检测压力
 		{
-			//pressure_result=ADS115_readByte(0x90);
-			//adc_value[1]=ADS115_readByte(0x90);
-			if(adc_value[1]>=buffer[0]*70)  //压力达到threshold，进入输出PWM模式,其中75为斜率，5mmgH对应5*70+700
+			if(CHECK_MODE_OUTPUT_PWM*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
 			{
-				state=PREV_OUTPUT_PWM;
+				checkPressAgain_cnt=0;
+				mcu_state=POWER_OFF;
+				state=LOAD_PARA;
+				set_led(LED_CLOSE);
+				
+				EnterStopMode();
+				init_system_afterWakeUp();
 			}
 			else
 			{
-				state=CHECK_PRESSURE_AGAIN;
+				if(adc_value[1]<buffer[0]*PRESSURE_RATE)
+				{
+					checkPressAgain_cnt++;
+				}
+				else	
+				{
+					checkPressAgain_cnt=0;
+					//state=LOAD_PARA;
+					if(adc_value[1]>PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)  
+					{
+						//state=OVER_THRESHOLD_SAFETY;
+						state=OVER_THRESHOLD_SAFETY;
+					}
+					//else if(adc_value[1]>=parameter_buf[0]*70&&adc_value[1]<=20*70)
+					else if(adc_value[1]>=buffer[0]*PRESSURE_RATE&&adc_value[1]<=PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)
+					{
+						state=PREV_OUTPUT_PWM;
+					}
+					else
+					{
+						//do nothing
+					}
+				}
 			}
 		}
-		
+
 		//5.检测压力Ok,则预备输出波形，先定时waitBeforeStart这么长时间
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
@@ -840,16 +889,6 @@ void check_selectedMode_ouputPWM()
 			}
 			else
 			{
-//				if((PWM_waitBeforeStart_cnt)*CHECK_MODE_OUTPUT_PWM==buffer[1]*1000)
-//				{
-//					PWM_waitBeforeStart_cnt=0;
-//					//state=CPY_PARA_TO_BUFFER;
-//					state=OUTPUT_PWM;
-//				}
-//				else
-//				{
-//					PWM_waitBeforeStart_cnt++;
-//				}
 				if(Is_timing_Xmillisec(buffer[1]*1000,6))
 				{
 					state=OUTPUT_PWM;
@@ -869,10 +908,47 @@ void check_selectedMode_ouputPWM()
 			}		
 			else
 			{
-				PaintPWM(1,pwm1_buffer); 
-				PaintPWM(2,pwm2_buffer);
-				PaintPWM(3,pwm3_buffer);
+				if(adc_value[1]<=PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)
+				{
+					PaintPWM(1,pwm1_buffer); 
+					PaintPWM(2,pwm2_buffer);
+					PaintPWM(3,pwm3_buffer);
+				}
+				else
+				{
+					Motor_PWM_Freq_Dudy_Set(1,100,0);
+					Motor_PWM_Freq_Dudy_Set(2,100,0);
+					Motor_PWM_Freq_Dudy_Set(3,100,0);
+//					pwm1_state=PWM_START;
+//					pwm2_state=PWM_START;
+//					pwm3_state=PWM_START;
+					state=OVER_THRESHOLD_SAFETY;
+				}
 			}
+		}
+		
+		//如果超过了threshold的安全值，关闭设备，保护耳朵
+		if(state==OVER_THRESHOLD_SAFETY)
+		{
+	//		Motor_shake_for_sleep();
+			set_led(LED_RED);
+	
+			for(uint8_t i=0;i<5;i++)
+			{
+				Motor_PWM_Freq_Dudy_Set(1,100,0);
+				Motor_PWM_Freq_Dudy_Set(2,100,0);
+				Motor_PWM_Freq_Dudy_Set(3,100,0);
+				Delay_ms(500);
+				//IWDG_Feed();
+				Motor_PWM_Freq_Dudy_Set(1,100,50);
+				Motor_PWM_Freq_Dudy_Set(2,100,50);
+				//Motor_PWM_Freq_Dudy_Set(2,100,50);
+				Motor_PWM_Freq_Dudy_Set(3,100,50);
+				Delay_ms(500);
+				IWDG_Feed();
+			}
+			EnterStopMode();
+			init_system_afterWakeUp();
 		}
 		
 		//7.波形输出完毕，检测电池电压
@@ -893,38 +969,41 @@ void check_selectedMode_ouputPWM()
 				pwm3_state=PWM_START;
 			}
 		}
-		
-		//对应4，压力检测，如果检测压力不ok，则再次检测压力
-		if(state==CHECK_PRESSURE_AGAIN) //再次检测压力
-		{
-			if(CHECK_MODE_OUTPUT_PWM*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
-			{
-				checkPressAgain_cnt=0;
-				mcu_state=POWER_OFF;
-				state=LOAD_PARA;
-				set_led(LED_CLOSE);
-				
-				EnterStopMode();
-				init_system_afterWakeUp();
-			}
-			else
-			{
-				//pressure_result=ADS115_readByte(0x90);
-				//adc_value[1]=ADS115_readByte(0x90);
-				//特别注意，这里不能用全局变量buffer,而应该用parameter_buf
-				//理由：如果进入60s倒计时状态，此时的buffer的值在CHECK_PRESSURE_AGAIN状态已经固定了
-				//如果此时上位机更新了参数，parameter_buf[0]会改变，应该用这个变化了的值来判断
-				if(adc_value[1]<parameter_buf[0]*70) 
-				{
-					checkPressAgain_cnt++;
-				}
-				else	
-				{
-					checkPressAgain_cnt=0;
-					state=LOAD_PARA;
-				}
-			}
-		}
+	
+#if 0		
+//		//对应4，压力检测，如果检测压力不ok，则再次检测压力
+//		if(state==CHECK_PRESSURE_AGAIN) //再次检测压力
+//		{
+//			if(CHECK_MODE_OUTPUT_PWM*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
+//			{
+//				checkPressAgain_cnt=0;
+//				mcu_state=POWER_OFF;
+//				state=LOAD_PARA;
+//				set_led(LED_CLOSE);
+//				
+//				EnterStopMode();
+//				init_system_afterWakeUp();
+//			}
+//			else
+//			{
+//				//pressure_result=ADS115_readByte(0x90);
+//				//adc_value[1]=ADS115_readByte(0x90);
+//				//特别注意，这里不能用全局变量buffer,而应该用parameter_buf
+//				//理由：如果进入60s倒计时状态，此时的buffer的值在CHECK_PRESSURE_AGAIN状态已经固定了
+//				//如果此时上位机更新了参数，parameter_buf[0]会改变，应该用这个变化了的值来判断
+//				if(adc_value[1]<parameter_buf[0]*70) 
+//				{
+//					checkPressAgain_cnt++;
+//				}
+//				else	
+//				{
+//					checkPressAgain_cnt=0;
+//					state=LOAD_PARA;
+//					
+//				}
+//			}
+//		}
+#endif
 
 		//对应7，如果检测电池电压小于2.2V，则闪灯
 		if(state==LED_RED_BLINK)
@@ -949,13 +1028,13 @@ void check_selectedMode_ouputPWM()
 			init_system_afterWakeUp();
 		}
 	}
-	else
-	{
-		//进入低功耗模式
-//		EnterStopMode();
-//		init_system_afterWakeUp();
-//		Motor_PWM_Init();
-	}
+//	else
+//	{
+//		//进入低功耗模式
+////		EnterStopMode();
+////		init_system_afterWakeUp();
+////		Motor_PWM_Init();
+//	}
 	IWDG_Feed();   //喂狗
 	os_delay_ms(TASK_OUTPUT_PWM, CHECK_MODE_OUTPUT_PWM);
 }

@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F030Demo.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F030Demo.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Thu May 03 12:02:09 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Fri May 04 16:36:48 2018
 <BR><P>
 <H3>Maximum Stack Usage =        852 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -313,6 +313,7 @@ Global Symbols
 <P><STRONG><a name="[6f]"></a>init_PWMState</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, comm_task.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_1_IRQHandler
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
+<LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
 
 <P><STRONG><a name="[8f]"></a>CalcCheckSum</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, comm_task.o(.text))
@@ -400,10 +401,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 508 bytes, Stack size 456 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 638 bytes, Stack size 456 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 648<LI>Call Chain = check_selectedMode_ouputPWM &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
+<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
 <LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
 <LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
 <LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FillUpPWMbuffer
@@ -492,7 +494,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
 
-<P><STRONG><a name="[45]"></a>EnterStopMode</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[45]"></a>EnterStopMode</STRONG> (Thumb, 56 bytes, Stack size 8 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 108<LI>Call Chain = EnterStopMode &rArr; CfgALLPins4StopMode &rArr; GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
@@ -500,6 +502,7 @@ Global Symbols
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADS115_enter_power_down_mode
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
 <LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_PWMState
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
@@ -1007,6 +1010,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
 <LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
+<LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;adc_value_sample
 </UL>
 

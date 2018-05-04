@@ -352,6 +352,9 @@ void EnterStopMode()
 {
 	thermal_state=THERMAL_NONE;
 	adc_state=1;
+	mcu_state=POWER_OFF;
+	state=LOAD_PARA;
+	init_PWMState();
 	//配置中断
 	CfgPA0ASWFI();
 	//I2C芯片ADS115进入power-down模式
