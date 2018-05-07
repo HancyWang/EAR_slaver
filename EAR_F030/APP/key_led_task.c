@@ -55,6 +55,9 @@ extern CHCKMODE_OUTPUT_PWM state;
 extern PWM_STATE pwm1_state;
 extern PWM_STATE pwm2_state;
 extern PWM_STATE pwm3_state;
+
+extern uint8_t led_high_cnt;
+extern uint8_t led_low_cnt;
 //KEY值，这里点按为确认蓝牙连接
 typedef enum {
 	NO_KEY,
@@ -66,12 +69,15 @@ MCU_STATE mcu_state=POWER_OFF;
 
 //extern uint8_t OUTPUT_FINISH;
 BOOL b_Is_PCB_PowerOn=FALSE;
-
+//BOOL b_check_bat=FALSE;
 volatile KEY_STATE key_state=KEY_STOP_MODE;
 
 extern uint16_t RegularConvData_Tab[2];
 extern uint8_t adc_state;
 extern THERMAL_STATE thermal_state;
+
+
+LED_STATE led_state=LED_NONE;
 /***********************************
 * 局部函数
 ***********************************/
@@ -350,6 +356,10 @@ void CfgALLPins4StopMode()
 //进入stop模式，采用中断唤醒
 void EnterStopMode()
 {
+//	b_check_bat=FALSE;
+	led_state=LED_NONE;
+	led_high_cnt=0;
+ led_low_cnt=0;
 	thermal_state=THERMAL_NONE;
 	adc_state=1;
 	mcu_state=POWER_OFF;
@@ -365,6 +375,35 @@ void EnterStopMode()
 	PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
 }
 
+
+LED_STATE Check_Bat()
+{
+	uint16_t result;
+	result=RegularConvData_Tab[0];
+	if(result<2730) //如果电压小于2.2v,没电了 ，直接进入低功耗
+	{
+		//led_state=LED_RED_SOLID;
+		return LED_RED_SOLID;
+	}
+	else if(result>=2730&&result<3227)  //2.2-2.6 ，提醒用户电量不足了
+	{
+		//led_state=LED_RED_FLASH;
+		return LED_RED_FLASH;
+	}
+	else if(result>=3227)
+	{
+		//solid green,常亮绿灯，表示电量充值
+		//led_state=LED_GREEN_SOLID;
+		return LED_GREEN_SOLID;
+	}
+	else
+	{
+		//do nothing
+		return LED_NONE;
+	}
+}
+
+
 void key_led_task(void)
 {
 	if(key_state==KEY_STOP_MODE)
@@ -373,15 +412,20 @@ void key_led_task(void)
 		init_system_afterWakeUp();
 	}
 	
-	//按键被按下，检查电池电压是否大于2.2V
+	//按键被按下，检查电池电压
 	if(key_state==KEY_WAKE_UP)
 	{
+		//b_check_bat=TRUE;
 		//if(b_Is_PCB_PowerOn)
 		{
-			if(RegularConvData_Tab[0]>=2730)
+			if(RegularConvData_Tab[0]>2730)
 			{
 				//开机
-				set_led(LED_GREEN);
+				//set_led(LED_GREEN);
+				if(RegularConvData_Tab[0]>3227)
+				{
+					set_led(LED_GREEN);
+				}
 				Motor_PWM_Freq_Dudy_Set(1,100,80);
 				Motor_PWM_Freq_Dudy_Set(2,100,80);
 				Motor_PWM_Freq_Dudy_Set(3,100,80);
@@ -392,6 +436,8 @@ void key_led_task(void)
 				
 				key_state=KEY_UPING;
 				mcu_state=POWER_ON;
+				
+				led_state=Check_Bat();
 			}
 			else
 			{
@@ -427,16 +473,7 @@ void key_led_task(void)
 				init_system_afterWakeUp();
 			}
 		}
-//		else
-//		{
-//			mcu_state=POWER_OFF;
-//			
-//			//进入stop模式
-//			EnterStopMode();
-//			//唤醒之后重新初始化
-//			init_system_afterWakeUp();
-//		}
-		
+
 	}
 
 	//IWDG_Feed();   //喂狗

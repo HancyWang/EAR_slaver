@@ -29,6 +29,14 @@ typedef enum
 	//KEY_UP_DOWN
 }KEY_STATE;
 
+typedef enum
+{
+	LED_NONE,
+	LED_RED_SOLID,
+	LED_RED_FLASH,
+	LED_GREEN_SOLID
+}LED_STATE;
+
 /***********************************
 * Óê–Õ∂®¡x
 ***********************************/
@@ -42,7 +50,7 @@ void CfgPA0ASWFI(void);
 void CfgALLPins4StopMode(void);
 void init_system_afterWakeUp(void);
 //extern INT8U I2C_RecByte(void);
-
+LED_STATE Check_Bat(void);
 
 
 #endif

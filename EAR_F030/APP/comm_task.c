@@ -42,6 +42,9 @@ extern const uint8_t default_parameter_buf[PARAMETER_BUF_LEN];
 extern uint16_t RegularConvData_Tab[2];
 
 extern uint32_t os_ticks;
+extern BOOL b_check_bat;
+
+extern LED_STATE led_state;
 
 static BOOL PWM1_timing_flag=TRUE;
 static BOOL PWM2_timing_flag=TRUE; 
@@ -108,6 +111,9 @@ THERMAL_STATE thermal_state=THERMAL_NONE;
 
 uint16_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
 uint8_t adc_state=1;
+
+uint8_t led_high_cnt=0;
+uint8_t led_low_cnt=0;
 /*******************************************************************************
 *                                内部函数声明
 *******************************************************************************/
@@ -412,6 +418,70 @@ BOOL Is_timing_Xmillisec(uint32_t n_ms,uint8_t num)
 	}
 	
 	return FALSE;
+}
+
+
+
+void bat_check()
+{
+	if(led_state==LED_NONE)
+	{
+		//do nothing
+	}
+	
+	if(led_state==LED_RED_SOLID) //关机
+	{
+		set_led(LED_RED);
+	
+		for(uint8_t i=0;i<5;i++)
+		{
+			Motor_PWM_Freq_Dudy_Set(1,100,0);
+			Motor_PWM_Freq_Dudy_Set(2,100,0);
+			Motor_PWM_Freq_Dudy_Set(3,100,0);
+			Delay_ms(500);
+			//IWDG_Feed();
+			Motor_PWM_Freq_Dudy_Set(1,100,50);
+			Motor_PWM_Freq_Dudy_Set(2,100,50);
+			//Motor_PWM_Freq_Dudy_Set(2,100,50);
+			Motor_PWM_Freq_Dudy_Set(3,100,50);
+			Delay_ms(500);
+			IWDG_Feed();
+		}
+		EnterStopMode();
+		init_system_afterWakeUp();
+	}
+	
+	if(led_state==LED_RED_FLASH)
+	{
+		
+		//static BOOL b_led_red=TRUE;
+		if(led_high_cnt==10)
+		{
+			//set_led(LED_RED);
+			set_led(LED_CLOSE);
+			if(led_low_cnt==10)
+			{
+				led_high_cnt=0;
+				led_low_cnt=0;
+			}
+			else
+			{
+				led_low_cnt++;
+			}
+		}
+		else
+		{
+			set_led(LED_RED);
+			led_high_cnt++;
+		}
+	}
+	
+	if(led_state==LED_GREEN_SOLID)
+	{
+		set_led(LED_GREEN);
+	}
+	
+	os_delay_ms(TASK_BAT_CHECK, 50);
 }
 
 
@@ -870,6 +940,9 @@ void check_selectedMode_ouputPWM()
 					else if(adc_value[1]>=buffer[0]*PRESSURE_RATE&&adc_value[1]<=PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)
 					{
 						state=PREV_OUTPUT_PWM;
+						checkPressAgain_cnt=0;
+						waitBeforeStart_timing_flag=TRUE;
+						prev_WaitBeforeStart_os_tick=0;
 					}
 					else
 					{
@@ -954,22 +1027,28 @@ void check_selectedMode_ouputPWM()
 		//7.波形输出完毕，检测电池电压
 		if(state==CHECK_BAT_VOL) 
 		{
-			uint16_t result;
-			result=RegularConvData_Tab[0];
-			if(result<2730) //如果电压小于2.2v,（基准3.3v）
-			{
-				//闪灯，进入POWER_OFF
-				state=LED_RED_BLINK;
-			}
-			else
-			{
-				state=LOAD_PARA;
-				pwm1_state=PWM_START;
-				pwm2_state=PWM_START;
-				pwm3_state=PWM_START;
-			}
-		}
-	
+			led_state=Check_Bat();
+			state=LOAD_PARA;
+			pwm1_state=PWM_START;
+			pwm2_state=PWM_START;
+			pwm3_state=PWM_START;
+			#if 0
+//			uint16_t result;
+//			result=RegularConvData_Tab[0];
+//			if(result<2730) //如果电压小于2.2v,（基准3.3v）
+//			{
+//				//闪灯，进入POWER_OFF
+//				state=LED_RED_BLINK;
+//			}
+//			else
+//			{
+//				state=LOAD_PARA;
+//				pwm1_state=PWM_START;
+//				pwm2_state=PWM_START;
+//				pwm3_state=PWM_START;
+//			}
+//		}
+	#endif
 #if 0		
 //		//对应4，压力检测，如果检测压力不ok，则再次检测压力
 //		if(state==CHECK_PRESSURE_AGAIN) //再次检测压力
@@ -1005,27 +1084,29 @@ void check_selectedMode_ouputPWM()
 //		}
 #endif
 
-		//对应7，如果检测电池电压小于2.2V，则闪灯
-		if(state==LED_RED_BLINK)
-		{
-			//橙色LED闪3s
-			for(int i=0;i<3;i++)
-			{
-				set_led(LED_RED);
-				Delay_ms(500);
-				set_led(LED_CLOSE);
-				Delay_ms(500);
-				IWDG_Feed();   //喂狗
-			}
-			//Delay_ms(10);
-			state=LOAD_PARA;
-			pwm1_state=PWM_START;
-			pwm2_state=PWM_START;
-			pwm3_state=PWM_START;
-			mcu_state=POWER_OFF;
-			
-			EnterStopMode();
-			init_system_afterWakeUp();
+//		//对应7，如果检测电池电压小于2.2V，则闪灯
+//		if(state==LED_RED_BLINK)
+//		{
+#if 0
+//			//橙色LED闪3s
+//			for(int i=0;i<3;i++)
+//			{
+//				set_led(LED_RED);
+//				Delay_ms(500);
+//				set_led(LED_CLOSE);
+//				Delay_ms(500);
+//				IWDG_Feed();   //喂狗
+//			}
+//			//Delay_ms(10);
+//			state=LOAD_PARA;
+//			pwm1_state=PWM_START;
+//			pwm2_state=PWM_START;
+//			pwm3_state=PWM_START;
+//			mcu_state=POWER_OFF;
+//			
+//			EnterStopMode();
+//			init_system_afterWakeUp();
+#endif
 		}
 	}
 //	else
