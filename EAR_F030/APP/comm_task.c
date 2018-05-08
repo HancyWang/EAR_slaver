@@ -518,13 +518,31 @@ void adc_value_sample()
 			Motor_PWM_Freq_Dudy_Set(2,100,0);
 			Motor_PWM_Freq_Dudy_Set(3,100,0);
 			//³ÈÉ«LEDÉÁ3s
-			for(int i=0;i<3;i++)
+//			for(int i=0;i<3;i++)
+//			{
+//				set_led(LED_RED);
+//				Delay_ms(500);
+//				set_led(LED_CLOSE);
+//				Delay_ms(500);
+//				IWDG_Feed();   //Î¹¹·
+//			}
+//			EnterStopMode();
+//			init_system_afterWakeUp();
+			set_led(LED_RED);
+	
+			for(uint8_t i=0;i<5;i++)
 			{
-				set_led(LED_RED);
+				Motor_PWM_Freq_Dudy_Set(1,100,0);
+				Motor_PWM_Freq_Dudy_Set(2,100,0);
+				Motor_PWM_Freq_Dudy_Set(3,100,0);
 				Delay_ms(500);
-				set_led(LED_CLOSE);
+				//IWDG_Feed();
+				Motor_PWM_Freq_Dudy_Set(1,100,50);
+				Motor_PWM_Freq_Dudy_Set(2,100,50);
+				//Motor_PWM_Freq_Dudy_Set(2,100,50);
+				Motor_PWM_Freq_Dudy_Set(3,100,50);
 				Delay_ms(500);
-				IWDG_Feed();   //Î¹¹·
+				IWDG_Feed();
 			}
 			EnterStopMode();
 			init_system_afterWakeUp();
