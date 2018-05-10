@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F030Demo.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F030Demo.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Tue May 08 09:32:10 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060422: Last Updated: Thu May 10 14:22:46 2018
 <BR><P>
 <H3>Maximum Stack Usage =        852 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -416,7 +416,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 604 bytes, Stack size 464 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 592 bytes, Stack size 464 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 656<LI>Call Chain = check_selectedMode_ouputPWM &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
@@ -528,7 +528,7 @@ Global Symbols
 <LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[7a]"></a>Check_Bat</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[7a]"></a>Check_Bat</STRONG> (Thumb, 44 bytes, Stack size 0 bytes, key_led_task.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
@@ -625,12 +625,12 @@ Global Symbols
 
 <P><STRONG><a name="[11d]"></a>FlashReadByte</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, protocol_module.o(.text), UNUSED)
 
-<P><STRONG><a name="[6f]"></a>GetModeSelected</STRONG> (Thumb, 36 bytes, Stack size 0 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[6f]"></a>GetModeSelected</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, protocol_module.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_hardware
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
 </UL>
 
-<P><STRONG><a name="[64]"></a>protocol_module_process</STRONG> (Thumb, 130 bytes, Stack size 8 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[64]"></a>protocol_module_process</STRONG> (Thumb, 134 bytes, Stack size 8 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 820<LI>Call Chain = protocol_module_process &rArr; send_prameter_fram1_to_PC &rArr; CheckFlashData &rArr; ResetParameter &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_prameter_fram2_to_PC

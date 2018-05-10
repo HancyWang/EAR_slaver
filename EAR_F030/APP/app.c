@@ -82,7 +82,6 @@ void init_task(void)
 	os_create_task(adc_value_sample,OS_TRUE,TASK_ADC_VALUE_SAMPLE);
 	os_create_task(bat_check,OS_TRUE,TASK_BAT_CHECK);
 	os_pend_task(INIT_TASK_ID);
-
 }
 
 

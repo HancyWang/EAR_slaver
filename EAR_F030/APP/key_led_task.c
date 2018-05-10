@@ -380,17 +380,17 @@ LED_STATE Check_Bat()
 {
 	uint16_t result;
 	result=RegularConvData_Tab[0];
-	if(result<2730) //如果电压小于2.2v,没电了 ，直接进入低功耗
+	if(result<3003) //如果电压小于2.2v,没电了 ，直接进入低功耗
 	{
 		//led_state=LED_RED_SOLID;
 		return LED_RED_SOLID;
 	}
-	else if(result>=2730&&result<3227)  //2.2-2.6 ，提醒用户电量不足了
+	else if(result>=3003&&result<3549)  //2.2-2.6 ，提醒用户电量不足了
 	{
 		//led_state=LED_RED_FLASH;
 		return LED_RED_FLASH;
 	}
-	else if(result>=3227)
+	else if(result>=3549)
 	{
 		//solid green,常亮绿灯，表示电量充值
 		//led_state=LED_GREEN_SOLID;
@@ -418,11 +418,11 @@ void key_led_task(void)
 		//b_check_bat=TRUE;
 		//if(b_Is_PCB_PowerOn)
 		{
-			if(RegularConvData_Tab[0]>2730)
+			if(RegularConvData_Tab[0]>3003)
 			{
 				//开机
 				//set_led(LED_GREEN);
-				if(RegularConvData_Tab[0]>3227)
+				if(RegularConvData_Tab[0]>3549)
 				{
 					set_led(LED_GREEN);
 				}

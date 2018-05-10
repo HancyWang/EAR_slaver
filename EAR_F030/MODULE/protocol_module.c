@@ -452,11 +452,11 @@ uint8_t GetModeSelected(void)
 //		res=Adc_Switch(ADC_Channel_4);
 //	}
 	
-	if(res>=1500)
+	if(res>=1650)
 	{
 		return 1;  //返回模式1
 	}
-	else if(res>=700&&res<1500)
+	else if(res>=700&&res<1650)
 	//else if(res>=mod2_base_vol-200&&res<=mod2_base_vol+200)
 	{
 		return 2;	//返回模式2

@@ -19,7 +19,7 @@
 #include "iwtdg.h"
 
 #define PRESSURE_RATE 70
-#define PRESSURE_SAFETY_THRESHOLD 20
+#define PRESSURE_SAFETY_THRESHOLD 10
 
 
 //全局变量
@@ -496,7 +496,7 @@ void adc_value_sample()
 				adc_state=2;
 				break;
 			case 2:
-				adc_value[0]=ADS115_readByte(0x90);
+				adc_value[0]=ADS115_readByte(0x90);  //温度
 				ADS115_Init();
 				if(adc_value[0]<=7247)
 				//if(adc_value[0]<=22500)  //debug
@@ -531,6 +531,7 @@ void adc_value_sample()
 			set_led(LED_RED);
 	
 			for(uint8_t i=0;i<5;i++)
+			//for(uint8_t i=0;i<6;i++)  //debug
 			{
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
@@ -974,11 +975,11 @@ void check_selectedMode_ouputPWM()
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 			//如果不加if(b_Is_PCB_PowerOn==FALSE)会导致开关重新开机waitbeforestart定时不到想要的秒数
-			if(b_Is_PCB_PowerOn==FALSE)
-			{
-				PWM_waitBeforeStart_cnt=0;
-			}
-			else
+//			if(b_Is_PCB_PowerOn==FALSE)
+//			{
+//				PWM_waitBeforeStart_cnt=0;
+//			}
+//			else
 			{
 				if(Is_timing_Xmillisec(buffer[1]*1000,6))
 				{
@@ -1025,6 +1026,7 @@ void check_selectedMode_ouputPWM()
 			set_led(LED_RED);
 	
 			for(uint8_t i=0;i<5;i++)
+			//for(uint8_t i=0;i<3;i++)
 			{
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
