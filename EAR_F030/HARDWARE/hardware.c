@@ -41,6 +41,7 @@
 unsigned short inner_adc_result[SAMPLING_CNT];
  uint16_t RegularConvData_Tab[2];
 
+uint16_t zero_point_of_pressure_sensor;
 
 extern uint8_t parameter_buf[PARAMETER_BUF_LEN];
 
@@ -149,6 +150,24 @@ void Init_PWRSAVE(void)
 	GPIO_ResetBits(KEY_PWR_SAVE_PORT,KEY_PWR_SAVE_PIN);
 }
 
+//校验pressure sensor
+void Calibrate_pressure_sensor(uint16_t* p_zeroPoint)
+{
+	//如果是负压怎么办？应该定义成int16?值会不会变成负数？
+	uint16_t arr[10]={0};
+	uint16_t sum=0;
+	
+	delay_ms(50); //让ADC稳定
+	for(uint8_t i=0;i<10;i++)
+	{
+		arr[i]=ADS115_readByte(0x90);
+		sum+=arr[i];
+		delay_us(5);
+	}
+	*p_zeroPoint=sum/10;
+}
+
+
 /**************************************************************
 * 初始化硬件管脚
 **************************************************************/
@@ -201,6 +220,8 @@ void init_hardware()
 	//进入stop模式
 	//EnterStopMode();
 	prev_mode=GetModeSelected(); //初始化的时候得到按键的模式
+	
+	Calibrate_pressure_sensor(&zero_point_of_pressure_sensor);
 }
 
 /**************************************************************
