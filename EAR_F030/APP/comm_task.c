@@ -20,6 +20,8 @@
 
 #define PRESSURE_RATE 70
 #define PRESSURE_SAFETY_THRESHOLD 10
+//y=ax+b
+#define PRESSURE_SENSOR_VALUE(x) ((PRESSURE_RATE*x)+zero_point_of_pressure_sensor)
 
 
 //全局变量
@@ -45,6 +47,8 @@ extern uint32_t os_ticks;
 extern BOOL b_check_bat;
 
 extern LED_STATE led_state;
+
+extern int16_t zero_point_of_pressure_sensor;
 
 static BOOL PWM1_timing_flag=TRUE;
 static BOOL PWM2_timing_flag=TRUE; 
@@ -484,7 +488,7 @@ void bat_check()
 	os_delay_ms(TASK_BAT_CHECK, 50);
 }
 
-
+//采集ADS115的ADC值
 void adc_value_sample()
 {
 	if(thermal_state==THERMAL_NONE)
@@ -942,7 +946,8 @@ void check_selectedMode_ouputPWM()
 			}
 			else
 			{
-				if(adc_value[1]<buffer[0]*PRESSURE_RATE)
+				//if(adc_value[1]<buffer[0]*PRESSURE_RATE)
+				if(adc_value[1]<PRESSURE_SENSOR_VALUE(buffer[0]))
 				{
 					checkPressAgain_cnt++;
 				}
@@ -950,13 +955,14 @@ void check_selectedMode_ouputPWM()
 				{
 					checkPressAgain_cnt=0;
 					//state=LOAD_PARA;
-					if(adc_value[1]>PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)  
+					//if(adc_value[1]>PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)  
+					if(adc_value[1]>PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))  
 					{
 						//state=OVER_THRESHOLD_SAFETY;
 						state=OVER_THRESHOLD_SAFETY;
 					}
 					//else if(adc_value[1]>=parameter_buf[0]*70&&adc_value[1]<=20*70)
-					else if(adc_value[1]>=buffer[0]*PRESSURE_RATE&&adc_value[1]<=PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)
+					else if(adc_value[1]>=PRESSURE_SENSOR_VALUE(buffer[0])&&adc_value[1]<=PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))
 					{
 						state=PREV_OUTPUT_PWM;
 						checkPressAgain_cnt=0;
@@ -1000,7 +1006,8 @@ void check_selectedMode_ouputPWM()
 			}		
 			else
 			{
-				if(adc_value[1]<=PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)
+				//if(adc_value[1]<=PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)
+				if(adc_value[1]<=PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))
 				{
 					PaintPWM(1,pwm1_buffer); 
 					PaintPWM(2,pwm2_buffer);

@@ -41,7 +41,7 @@
 unsigned short inner_adc_result[SAMPLING_CNT];
  uint16_t RegularConvData_Tab[2];
 
-uint16_t zero_point_of_pressure_sensor;
+int16_t zero_point_of_pressure_sensor;
 
 extern uint8_t parameter_buf[PARAMETER_BUF_LEN];
 
@@ -151,7 +151,7 @@ void Init_PWRSAVE(void)
 }
 
 //校验pressure sensor
-void Calibrate_pressure_sensor(uint16_t* p_zeroPoint)
+void Calibrate_pressure_sensor(int16_t* p_zeroPoint)
 {
 	//如果是负压怎么办？应该定义成int16?值会不会变成负数？
 	uint16_t arr[10]={0};
