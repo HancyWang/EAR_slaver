@@ -155,9 +155,9 @@ void init_PWMState(void)
 	PWM3_timing_flag=TRUE;
 	waitBeforeStart_timing_flag=TRUE;
 	
-	pwm1_state=PWM_START;
-	pwm2_state=PWM_START;
-	pwm3_state=PWM_START;
+	pwm1_state=PWM_NONE;
+	pwm2_state=PWM_NONE;
+	pwm3_state=PWM_NONE;
 
 	PWM_waitBeforeStart_cnt=0;
 
@@ -409,6 +409,7 @@ BOOL Is_timing_Xmillisec(uint32_t n_ms,uint8_t num)
 		if(os_ticks==os_ticks+n_ms)
 		{
 			*b_timing_flag=TRUE;
+			*p_prev_os_tick=0;
 			return TRUE;
 		}
 	}
@@ -417,6 +418,7 @@ BOOL Is_timing_Xmillisec(uint32_t n_ms,uint8_t num)
 		if(os_ticks-*p_prev_os_tick>=n_ms)
 		{
 			*b_timing_flag=TRUE;
+			*p_prev_os_tick=0;
 			return TRUE;
 		}
 	}
@@ -990,6 +992,9 @@ void check_selectedMode_ouputPWM()
 				if(Is_timing_Xmillisec(buffer[1]*1000,6))
 				{
 					state=OUTPUT_PWM;
+					pwm1_state=PWM_START;
+					pwm2_state=PWM_START;
+					pwm3_state=PWM_START;
 				}
 			}  
 		}

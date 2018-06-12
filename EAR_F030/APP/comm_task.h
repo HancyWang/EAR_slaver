@@ -28,6 +28,7 @@ typedef enum
 
 typedef enum
 {
+	PWM_NONE,
 	PWM_START,
 	PWM_PERIOD,
 	PWM_WAIT_BETWEEN,

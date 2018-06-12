@@ -60,6 +60,8 @@ void test_task(void);
 * 函数定义
 ***********************************/
 
+extern int16_t zero_point_of_pressure_sensor;
+
 
 //初始化任务
 void init_task(void)
@@ -67,6 +69,8 @@ void init_task(void)
 	//初始化硬件
 	init_hardware();	
 	Motor_PWM_Init();
+	
+	Calibrate_pressure_sensor(&zero_point_of_pressure_sensor);
 	
 	//初始化通信相关
 	fifoInit(&send_fifo,send_buf,SEND_BUF_LEN);

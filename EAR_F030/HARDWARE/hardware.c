@@ -221,7 +221,7 @@ void init_hardware()
 	//EnterStopMode();
 	prev_mode=GetModeSelected(); //初始化的时候得到按键的模式
 	
-	Calibrate_pressure_sensor(&zero_point_of_pressure_sensor);
+//	Calibrate_pressure_sensor(&zero_point_of_pressure_sensor);
 }
 
 /**************************************************************
