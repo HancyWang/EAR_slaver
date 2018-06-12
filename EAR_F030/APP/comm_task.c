@@ -983,11 +983,11 @@ void check_selectedMode_ouputPWM()
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 			//如果不加if(b_Is_PCB_PowerOn==FALSE)会导致开关重新开机waitbeforestart定时不到想要的秒数
-//			if(b_Is_PCB_PowerOn==FALSE)
-//			{
-//				PWM_waitBeforeStart_cnt=0;
-//			}
-//			else
+			if(b_Is_PCB_PowerOn==FALSE)
+			{
+				PWM_waitBeforeStart_cnt=0;
+			}
+			else
 			{
 				if(Is_timing_Xmillisec(buffer[1]*1000,6))
 				{

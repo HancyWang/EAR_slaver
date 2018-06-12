@@ -70,7 +70,7 @@ MCU_STATE mcu_state=POWER_OFF;
 //extern uint8_t OUTPUT_FINISH;
 BOOL b_Is_PCB_PowerOn=FALSE;
 //BOOL b_check_bat=FALSE;
-volatile KEY_STATE key_state=KEY_UPING;
+volatile KEY_STATE key_state=KEY_STOP_MODE;
 
 extern uint16_t RegularConvData_Tab[2];
 extern uint8_t adc_state;
