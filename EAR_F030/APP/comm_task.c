@@ -18,7 +18,9 @@
 #include "hardware.h"
 #include "iwtdg.h"
 
-#define PRESSURE_RATE 70
+//#define PRESSURE_RATE 70
+#define PRESSURE_RATE (FlashReadWord(FLASH_PRESSURE_RATE_ADDR))
+
 #define PRESSURE_SAFETY_THRESHOLD 10
 //y=ax+b
 #define PRESSURE_SENSOR_VALUE(x) ((PRESSURE_RATE*x)+zero_point_of_pressure_sensor)

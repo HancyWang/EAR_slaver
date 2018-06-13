@@ -80,11 +80,12 @@ void init_task(void)
 
 	os_create_task(TaskDataSend, OS_TRUE, SEND_TASK_ID);
 	os_create_task(CMD_ProcessTask, OS_TRUE, RECEIVE_TASK_ID);
-	os_create_task(key_led_task, OS_TRUE, KEY_LED_TASK_ID);
-	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
-	os_create_task(get_switch_mode,OS_TRUE,TASK_GET_SWITCH_MODE);
-	os_create_task(adc_value_sample,OS_TRUE,TASK_ADC_VALUE_SAMPLE);
-	os_create_task(bat_check,OS_TRUE,TASK_BAT_CHECK);
+	
+//	os_create_task(key_led_task, OS_TRUE, KEY_LED_TASK_ID);
+//	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
+//	os_create_task(get_switch_mode,OS_TRUE,TASK_GET_SWITCH_MODE);
+//	//os_create_task(adc_value_sample,OS_TRUE,TASK_ADC_VALUE_SAMPLE);
+//	os_create_task(bat_check,OS_TRUE,TASK_BAT_CHECK);
 	os_pend_task(INIT_TASK_ID);
 }
 
