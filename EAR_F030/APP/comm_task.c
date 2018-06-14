@@ -23,7 +23,7 @@
 
 #define PRESSURE_SAFETY_THRESHOLD 10
 //y=ax+b
-#define PRESSURE_SENSOR_VALUE(x) ((PRESSURE_RATE*x)+zero_point_of_pressure_sensor)
+#define PRESSURE_SENSOR_VALUE(x) (int16_t)((PRESSURE_RATE*x)+zero_point_of_pressure_sensor)
 
 
 //全局变量
@@ -115,7 +115,7 @@ uint8_t wait_cnt=0;
 
 THERMAL_STATE thermal_state=THERMAL_NONE;
 
-uint16_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
+int16_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
 uint8_t adc_state=1;
 
 uint8_t led_high_cnt=0;
@@ -1022,9 +1022,9 @@ void check_selectedMode_ouputPWM()
 				}
 				else
 				{
-					Motor_PWM_Freq_Dudy_Set(1,100,0);
-					Motor_PWM_Freq_Dudy_Set(2,100,0);
-					Motor_PWM_Freq_Dudy_Set(3,100,0);
+//					Motor_PWM_Freq_Dudy_Set(1,100,0);
+//					Motor_PWM_Freq_Dudy_Set(2,100,0);
+//					Motor_PWM_Freq_Dudy_Set(3,100,0);
 //					pwm1_state=PWM_START;
 //					pwm2_state=PWM_START;
 //					pwm3_state=PWM_START;
@@ -1037,19 +1037,21 @@ void check_selectedMode_ouputPWM()
 		if(state==OVER_THRESHOLD_SAFETY)
 		{
 	//		Motor_shake_for_sleep();
-			set_led(LED_RED);
+			
 	
 			for(uint8_t i=0;i<5;i++)
 			//for(uint8_t i=0;i<3;i++)
 			{
+				set_led(LED_CLOSE);
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
 				Motor_PWM_Freq_Dudy_Set(3,100,0);
 				Delay_ms(500);
 				//IWDG_Feed();
+				set_led(LED_RED);
 				Motor_PWM_Freq_Dudy_Set(1,100,50);
 				Motor_PWM_Freq_Dudy_Set(2,100,50);
-				//Motor_PWM_Freq_Dudy_Set(2,100,50);
+				Motor_PWM_Freq_Dudy_Set(2,100,50);
 				Motor_PWM_Freq_Dudy_Set(3,100,50);
 				Delay_ms(500);
 				IWDG_Feed();

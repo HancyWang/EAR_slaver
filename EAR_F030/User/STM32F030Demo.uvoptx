@@ -156,17 +156,7 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>parameter_buf</ItemText>
-        </Ww>
-        <Ww>
-          <count>1</count>
-          <WinNumber>1</WinNumber>
           <ItemText>adc_value,0x0A</ItemText>
-        </Ww>
-        <Ww>
-          <count>2</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>g_CmdReceive</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -184,6 +174,16 @@
           <count>2</count>
           <WinNumber>2</WinNumber>
           <ItemText>buffer,0x10</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>zero_point_of_pressure_sensor,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>checkPressAgain_cnt,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

@@ -154,8 +154,8 @@ void Init_PWRSAVE(void)
 void Calibrate_pressure_sensor(int16_t* p_zeroPoint)
 {
 	//如果是负压怎么办？应该定义成int16?值会不会变成负数？
-	uint16_t arr[10]={0};
-	uint16_t sum=0;
+	int16_t arr[10]={0};
+	int16_t sum=0;
 	
 	delay_ms(50); //让ADC稳定
 	for(uint8_t i=0;i<10;i++)
