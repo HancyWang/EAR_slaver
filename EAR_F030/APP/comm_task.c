@@ -820,7 +820,7 @@ void CheckFlashData(unsigned char* buffer)
 			ResetParameter(buffer);
 			return;
 		}
-		if(buffer[2+j]<5||buffer[2+j]>99) //4.duty cycle
+		if(buffer[2+j]<5||buffer[2+j]>100) //4.duty cycle
 		{
 			ResetParameter(buffer);
 			return;
