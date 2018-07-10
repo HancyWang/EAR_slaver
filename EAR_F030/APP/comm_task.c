@@ -1057,17 +1057,17 @@ void check_selectedMode_ouputPWM()
 		{
 	//		Motor_shake_for_sleep();
 			
-	
+			set_led(LED_RED);
 			for(uint8_t i=0;i<5;i++)
 			//for(uint8_t i=0;i<3;i++)
 			{
-				set_led(LED_CLOSE);
+				//set_led(LED_CLOSE);
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
 				Motor_PWM_Freq_Dudy_Set(3,100,0);
 				Delay_ms(500);
 				//IWDG_Feed();
-				set_led(LED_RED);
+				//set_led(LED_RED);
 				Motor_PWM_Freq_Dudy_Set(1,100,50);
 				Motor_PWM_Freq_Dudy_Set(2,100,50);
 				Motor_PWM_Freq_Dudy_Set(2,100,50);
