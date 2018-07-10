@@ -19,11 +19,12 @@
 #include "iwtdg.h"
 
 //#define PRESSURE_RATE 70
-#define PRESSURE_RATE (FlashReadWord(FLASH_PRESSURE_RATE_ADDR))
+//#define PRESSURE_RATE (FlashReadWord(FLASH_PRESSURE_RATE_ADDR))
+uint16_t PRESSURE_RATE;
 
 #define PRESSURE_SAFETY_THRESHOLD 10
 //y=ax+b
-#define PRESSURE_SENSOR_VALUE(x) (int16_t)((PRESSURE_RATE*x)+zero_point_of_pressure_sensor)
+#define PRESSURE_SENSOR_VALUE(x) ((int16_t)(((PRESSURE_RATE)*(x))+zero_point_of_pressure_sensor))
 
 
 //全局变量
@@ -870,7 +871,22 @@ void FillUpPWMbuffer(uint8_t* dest,uint8_t* src)
 	dest[0]=serial_cnt;
 }
 
-
+//容错，如果读到的sensor斜率值在[10,200]之间，为ok，否则读10次之后就给sensor默认值20
+void get_pressure_sensor_rate()
+{
+	uint8_t readCnt=0;
+	do
+	{
+		if(readCnt==10) //如果读10次都不在[10,200]之间，认为有问题
+		{
+			readCnt=0;
+			PRESSURE_RATE=60;
+			return;
+		}
+		PRESSURE_RATE=FlashReadWord(FLASH_PRESSURE_RATE_ADDR);
+		readCnt++;
+	}while(PRESSURE_RATE<10||PRESSURE_RATE>200);
+}
 
 
 /*******************************************************************************
@@ -897,6 +913,9 @@ void check_selectedMode_ouputPWM()
 			FlashRead(FLASH_WRITE_START_ADDR,tmp,len);
 			memcpy(buffer,tmp,PARAMETER_BUF_LEN);
 			CheckFlashData(buffer);
+			
+			get_pressure_sensor_rate();  //获取压力sensor的斜率
+			//PRESSURE_RATE=FlashReadWord(FLASH_PRESSURE_RATE_ADDR);
 			//state=GET_MODE;
 			state=CPY_PARA_TO_BUFFER;
 		}
