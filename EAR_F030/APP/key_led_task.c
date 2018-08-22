@@ -137,17 +137,18 @@ BOOL Check_wakeUpKey_pressed(void)
 		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0)
 		{
 			//cnt++;
-			delay_ms(30);
+			delay_ms(10);
 			if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0)
 			{
-				while(TRUE)
-				{
-					delay_ms(10);
-					if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==1)
-					{
-						return TRUE;
-					}
-				}
+//				while(TRUE)
+//				{
+//					delay_ms(10);
+//					if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==1)
+//					{
+//						return TRUE;
+//					}
+//				}
+				return TRUE;
 			}
 			//delay_ms(5);
 //			if(cnt>20)
