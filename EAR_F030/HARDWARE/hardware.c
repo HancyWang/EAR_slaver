@@ -31,6 +31,7 @@
 #include "protocol_module.h"
 #include "key_led_task.h"
 #include "app.h"
+#include "rtc.h"
 /**********************************
 *宏定义
 ***********************************/
@@ -39,7 +40,7 @@
 * 全局变量
 ***********************************/
 unsigned short inner_adc_result[SAMPLING_CNT];
- uint16_t RegularConvData_Tab[2];
+ uint16_t RegularConvData_Tab[2];  //电池电压和按键模式
 
 int16_t zero_point_of_pressure_sensor;
 
@@ -107,10 +108,11 @@ void init_tim(void)
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
  
-  TIM_TimeBaseStructure.TIM_Period = SystemCoreClock/OS_TICKS_PER_SEC;           // 自动重装载寄存器周期的值(计数值) 
+  TIM_TimeBaseStructure.TIM_Period = SystemCoreClock/OS_TICKS_PER_SEC-1;           // 自动重装载寄存器周期的值(计数值) 
   TIM_TimeBaseStructure.TIM_Prescaler = 0;	//时钟预分频数 
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;			//向上计数模式
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+	TIM_TimeBaseStructure.TIM_RepetitionCounter=0;
 
   TIM_TimeBaseInit(TIM16, &TIM_TimeBaseStructure);
 
@@ -150,22 +152,22 @@ void Init_PWRSAVE(void)
 	GPIO_ResetBits(KEY_PWR_SAVE_PORT,KEY_PWR_SAVE_PIN);
 }
 
-//校验pressure sensor
-void Calibrate_pressure_sensor(int16_t* p_zeroPoint)
-{
-	//如果是负压怎么办？应该定义成int16?值会不会变成负数？
-	int16_t arr[10]={0};
-	int16_t sum=0;
-	
-	delay_ms(50); //让ADC稳定
-	for(uint8_t i=0;i<10;i++)
-	{
-		arr[i]=ADS115_readByte(0x90);
-		sum+=arr[i];
-		delay_us(5);
-	}
-	*p_zeroPoint=sum/10;
-}
+////校验pressure sensor
+//void Calibrate_pressure_sensor(int16_t* p_zeroPoint)
+//{
+//	//如果是负压怎么办？应该定义成int16?值会不会变成负数？
+//	int16_t arr[10]={0};
+//	int16_t sum=0;
+//	
+//	delay_ms(50); //让ADC稳定
+//	for(uint8_t i=0;i<10;i++)
+//	{
+//		arr[i]=ADS115_readByte(0x90);
+//		sum+=arr[i];
+//		delay_us(5);
+//	}
+//	*p_zeroPoint=sum/10;
+//}
 
 
 /**************************************************************
@@ -175,17 +177,20 @@ void init_hardware()
 {
 	GPIO_InitTypeDef  GPIO_InitStructure;
 
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
+//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB, ENABLE);
 
 	//输入检测
-	GPIO_InitStructure.GPIO_Pin = EXP_DETECT_PIN;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-	GPIO_Init(EXP_DETECT_PORT, &GPIO_InitStructure);
+//	GPIO_InitStructure.GPIO_Pin = EXP_DETECT_PIN;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+//	GPIO_Init(EXP_DETECT_PORT, &GPIO_InitStructure);
 	
+	//按键 PA0
 	GPIO_InitStructure.GPIO_Pin = KEY_DETECT_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
 	GPIO_Init(KEY_DETECT_PORT, &GPIO_InitStructure);
 	
-	//推挽输出
+	//LED灯 PB8 PB9
 	GPIO_InitStructure.GPIO_Pin = GREEN_LED_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -195,8 +200,9 @@ void init_hardware()
 	
 	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
 	GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
+	set_led(LED_CLOSE);
 	
-	//电源PWR_SAVE
+	//电源PWR_SAVE PA5
 	GPIO_InitStructure.GPIO_Pin = KEY_PWR_SAVE_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -204,24 +210,15 @@ void init_hardware()
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(KEY_PWR_SAVE_PORT, &GPIO_InitStructure);
 	GPIO_ResetBits(KEY_PWR_SAVE_PORT,KEY_PWR_SAVE_PIN);
+
 	
-	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
-	GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
-	set_led(LED_CLOSE);
-	
-	//初始化ADC
+	//初始化ADC   PA1 PA4
 	ADC1_Init();
-//	//初始化ADS115,I2C
-	ADS115_Init();
-//ADS115_cfg4ThermalCheck();
-//	ADS115_enter_power_down_mode();
-//	//配置中断
-//	CfgPA0ASWFI();
-	//进入stop模式
-	//EnterStopMode();
+
 	prev_mode=GetModeSelected(); //初始化的时候得到按键的模式
-	
-//	Calibrate_pressure_sensor(&zero_point_of_pressure_sensor);
+
+//初始化flash中的datetime记录页
+	Init_RecordPage();
 }
 
 /**************************************************************

@@ -60,4 +60,5 @@ void get_switch_mode(void);
 void thermal_check(void);
 void adc_value_sample(void);
 void bat_check(void);
+
 #endif

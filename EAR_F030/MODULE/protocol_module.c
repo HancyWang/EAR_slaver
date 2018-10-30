@@ -28,6 +28,7 @@
 #include "key_led_task.h"
 
 #include "common.h"
+#include "rtc.h"
 /**********************************
 *宏定义
 ***********************************/
@@ -35,6 +36,7 @@
 /***********************************
 * 全局变量
 ***********************************/
+uint32_t pageBuff[512];
 //BOOL rcvParameters_from_PC=FALSE;
 uint8_t rcvParaSuccess=0x00;
 //發送數據FIFO
@@ -51,8 +53,8 @@ extern uint16_t RegularConvData_Tab[2];
 uint8_t arr_mmgH_value[3];
 uint16_t arr_adc_value[3];
 
-extern INT16U ADS115_readByte(INT8U slaveaddr);
-extern int16_t zero_point_of_pressure_sensor;
+//extern INT16U ADS115_readByte(INT8U slaveaddr);
+//extern int16_t zero_point_of_pressure_sensor;
 
 //uint32_t RATE;
 typedef struct POINT
@@ -60,6 +62,9 @@ typedef struct POINT
 	uint8_t mmgh_value;
 	uint16_t adc_value;
 }POINT;
+
+
+
 /***********************************
 * 局部变量
 ***********************************/
@@ -497,81 +502,344 @@ uint32_t cal_pressure_rate(POINT point_1,POINT point_2,POINT point_3)
 	return (rate1+rate2)/2;
 }
 
-void send_cal_reslut_2_PC()
+//void send_cal_reslut_2_PC()
+//{
+//	uint8_t buffer[4+9+2+2];
+//	POINT point_1;
+//	POINT point_2;
+//	POINT point_3;
+//	
+//	//1.发送给上位机
+//	buffer[0] = PACK_HEAD_BYTE;       //0xFF
+//	buffer[1] = 0x04+11;            
+//	buffer[2] = MODULE_CMD_TYPE;      //0x00
+//	buffer[3] = CAL_SENSOR_SEND_TO_PC; //0x60
+//	
+//	point_1.mmgh_value=arr_mmgH_value[0];
+//	point_1.adc_value=arr_adc_value[0];
+
+//	point_2.mmgh_value=arr_mmgH_value[1];
+//	point_2.adc_value=arr_adc_value[1];
+
+//	point_3.mmgh_value=arr_mmgH_value[2];
+//	point_3.adc_value=arr_adc_value[2];
+
+//	 
+//	//填数值1
+//	buffer[4]=point_1.mmgh_value;
+//	buffer[5]=point_1.adc_value/256;
+//	buffer[6]=point_1.adc_value%256;
+
+//	//填数值2
+//	buffer[7]=point_2.mmgh_value;
+//	buffer[8]=point_2.adc_value/256;
+//	buffer[9]=point_2.adc_value%256;
+
+//	//填数值3
+//	buffer[10]=point_3.mmgh_value;
+//	buffer[11]=point_3.adc_value/256;
+//	buffer[12]=point_3.adc_value%256;
+
+//	buffer[buffer[1]-1]=((uint16_t)zero_point_of_pressure_sensor)%256;
+//	buffer[buffer[1]-2]=((uint16_t)zero_point_of_pressure_sensor)/256;
+//	CalcCheckSum(buffer);
+//	fifoWriteData(&send_fifo, buffer, buffer[1]+2);
+//	
+//	//2.将斜率存起来
+//	//计算斜率
+//	uint32_t rate=cal_pressure_rate(point_1,point_2,point_3);
+//	FlashWrite(FLASH_PRESSURE_RATE_ADDR,(uint8_t*)&rate,1);
+//}
+
+//void calibrate_sensor_by_ID(uint8_t* pdata,uint8_t ID)
+//{
+//	
+//	
+//	switch(ID)
+//	{
+//		case 1:
+//			arr_mmgH_value[0]=*(pdata+4);
+//			arr_adc_value[0]=ADS115_readByte(0x90);
+//			break;
+//		case 2:
+//			arr_mmgH_value[1]=*(pdata+4);
+//			arr_adc_value[1]=ADS115_readByte(0x90);
+//			break;
+//		case 3:
+//			arr_mmgH_value[2]=*(pdata+4);
+//			arr_adc_value[2]=ADS115_readByte(0x90);
+//			
+//			send_cal_reslut_2_PC();
+//			break;
+//		default:
+//			break;
+//	}
+//}
+
+#if 1
+uint16_t FlashWriteUIntBuffer(uint32_t addr, uint32_t *p_data, uint16_t len)
 {
-	uint8_t buffer[4+9+2+2];
-	POINT point_1;
-	POINT point_2;
-	POINT point_3;
+	uint16_t i = 0;
+	uint32_t address = addr;
 	
-	//1.发送给上位机
-	buffer[0] = PACK_HEAD_BYTE;       //0xFF
-	buffer[1] = 0x04+11;            
-	buffer[2] = MODULE_CMD_TYPE;      //0x00
-	buffer[3] = CAL_SENSOR_SEND_TO_PC; //0x60
+	FLASH_Unlock();
+	FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
+
+	FLASH_ErasePage(addr);
 	
-	point_1.mmgh_value=arr_mmgH_value[0];
-	point_1.adc_value=arr_adc_value[0];
-
-	point_2.mmgh_value=arr_mmgH_value[1];
-	point_2.adc_value=arr_adc_value[1];
-
-	point_3.mmgh_value=arr_mmgH_value[2];
-	point_3.adc_value=arr_adc_value[2];
-
-	 
-	//填数值1
-	buffer[4]=point_1.mmgh_value;
-	buffer[5]=point_1.adc_value/256;
-	buffer[6]=point_1.adc_value%256;
-
-	//填数值2
-	buffer[7]=point_2.mmgh_value;
-	buffer[8]=point_2.adc_value/256;
-	buffer[9]=point_2.adc_value%256;
-
-	//填数值3
-	buffer[10]=point_3.mmgh_value;
-	buffer[11]=point_3.adc_value/256;
-	buffer[12]=point_3.adc_value%256;
-
-	buffer[buffer[1]-1]=((uint16_t)zero_point_of_pressure_sensor)%256;
-	buffer[buffer[1]-2]=((uint16_t)zero_point_of_pressure_sensor)/256;
-	CalcCheckSum(buffer);
-	fifoWriteData(&send_fifo, buffer, buffer[1]+2);
+	for(i=0;i<len;i++)
+	{
+		FLASH_ProgramWord(address,p_data[i]);			
+		address += 4;
+	}
 	
-	//2.将斜率存起来
-	//计算斜率
-	uint32_t rate=cal_pressure_rate(point_1,point_2,point_3);
-	FlashWrite(FLASH_PRESSURE_RATE_ADDR,(uint8_t*)&rate,1);
+	FLASH_Lock();
+	return i;
 }
 
-void calibrate_sensor_by_ID(uint8_t* pdata,uint8_t ID)
+void reset_dateTime()
+{
+	uint32_t pageInfo[3];
+	memset(pageInfo,0,3*4);
+	FlashRead(FLASH_RECORD_PAGE_FROM_TO,pageInfo,3);
+	
+	uint16_t len=FLASH_PAGE_STEP/4;   
+	memset(pageBuff,0xFF,len*4);
+	
+	for(uint32_t addr=FLASH_RECORD_PAGE_FROM_TO;addr<=pageInfo[1];)
+	{
+		FlashWriteUIntBuffer(addr,pageBuff,len);
+		addr+=2048;
+	}
+//	FlashWriteUIntBuffer(FLASH_RECORD_PAGE_FROM_TO,pageBuff,len);
+//	FlashWriteUIntBuffer(FLASH_RECORD_DATETIME_START,pageBuff,len);
+}
+
+//初始化PAGE_from_to,记录从XXX页到xxx页，有多少条数据
+void Init_RecordPage()
+{
+	//如果在FLASH_RECORD_PAGE_FROM_TO中有数据，说明已经初始化过了
+	uint32_t data = *(uint32_t*)FLASH_RECORD_PAGE_FROM_TO;
+	if(data==FLASH_RECORD_DATETIME_START)
+	{
+		return;
+	}
+	
+	FLASH_Unlock();
+	FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
+	
+	uint32_t address=FLASH_RECORD_PAGE_FROM_TO;
+	FLASH_ErasePage(address);
+	
+	FLASH_ProgramWord(address,FLASH_RECORD_DATETIME_START);     //page from FLASH_RECORD_DATETIME_START
+	FLASH_ProgramWord(address+4,FLASH_RECORD_DATETIME_START);  //page to  FLASH_RECORD_DATETIME_START
+	FLASH_ProgramWord(address+8,0);        											//record numbers，记录数据条数
+
+	FLASH_Lock();
+}
+
+
+
+//记录开关机时间
+void record_dateTime(SYSTEM_CODE code)
+{
+	//获取page信息，1.从XXX页 2.到XXX页 3.记录条数
+	//pageInfo[0]  从xxx页
+	//pageInfo[1]  到xxx页
+	//pageInfo[2]  记录条数，一条记录8字节
+	uint32_t pageInfo[3];
+	memset(pageInfo,0,3*4);
+	FlashRead(FLASH_RECORD_PAGE_FROM_TO,pageInfo,3);
+	
+	//根据获取的page信息，确定在哪一页进行操作
+	uint32_t address=pageInfo[1];															//定位操作的页面
+	if(address>=FLASH_RECORD_DATETIME_UPLIMIT)  //不允许超过128K
+	{
+		return;
+	}
+	
+	uint16_t len=FLASH_PAGE_STEP/4;   //len=512
+//	static uint32_t pageBuff[512]={0};
+	memset(pageBuff,0xFF,len*4);
+	
+//#ifdef	_DEBUG_FLASH_RECORD_DATETIME
+//	FlashWriteUIntBuffer(FLASH_RECORD_PAGE_FROM_TO,pageBuff,len);
+//	FlashWriteUIntBuffer(FLASH_RECORD_DATETIME_START,pageBuff,len);
+//#else
+	FlashRead(address,pageBuff,len);    											//读取该页面的数据到pageBuff中
+	
+	//根据pageInfo[2](信息条数)来加入新的一条的数据
+	RTC_DateTypeDef date_struct;
+	RTC_TimeTypeDef time_struct;
+	Get_DataTime(&date_struct,&time_struct);
+	
+	pageBuff[(pageInfo[2]%256)*2]=code+(date_struct.RTC_Year<<16)+(date_struct.RTC_Month<<24);
+	pageBuff[(pageInfo[2]%256)*2+1]=(time_struct.RTC_Seconds<<24)+(time_struct.RTC_Minutes<<16)+(time_struct.RTC_Hours<<8)+date_struct.RTC_Date;
+	
+	pageInfo[2]++;          //完成了一条数据的记录
+	if(pageInfo[2]%256==0)  //如果刚好更新满一页了
+	{
+		//更新pageInfo中的数据
+		pageInfo[0]=FLASH_RECORD_DATETIME_START;
+		pageInfo[1]+=2048;
+	}
+	FlashWriteUIntBuffer(FLASH_RECORD_PAGE_FROM_TO,pageInfo,3);
+	
+	//写入数据
+	FlashWriteUIntBuffer(address,pageBuff,len);
+//#endif
+}
+
+uint32_t get_rtc_record_number()
+{
+	uint32_t pageInfo[3];
+	memset(pageInfo,0,3*4);
+	FlashRead(FLASH_RECORD_PAGE_FROM_TO,pageInfo,3);
+	
+	return pageInfo[2];
+}
+
+void send_RTC_SYN_finish()
+{
+	uint8_t buffer[7];
+	
+	buffer[0] = PACK_HEAD_BYTE;       //0xFF
+	buffer[1] = 0x05;            
+	buffer[2] = MODULE_CMD_TYPE;      //0x00
+	buffer[3] = RTC_SYN_FINISHED; //0x66
+	
+	buffer[4]=1;
+	
+	CalcCheckSum(buffer);
+	fifoWriteData(&send_fifo, buffer, buffer[1]+2);
+}
+
+void send_RTC_record_numbers()
+{
+	uint8_t buffer[10];
+	
+	buffer[0] = 0xFF;       //0xFF
+	buffer[1] = 0x08;            
+	buffer[2] = MODULE_CMD_TYPE;      //0x00
+	buffer[3] = SENT_RTC_BYTES; //0x69
+	
+	uint32_t tmp=get_rtc_record_number();
+	
+	buffer[4]=tmp/256/256/256;
+	buffer[5]=tmp/256/256%256;
+	buffer[6]=tmp%(256*256)/256;
+	buffer[7]=tmp%(256*256)%256;
+	
+	CalcCheckSum(buffer);
+	fifoWriteData(&send_fifo, buffer, buffer[1]+2);
+}
+
+uint16_t get_page_num(uint16_t frameX)
+{
+	uint16_t tmp=0;
+	tmp=frameX/9;
+	if(frameX%9!=0)
+	{
+		tmp++;
+	}
+	return tmp;
+}
+
+
+uint16_t send_one_frame_data(uint8_t frame_length,uint8_t* p_data,uint16_t pack_No)
+{
+//	memset(send_buf,0,SEND_BUF_LEN);
+	
+		uint8_t bufferSend[30*8+6+2];
+//	uint8_t bufferSend[frame_length];
+//	memset(bufferSend,0,frame_length);
+//	static uint8_t what;
+//		what=frame_length;
+	
+	uint16_t cnt=0;
+	bufferSend[0] = 0xFF;       //0xFF
+	bufferSend[1] = frame_length-2; 
+//	if(pack_No%9==0)
+//	{
+//		bufferSend[1] = 128+2+4;
+//	}
+//	else
+//	{
+//		bufferSend[1] = frame_length-2; 
+//	}         
+	bufferSend[2] = MODULE_CMD_TYPE;      //0x00
+	bufferSend[3] = SEND_RTC_INFO; //0x71
+	
+	//填充数据
+	bufferSend[4]=pack_No/256;   //每一个包都做一个标记，表示这是第几包
+	bufferSend[5]=pack_No%256;
+	
+	for(int m=6;m<=bufferSend[1]-1;m++) 
+	{
+		bufferSend[m]=*p_data++;
+		cnt++;
+	}
+	
+	CalcCheckSum(bufferSend);
+	fifoWriteData(&send_fifo, bufferSend, bufferSend[1]+2);
+	memset(bufferSend,0,frame_length);
+	return cnt;
+}
+
+void send_rtc_info(uint16_t frameX)
 {
 	
+	int recordNums=get_rtc_record_number();  //获取记录数据的条数
+	uint16_t pages_numbers=recordNums/256; //一共有多少页
+	uint16_t page_rest=recordNums%256;//还剩下多少条记录
+	uint16_t DATA_RECORD_CNT=30;  //一次发送30条数据
 	
-	switch(ID)
+	uint16_t tmp_cnt,tmp_rest;
+		
+	tmp_cnt=page_rest/DATA_RECORD_CNT;  //满包要发送的次数
+	tmp_rest=page_rest%DATA_RECORD_CNT; //非满包的记录条数
+	
+	if(frameX<=9*pages_numbers)
 	{
-		case 1:
-			arr_mmgH_value[0]=*(pdata+4);
-			arr_adc_value[0]=ADS115_readByte(0x90);
-			break;
-		case 2:
-			arr_mmgH_value[1]=*(pdata+4);
-			arr_adc_value[1]=ADS115_readByte(0x90);
-			break;
-		case 3:
-			arr_mmgH_value[2]=*(pdata+4);
-			arr_adc_value[2]=ADS115_readByte(0x90);
-			
-			send_cal_reslut_2_PC();
-			break;
-		default:
-			break;
+		uint8_t* p=(uint8_t*)pageBuff;
+		//读取当前页面数据
+		memset(pageBuff,0xFF,512*4);
+		FlashRead(FLASH_RECORD_DATETIME_START+FLASH_PAGE_STEP*(get_page_num(frameX)-1),pageBuff,FLASH_PAGE_STEP/4);    											//读取该页面的数据到pageBuff中
+		
+		if(frameX%9==0)
+		{
+			send_one_frame_data(6+16*8+2,p+8*240,frameX);
+		}
+		else
+		{
+			send_one_frame_data(6+DATA_RECORD_CNT*8+2,p+30*8*(frameX-9*(get_page_num(frameX)-1)-1),frameX);
+		}
+	}
+	else
+	{
+		uint8_t* p=(uint8_t*)pageBuff;
+		//读取当前页面数据
+		memset(pageBuff,0xFF,512*4);
+		FlashRead(FLASH_RECORD_DATETIME_START+FLASH_PAGE_STEP*(get_page_num(frameX)-1),pageBuff,FLASH_PAGE_STEP/4);  
+		
+		if(frameX<=9*pages_numbers+tmp_cnt)
+		{
+			send_one_frame_data(6+DATA_RECORD_CNT*8+2,p+30*8*(frameX-9*(get_page_num(frameX)-1)-1),frameX);  //发送满包的数据
+		}
+		else
+		{
+			send_one_frame_data(6+tmp_rest*8+2,p+240*(frameX-9*(get_page_num(frameX)-1)-1),frameX);  //发送非满包的
+		}
 	}
 }
 
-
+uint16_t getFrameNo(uint8_t* pdata)
+{
+	if(pdata==NULL)
+		return 0;
+	return pdata[4]*256+pdata[5];
+}
+#endif
 //解析上位机命令
 void protocol_module_process(uint8_t* pdata)
 {
@@ -655,17 +923,30 @@ void protocol_module_process(uint8_t* pdata)
 	case GET_FLASH_DATA_2_ID:
 		send_prameter_fram2_to_PC();
 		break;
-	case CAL_SENSOR_MMGH_1:   //新增的专门用来校验sensor
-		calibrate_sensor_by_ID(pdata,1);
-		break;
-	case CAL_SENSOR_MMGH_2:
-		calibrate_sensor_by_ID(pdata,2);
-		break;
-	case CAL_SENSOR_MMGH_3:
-		calibrate_sensor_by_ID(pdata,3);  //在3中回传值
+	//现在使用honeywell 代替ADS115,不需要校验了
+//	case CAL_SENSOR_MMGH_1:   //新增的专门用来校验sensor
+//		calibrate_sensor_by_ID(pdata,1);
 //		break;
-//	case CAL_SENSOR_SEND_TO_PC:
+//	case CAL_SENSOR_MMGH_2:
+//		calibrate_sensor_by_ID(pdata,2);
+//		break;
+//	case CAL_SENSOR_MMGH_3:
+//		calibrate_sensor_by_ID(pdata,3);  //在3中回传值
+//		break;
+	case RTC_SYN_CMD:
+		if(Set_RTC(pdata)==TRUE)
+		{		
+			reset_dateTime();
+			Init_RecordPage();
+			record_dateTime(CODE_PC_SYN_RTC);
+			send_RTC_SYN_finish();
+		}
 		break;
+	case GET_RTC_RECORD_NUMBERS:
+		send_RTC_record_numbers();
+		break;
+	case GET_RTC_INFO:
+		send_rtc_info(getFrameNo(pdata));
 	default:
 		break;
 	}

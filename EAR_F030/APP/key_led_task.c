@@ -70,14 +70,17 @@ MCU_STATE mcu_state=POWER_OFF;
 //extern uint8_t OUTPUT_FINISH;
 BOOL b_Is_PCB_PowerOn=FALSE;
 //BOOL b_check_bat=FALSE;
-volatile KEY_STATE key_state=KEY_STOP_MODE;
+volatile KEY_STATE key_state=KEY_UPING;
 
 extern uint16_t RegularConvData_Tab[2];
 extern uint8_t adc_state;
 extern THERMAL_STATE thermal_state;
 
+static uint8_t wakeup_Cnt;
 
 LED_STATE led_state=LED_NONE;
+
+extern uint8_t prev_mode;
 /***********************************
 * 局部函数
 ***********************************/
@@ -167,24 +170,28 @@ void EXTI0_1_IRQHandler(void)
 {  
 	if(EXTI_GetITStatus(EXTI_Line0)!=RESET)  
 	{ 
-		if(Check_wakeUpKey_pressed())
-		{
-			b_Is_PCB_PowerOn=!b_Is_PCB_PowerOn;		//每按一次，b_Is_PCB_PowerOn翻转一次状态
-			if(b_Is_PCB_PowerOn==TRUE)
-			{
-				mcu_state=POWER_ON;	
-				key_state=KEY_WAKE_UP;		
-				state=LOAD_PARA;
-				init_PWMState();
-			}
-			else
-			{
-				mcu_state=POWER_OFF;	
-				key_state=KEY_STOP_MODE;
-				state=LOAD_PARA;
-				init_PWMState();
-			}
-		}
+		#if 0
+//		if(Check_wakeUpKey_pressed())
+//		{
+//			b_Is_PCB_PowerOn=!b_Is_PCB_PowerOn;		//每按一次，b_Is_PCB_PowerOn翻转一次状态
+//			if(b_Is_PCB_PowerOn==TRUE)
+//			{
+//				mcu_state=POWER_ON;	
+//				key_state=KEY_WAKE_UP;		
+//				state=LOAD_PARA;
+//				init_PWMState();
+//			}
+//			else
+//			{
+//				mcu_state=POWER_OFF;	
+//				key_state=KEY_STOP_MODE;
+//				state=LOAD_PARA;
+//				init_PWMState();
+//			}
+//		}
+		#endif
+		key_state=KEY_DOWNING;
+		wakeup_Cnt=0;
 	}  
 	//EXTI_ClearITPendingBit(EXTI_Line0);
 	EXTI_ClearFlag(EXTI_Line0);
@@ -203,81 +210,24 @@ void init_system_afterWakeUp()
 	SystemInit();
 	
 	init_task();
-	//os_start();	
-	#if 0
-//	delay_init();
-//	os_init();
-//	SystemInit();
-//	
-//	
-//	//初始化通信相关
-//	fifoInit(&send_fifo,send_buf,SEND_BUF_LEN);
-//	UARTInit(g_CmdReceive.m_Buf1, BUF1_LENGTH);	
-//	Init_Receive(&g_CmdReceive);
-//	
-//	
-//	GPIO_InitTypeDef  GPIO_InitStructure;
-
-//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
-
-//	//输入检测
-//	GPIO_InitStructure.GPIO_Pin = EXP_DETECT_PIN;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_Init(EXP_DETECT_PORT, &GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Pin = KEY_DETECT_PIN;
-//	GPIO_Init(KEY_DETECT_PORT, &GPIO_InitStructure);
-//	
-//	//推挽输出
-//	GPIO_InitStructure.GPIO_Pin = GREEN_LED_PIN;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(GREEN_LED_PORT, &GPIO_InitStructure);
-//	
-//	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
-//	GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
-//	//GPIO_ResetBits(GPIOF, GPIO_Pin_0|GPIO_Pin_1);
-//	
-//	//电源PWR_SAVE
-//	GPIO_InitStructure.GPIO_Pin = KEY_PWR_SAVE_PIN;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(KEY_PWR_SAVE_PORT, &GPIO_InitStructure);
-//	GPIO_ResetBits(KEY_PWR_SAVE_PORT,KEY_PWR_SAVE_PIN);
-//	
-//	GPIO_InitStructure.GPIO_Pin = RED_LED_PIN;
-//	GPIO_Init(RED_LED_PORT, &GPIO_InitStructure);
-//	set_led(LED_CLOSE);
-//	
-//	//初始化ADC
-//	ADC1_Init();
-//	//初始化ADS115,I2C
-//	ADS115_Init();
-//	
-//	Motor_PWM_Init();
-	
-#endif
 }
 
 
 void CfgALLPins4StopMode()
 {
-	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
+//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB, ENABLE);
 	
-	//PF0,PF1,配置为输出
-	GPIO_InitTypeDef GPIO_InitStructure_PF;
-	GPIO_InitStructure_PF.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;                       
-	GPIO_InitStructure_PF.GPIO_Speed = GPIO_Speed_50MHz;     
-	GPIO_InitStructure_PF.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure_PF.GPIO_OType=GPIO_OType_PP;
-	GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_UP;
-	//GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOF, &GPIO_InitStructure_PF);
-	GPIO_SetBits(GPIOF, GPIO_Pin_0|GPIO_Pin_1);
+//	//PF0,PF1,配置为输出
+//	GPIO_InitTypeDef GPIO_InitStructure_PF;
+//	GPIO_InitStructure_PF.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;                       
+//	GPIO_InitStructure_PF.GPIO_Speed = GPIO_Speed_50MHz;     
+//	GPIO_InitStructure_PF.GPIO_Mode = GPIO_Mode_OUT;
+//	GPIO_InitStructure_PF.GPIO_OType=GPIO_OType_PP;
+//	GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_UP;
+//	//GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_NOPULL;
+//	GPIO_Init(GPIOF, &GPIO_InitStructure_PF);
+//	GPIO_SetBits(GPIOF, GPIO_Pin_0|GPIO_Pin_1);
 	
 	
 	//配置ADC1和ADC4
@@ -352,11 +302,25 @@ void CfgALLPins4StopMode()
 	GPIO_InitStructure_PWM_1_2.GPIO_PuPd=GPIO_PuPd_DOWN;
 	GPIO_Init(GPIOB, &GPIO_InitStructure_PWM3);
 	//GPIO_SetBits(GPIOB,GPIO_Pin_1);
+	
+	//PB8,PB9 LED
+		GPIO_InitTypeDef GPIO_InitStructure_LED;
+	GPIO_InitStructure_LED.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9;                       
+	GPIO_InitStructure_LED.GPIO_Speed = GPIO_Speed_50MHz;     
+	GPIO_InitStructure_LED.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure_LED.GPIO_OType=GPIO_OType_PP;
+	GPIO_InitStructure_LED.GPIO_PuPd=GPIO_PuPd_UP;
+	//GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOB, &GPIO_InitStructure_LED);
+	GPIO_SetBits(GPIOB,GPIO_Pin_8|GPIO_Pin_9);
 }
 
-//进入stop模式，采用中断唤醒
-void EnterStopMode()
+
+void init_global_variant()
 {
+	b_Is_PCB_PowerOn=FALSE;
+	wakeup_Cnt=0;
+	key_state=KEY_UPING;
 //	b_check_bat=FALSE;
 	led_state=LED_NONE;
 	led_high_cnt=0;
@@ -365,11 +329,18 @@ void EnterStopMode()
 	adc_state=1;
 	mcu_state=POWER_OFF;
 	state=LOAD_PARA;
+}
+
+//进入stop模式，采用中断唤醒
+void EnterStopMode()
+{
+	init_global_variant();
 	init_PWMState();
 	//配置中断
 	CfgPA0ASWFI();
-	//I2C芯片ADS115进入power-down模式
-	ADS115_enter_power_down_mode();
+	//换芯片了，不需要这条语句
+//	//I2C芯片ADS115进入power-down模式
+//	ADS115_enter_power_down_mode();
 
 	CfgALLPins4StopMode();
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);  
@@ -384,6 +355,7 @@ LED_STATE Check_Bat()
 	if(result<3003) //如果电压小于2.2v,没电了 ，直接进入低功耗
 	{
 		//led_state=LED_RED_SOLID;
+		record_dateTime(CODE_LOW_POWER);
 		return LED_RED_SOLID;
 	}
 	else if(result>=3003&&result<3549)  //2.2-2.6 ，提醒用户电量不足了
@@ -405,12 +377,57 @@ LED_STATE Check_Bat()
 }
 
 
+
 void key_led_task(void)
 {
 	if(key_state==KEY_STOP_MODE)
 	{
+		//记录关机时间
+		record_dateTime(CODE_MANUAL_POWER_OFF);
+		
 		EnterStopMode();
 		init_system_afterWakeUp();
+	}
+	
+	if(key_state==KEY_DOWNING)
+	{
+		if(GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0)==0)
+		{
+			if(wakeup_Cnt==5)
+			{
+				wakeup_Cnt=0;
+//				b_KeyWkUP_InterrupHappened=FALSE;  //清除中断发生标志
+				b_Is_PCB_PowerOn=!b_Is_PCB_PowerOn;
+				
+				if(b_Is_PCB_PowerOn)
+				{
+					mcu_state=POWER_ON;	
+					key_state=KEY_WAKE_UP;		
+					state=LOAD_PARA;
+					init_PWMState();
+				}
+				else
+				{
+					mcu_state=POWER_OFF;	
+					key_state=KEY_STOP_MODE;
+					state=LOAD_PARA;
+					init_PWMState();
+				}
+			}
+			else
+			{
+				wakeup_Cnt++;
+			}
+		}
+		else
+		{
+			wakeup_Cnt=0;
+			if(!b_Is_PCB_PowerOn)  //b_Is_PCB_PowerOn为FALSE是才进行判断，按键时间过短，不允许启动
+			{
+				NVIC_SystemReset();
+				//key_state=KEY_FAIL_WAKEUP;
+			}
+		}
 	}
 	
 	//按键被按下，检查电池电压
@@ -420,6 +437,7 @@ void key_led_task(void)
 		//if(b_Is_PCB_PowerOn)
 		{
 			if(RegularConvData_Tab[0]>3003)
+//			if(RegularConvData_Tab[0]>0)
 			{
 				//开机
 				//set_led(LED_GREEN);
@@ -427,13 +445,35 @@ void key_led_task(void)
 				{
 					set_led(LED_GREEN);
 				}
+				
+				//记录开机时间
+				record_dateTime(CODE_SYSTEM_POWER_ON);
+				
+//				//记录当前按键模式
+//				if(prev_mode==1)
+//				{
+//					record_dateTime(CODE_CURRENT_MODE_IS_1);
+//				}
+//				else if(prev_mode==2)
+//				{
+//					record_dateTime(CODE_CURRENT_MODE_IS_2);
+//				}
+//				else if(prev_mode==3)
+//				{
+//					record_dateTime(CODE_CURRENT_MODE_IS_3);
+//				}
+//				else
+//				{
+//				//do nothing
+//				}
+				
 				Motor_PWM_Freq_Dudy_Set(1,100,80);
 				Motor_PWM_Freq_Dudy_Set(2,100,80);
-				Motor_PWM_Freq_Dudy_Set(3,100,80);
+				//Motor_PWM_Freq_Dudy_Set(3,100,80);
 				Delay_ms(500);
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
-				Motor_PWM_Freq_Dudy_Set(3,100,0);
+				//Motor_PWM_Freq_Dudy_Set(3,100,0);
 				
 				key_state=KEY_UPING;
 				mcu_state=POWER_ON;
@@ -442,27 +482,16 @@ void key_led_task(void)
 			}
 			else
 			{
-//				//橙色LED闪3s，关机
-//				for(int i=0;i<3;i++)
-//				{
-//					set_led(LED_RED);
-//					Delay_ms(500);
-//					set_led(LED_CLOSE);
-//					Delay_ms(500);
-//					IWDG_Feed();   //喂狗
-//				}
-//				//key_state=KEY_UPING;
-				//key_state=KEY_STOP_MODE;
 				set_led(LED_RED);
 				for(int i=0;i<5;i++)
 				{
 					Motor_PWM_Freq_Dudy_Set(1,100,0);
 					Motor_PWM_Freq_Dudy_Set(2,100,0);
-					Motor_PWM_Freq_Dudy_Set(3,100,0);
+//					Motor_PWM_Freq_Dudy_Set(3,100,0);
 					Delay_ms(500);
 					Motor_PWM_Freq_Dudy_Set(1,100,50);
 					Motor_PWM_Freq_Dudy_Set(2,100,50);
-					Motor_PWM_Freq_Dudy_Set(3,100,50);
+//					Motor_PWM_Freq_Dudy_Set(3,100,50);
 					Delay_ms(500);
 					IWDG_Feed();
 				}
@@ -474,7 +503,6 @@ void key_led_task(void)
 				init_system_afterWakeUp();
 			}
 		}
-
 	}
 
 	//IWDG_Feed();   //喂狗

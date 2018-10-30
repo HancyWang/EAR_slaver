@@ -155,27 +155,28 @@ INT8U I2C_RecByte(void)
   return dat;
 }
 
-void ADS115_enter_power_down_mode()
-{
-	//配置为power-down模式
-	I2C_uConfiguration();
-  I2C_Start();
-  I2C_SendByte(0x00);
-	I2C_RecAck();
-	I2C_SendByte(0x06);
-	
-//	//设置PA9和PA10
-//	GPIO_InitTypeDef  GPIO_InitStructure;
-//	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-//	GPIO_InitStructure.GPIO_PuPd=GPIO_PuPd_NOPULL;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//void ADS115_enter_power_down_mode()
+//{
+//	//配置为power-down模式
+//	I2C_uConfiguration();
+//  I2C_Start();
+//  I2C_SendByte(0x00);
+//	I2C_RecAck();
+//	I2C_SendByte(0x06);
 //	
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
-}
+////	//设置PA9和PA10
+////	GPIO_InitTypeDef  GPIO_InitStructure;
+////	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA | RCC_AHBPeriph_GPIOB | RCC_AHBPeriph_GPIOF, ENABLE);
+////	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_10;
+////	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
+////	GPIO_InitStructure.GPIO_PuPd=GPIO_PuPd_NOPULL;
+////	GPIO_Init(GPIOA, &GPIO_InitStructure);
+////	
+////	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+////	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//}
 
+#if 0
 void ADS115_Init(void)
 {
 //	//debug
@@ -242,4 +243,39 @@ INT16U ADS115_readByte(INT8U slaveaddr)
 	I2C_Stop();
 	return data1*256+data2;
 }
+#endif
 
+//使用honeywell传感器读取压力值
+void Init_honeywell_sensor(void)
+{
+	I2C_uConfiguration();
+  I2C_Start();
+  I2C_SendByte(0x30);
+	I2C_RecAck();
+  I2C_SendByte(0xAA);
+	I2C_RecAck();
+	I2C_SendByte(0x00);  		
+	I2C_RecAck();
+	I2C_SendByte(0x00);
+	I2C_RecAck();
+  I2C_Stop();
+}
+
+INT32U honeywell_readByte()
+{
+	INT8U data_staus,data23_16,data15_8,data7_0;
+	I2C_Start();
+	I2C_SendByte(0x31);
+	I2C_RecAck();
+	data_staus=I2C_RecByte();
+	I2C_SendAck();
+	data23_16=I2C_RecByte();
+	I2C_SendAck();
+	data15_8=I2C_RecByte();
+	I2C_SendAck();
+	data7_0=I2C_RecByte();
+	I2C_SendNak();
+	I2C_Stop();
+	return (data23_16<<16)+(data15_8<<8)+data7_0;
+//	return (data_staus<<24)+(data23_16<<16)+(data15_8<<8)+data7_0;
+}

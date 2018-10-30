@@ -18,11 +18,16 @@
 #include "hardware.h"
 #include "iwtdg.h"
 
+#define HONEYWELL_RATE			11110   //斜率
+extern uint32_t HONEYWELL_ZERO_POINT;
+extern uint32_t trans_xmmHg_2_adc_value(uint8_t xmmHg);
+extern BOOL b_getHoneywellZeroPoint;
+
 //#define PRESSURE_RATE 70
 //#define PRESSURE_RATE (FlashReadWord(FLASH_PRESSURE_RATE_ADDR))
 uint16_t PRESSURE_RATE;
 
-#define PRESSURE_SAFETY_THRESHOLD 10
+#define PRESSURE_SAFETY_THRESHOLD 160   //A0表示10.0，对于十进制160
 //y=ax+b
 #define PRESSURE_SENSOR_VALUE(x) ((int16_t)(((PRESSURE_RATE)*(x))+zero_point_of_pressure_sensor))
 
@@ -116,7 +121,8 @@ uint8_t wait_cnt=0;
 
 THERMAL_STATE thermal_state=THERMAL_NONE;
 
-int16_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
+//uint32_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
+uint32_t adc_pressure_value=0;
 uint8_t adc_state=1;
 
 uint8_t led_high_cnt=0;
@@ -352,13 +358,18 @@ void TaskDataSend (void)
     UINT16  len;
 		
 		//protocol_module_send_exp_flag(1);
-
-		//循環
-		len = fifoReadData(&send_fifo, send_data_buf, SEND_DATA_BUF_LENGTH);
-		if(len)
+		#ifdef _DEBUG
+		#else
+		if(mcu_state==POWER_ON)
+		#endif
 		{
-				UartSendNBytes(send_data_buf, len);
-				delay_ms(30);
+				//循環
+			len = fifoReadData(&send_fifo, send_data_buf, SEND_DATA_BUF_LENGTH);
+			if(len)
+			{
+					UartSendNBytes(send_data_buf, len);
+					delay_ms(30);
+			}
 		}
 		
 		os_delay_ms(SEND_TASK_ID, 30);  //mark一下
@@ -433,133 +444,136 @@ BOOL Is_timing_Xmillisec(uint32_t n_ms,uint8_t num)
 
 void bat_check()
 {
-	if(led_state==LED_NONE)
+	if(mcu_state==POWER_ON)
 	{
-		//do nothing
-	}
-	
-	if(led_state==LED_RED_SOLID) //关机
-	{
-		set_led(LED_RED);
-	
-		for(uint8_t i=0;i<5;i++)
+		if(led_state==LED_NONE)
 		{
-			Motor_PWM_Freq_Dudy_Set(1,100,0);
-			Motor_PWM_Freq_Dudy_Set(2,100,0);
-			Motor_PWM_Freq_Dudy_Set(3,100,0);
-			Delay_ms(500);
-			//IWDG_Feed();
-			Motor_PWM_Freq_Dudy_Set(1,100,50);
-			Motor_PWM_Freq_Dudy_Set(2,100,50);
-			//Motor_PWM_Freq_Dudy_Set(2,100,50);
-			Motor_PWM_Freq_Dudy_Set(3,100,50);
-			Delay_ms(500);
-			IWDG_Feed();
-		}
-		EnterStopMode();
-		init_system_afterWakeUp();
-	}
-	
-	if(led_state==LED_RED_FLASH)
-	{
-		
-		//static BOOL b_led_red=TRUE;
-		if(led_high_cnt==10)
-		{
-			//set_led(LED_RED);
-			set_led(LED_CLOSE);
-			if(led_low_cnt==10)
-			{
-				led_high_cnt=0;
-				led_low_cnt=0;
-			}
-			else
-			{
-				led_low_cnt++;
-			}
-		}
-		else
-		{
-			set_led(LED_RED);
-			led_high_cnt++;
-		}
-	}
-	
-	if(led_state==LED_GREEN_SOLID)
-	{
-		set_led(LED_GREEN);
-	}
-	
-	os_delay_ms(TASK_BAT_CHECK, 50);
-}
-
-//采集ADS115的ADC值
-void adc_value_sample()
-{
-	if(thermal_state==THERMAL_NONE)
-	{
-		switch(adc_state)
-		{
-			case 1:
-				ADS115_cfg4ThermalCheck();
-				adc_state=2;
-				break;
-			case 2:
-				adc_value[0]=ADS115_readByte(0x90);  //温度
-				ADS115_Init();
-				if(adc_value[0]<=7247)
-				//if(adc_value[0]<=22500)  //debug
-				{
-					thermal_state=THERMAL_OVER_HEATING;
-				}
-				adc_state=3;
-				break;
-			case 3:
-				adc_value[1]=ADS115_readByte(0x90);
-				ADS115_cfg4ThermalCheck();
-				adc_state=2;
-				break;
+			//do nothing
 		}
 		
-		if(thermal_state==THERMAL_OVER_HEATING)
+		if(led_state==LED_RED_SOLID) //关机
 		{
-			Motor_PWM_Freq_Dudy_Set(1,100,0);
-			Motor_PWM_Freq_Dudy_Set(2,100,0);
-			Motor_PWM_Freq_Dudy_Set(3,100,0);
-			//橙色LED闪3s
-//			for(int i=0;i<3;i++)
-//			{
-//				set_led(LED_RED);
-//				Delay_ms(500);
-//				set_led(LED_CLOSE);
-//				Delay_ms(500);
-//				IWDG_Feed();   //喂狗
-//			}
-//			EnterStopMode();
-//			init_system_afterWakeUp();
 			set_led(LED_RED);
-	
+		
 			for(uint8_t i=0;i<5;i++)
-			//for(uint8_t i=0;i<6;i++)  //debug
 			{
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
-				Motor_PWM_Freq_Dudy_Set(3,100,0);
+	//			Motor_PWM_Freq_Dudy_Set(3,100,0);
 				Delay_ms(500);
 				//IWDG_Feed();
 				Motor_PWM_Freq_Dudy_Set(1,100,50);
 				Motor_PWM_Freq_Dudy_Set(2,100,50);
 				//Motor_PWM_Freq_Dudy_Set(2,100,50);
-				Motor_PWM_Freq_Dudy_Set(3,100,50);
+	//			Motor_PWM_Freq_Dudy_Set(3,100,50);
 				Delay_ms(500);
 				IWDG_Feed();
 			}
 			EnterStopMode();
 			init_system_afterWakeUp();
 		}
+		
+		if(led_state==LED_RED_FLASH)
+		{
+			
+			//static BOOL b_led_red=TRUE;
+			if(led_high_cnt==10)
+			{
+				//set_led(LED_RED);
+				set_led(LED_CLOSE);
+				if(led_low_cnt==10)
+				{
+					led_high_cnt=0;
+					led_low_cnt=0;
+				}
+				else
+				{
+					led_low_cnt++;
+				}
+			}
+			else
+			{
+				set_led(LED_RED);
+				led_high_cnt++;
+			}
+		}
+		
+		if(led_state==LED_GREEN_SOLID)
+		{
+			set_led(LED_GREEN);
+		}
 	}
-	os_delay_ms(TASK_ADC_VALUE_SAMPLE, 15);
+	
+	os_delay_ms(TASK_BAT_CHECK, 50);
 }
+
+////采集ADS115的ADC值
+//void adc_value_sample()
+//{
+//	if(thermal_state==THERMAL_NONE)
+//	{
+//		switch(adc_state)
+//		{
+//			case 1:
+//				ADS115_cfg4ThermalCheck();
+//				adc_state=2;
+//				break;
+//			case 2:
+//				adc_value[0]=ADS115_readByte(0x90);  //温度
+//				ADS115_Init();
+//				if(adc_value[0]<=7247)
+//				//if(adc_value[0]<=22500)  //debug
+//				{
+//					thermal_state=THERMAL_OVER_HEATING;
+//				}
+//				adc_state=3;
+//				break;
+//			case 3:
+//				adc_value[1]=ADS115_readByte(0x90);
+//				ADS115_cfg4ThermalCheck();
+//				adc_state=2;
+//				break;
+//		}
+//		
+//		if(thermal_state==THERMAL_OVER_HEATING)
+//		{
+//			Motor_PWM_Freq_Dudy_Set(1,100,0);
+//			Motor_PWM_Freq_Dudy_Set(2,100,0);
+//			Motor_PWM_Freq_Dudy_Set(3,100,0);
+//			//橙色LED闪3s
+////			for(int i=0;i<3;i++)
+////			{
+////				set_led(LED_RED);
+////				Delay_ms(500);
+////				set_led(LED_CLOSE);
+////				Delay_ms(500);
+////				IWDG_Feed();   //喂狗
+////			}
+////			EnterStopMode();
+////			init_system_afterWakeUp();
+//			set_led(LED_RED);
+//	
+//			for(uint8_t i=0;i<5;i++)
+//			//for(uint8_t i=0;i<6;i++)  //debug
+//			{
+//				Motor_PWM_Freq_Dudy_Set(1,100,0);
+//				Motor_PWM_Freq_Dudy_Set(2,100,0);
+//				Motor_PWM_Freq_Dudy_Set(3,100,0);
+//				Delay_ms(500);
+//				//IWDG_Feed();
+//				Motor_PWM_Freq_Dudy_Set(1,100,50);
+//				Motor_PWM_Freq_Dudy_Set(2,100,50);
+//				//Motor_PWM_Freq_Dudy_Set(2,100,50);
+//				Motor_PWM_Freq_Dudy_Set(3,100,50);
+//				Delay_ms(500);
+//				IWDG_Feed();
+//			}
+//			EnterStopMode();
+//			init_system_afterWakeUp();
+//		}
+//	}
+//	os_delay_ms(TASK_ADC_VALUE_SAMPLE, 15);
+//}
 
 //void thermal_check()
 //{
@@ -604,27 +618,50 @@ void get_switch_mode()
 	static uint8_t switch_mode_cnt=0;
 	mode=GetModeSelected();
 	
-	if(mode!=prev_mode)
+	if(mcu_state==POWER_ON)
 	{
-		if(switch_mode_cnt==5)
+		if(mode!=prev_mode)
 		{
-			prev_mode=mode;
-			switch_mode_cnt=0;
-			init_PWMState();
-			state=LOAD_PARA;
-			Motor_PWM_Freq_Dudy_Set(1,100,0);
-			Motor_PWM_Freq_Dudy_Set(2,100,0);
-			Motor_PWM_Freq_Dudy_Set(3,100,0);
+			if(switch_mode_cnt==5)
+			{
+				prev_mode=mode;
+				switch_mode_cnt=0;
+				init_PWMState();
+				state=LOAD_PARA;
+				
+				//根据当前按键挡位记录
+//				if(mode==1)
+//				{
+//					record_dateTime(CODE_SWITCH_2_MODE1);
+//				}
+//				else if(mode==2)
+//				{
+//					record_dateTime(CODE_SWITCH_2_MODE2);
+//				}
+//				else if(mode==3)
+//				{
+//					record_dateTime(CODE_SWITCH_2_MODE3);
+//				}
+//				else
+//				{
+//					//do nothing
+//				}
+				
+				Motor_PWM_Freq_Dudy_Set(1,100,0);
+				Motor_PWM_Freq_Dudy_Set(2,100,0);
+	//			Motor_PWM_Freq_Dudy_Set(3,100,0);
+			}
+			else
+			{
+				switch_mode_cnt++;
+			}
 		}
 		else
 		{
-			switch_mode_cnt++;
+			switch_mode_cnt=0;
 		}
 	}
-	else
-	{
-		switch_mode_cnt=0;
-	}
+	
 	
 	os_delay_ms(TASK_GET_SWITCH_MODE, 20);
 }
@@ -675,6 +712,8 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 		default:
 			break;
 	}
+	#ifdef _DEBUG
+	#else
 	if(b_Is_PCB_PowerOn==FALSE)
 	{
 //		ResetAllState();
@@ -690,6 +729,7 @@ void PaintPWM(unsigned char num,unsigned char* buffer)
 		Motor_PWM_Freq_Dudy_Set(num,100,0);
 	}
 	else
+	#endif
 	{
 		if(*p_pwm_state==PWM_START)
 		{
@@ -803,7 +843,7 @@ void CheckFlashData(unsigned char* buffer)
 {
 	uint16_t j=0;
 	//如果数据出错就用默认的数据
-	if(buffer[0]<1||buffer[0]>50)
+	if(buffer[0]>249)
 	{
 		ResetParameter(buffer);
 		return;
@@ -889,6 +929,8 @@ void get_pressure_sensor_rate()
 }
 
 
+
+
 /*******************************************************************************
 ** 函数名称: check_selectedMode_ouputPWM
 ** 功能描述: 检查模式，并对应的输出PWM波形
@@ -900,8 +942,10 @@ void get_pressure_sensor_rate()
 void check_selectedMode_ouputPWM()
 {
 //	static uint16_t pressure_result; 
-	
+	#ifdef _DEBUG
+	#else
 	if(mcu_state==POWER_ON)
+	#endif
 	{
 		//1.从flash中加载参数到内存
 		if(state==LOAD_PARA)      
@@ -914,9 +958,9 @@ void check_selectedMode_ouputPWM()
 			memcpy(buffer,tmp,PARAMETER_BUF_LEN);
 			CheckFlashData(buffer);
 			
-			get_pressure_sensor_rate();  //获取压力sensor的斜率
-			//PRESSURE_RATE=FlashReadWord(FLASH_PRESSURE_RATE_ADDR);
-			//state=GET_MODE;
+//			get_pressure_sensor_rate();  //获取压力sensor的斜率
+//			//PRESSURE_RATE=FlashReadWord(FLASH_PRESSURE_RATE_ADDR);
+//			//state=GET_MODE;
 			state=CPY_PARA_TO_BUFFER;
 		}
 //		//2.获得开关对应的模式
@@ -957,58 +1001,74 @@ void check_selectedMode_ouputPWM()
 		//4.检测压力
 		if(state==CHECK_PRESSURE) //检测压力
 		{
-			if(CHECK_MODE_OUTPUT_PWM*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
+			if(b_getHoneywellZeroPoint)
 			{
-				checkPressAgain_cnt=0;
-				mcu_state=POWER_OFF;
-				state=LOAD_PARA;
-				set_led(LED_CLOSE);
-				
-				EnterStopMode();
-				init_system_afterWakeUp();
-			}
-			else
-			{
-				//if(adc_value[1]<buffer[0]*PRESSURE_RATE)
-				if(adc_value[1]<PRESSURE_SENSOR_VALUE(buffer[0]))
-				{
-					checkPressAgain_cnt++;
-				}
-				else	
+				if(CHECK_MODE_OUTPUT_PWM*checkPressAgain_cnt==60*1000)   //连续60s检测不到，进入POWER_OFF
 				{
 					checkPressAgain_cnt=0;
-					//state=LOAD_PARA;
-					//if(adc_value[1]>PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)  
-					if(adc_value[1]>PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))  
+					mcu_state=POWER_OFF;
+					state=LOAD_PARA;
+					set_led(LED_CLOSE);
+					
+					//60s内没触发，记录
+					record_dateTime(CODE_NO_TRIGGER_IN_60S);
+					
+					EnterStopMode();
+					init_system_afterWakeUp();
+				}
+				else
+				{
+					//if(adc_value[1]<buffer[0]*PRESSURE_RATE)
+	//				if(adc_value[1]<PRESSURE_SENSOR_VALUE(buffer[0]))
+
+					if(adc_pressure_value<trans_xmmHg_2_adc_value(buffer[0]))
 					{
-						//state=OVER_THRESHOLD_SAFETY;
-						state=OVER_THRESHOLD_SAFETY;
+						checkPressAgain_cnt++;
 					}
-					//else if(adc_value[1]>=parameter_buf[0]*70&&adc_value[1]<=20*70)
-					else if(adc_value[1]>=PRESSURE_SENSOR_VALUE(buffer[0])&&adc_value[1]<=PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))
+					else	
 					{
-						state=PREV_OUTPUT_PWM;
 						checkPressAgain_cnt=0;
-						waitBeforeStart_timing_flag=TRUE;
-						prev_WaitBeforeStart_os_tick=0;
-					}
-					else
-					{
-						//do nothing
+						//state=LOAD_PARA;
+						//if(adc_value[1]>PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)  
+	//					if(adc_value[1]>PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))  
+						if(adc_pressure_value>trans_xmmHg_2_adc_value(PRESSURE_SAFETY_THRESHOLD))  
+						{
+							state=OVER_THRESHOLD_SAFETY;
+						}
+						//else if(adc_value[1]>=parameter_buf[0]*70&&adc_value[1]<=20*70)
+	//					else if(adc_value[1]>=PRESSURE_SENSOR_VALUE(buffer[0])&&adc_value[1]<=PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))
+						else if(adc_pressure_value>=trans_xmmHg_2_adc_value(buffer[0])&&adc_pressure_value<=trans_xmmHg_2_adc_value(PRESSURE_SAFETY_THRESHOLD))
+						{
+							//触发成功，记录治疗开始时间
+							record_dateTime(CODE_SYSTEM_BEEN_TRIGGERED);
+							
+							state=PREV_OUTPUT_PWM;
+							checkPressAgain_cnt=0;
+							waitBeforeStart_timing_flag=TRUE;
+							prev_WaitBeforeStart_os_tick=0;
+						}
+						else
+						{
+							//do nothing
+						}
 					}
 				}
 			}
+			
 		}
 
 		//5.检测压力Ok,则预备输出波形，先定时waitBeforeStart这么长时间
 		if(state==PREV_OUTPUT_PWM)  //开始预备输出PWM波形
 		{
 			//如果不加if(b_Is_PCB_PowerOn==FALSE)会导致开关重新开机waitbeforestart定时不到想要的秒数
+			#ifdef _DEBUG
+			#else
 			if(b_Is_PCB_PowerOn==FALSE)
 			{
 				PWM_waitBeforeStart_cnt=0;
 			}
 			else
+			#endif
 			{
 				if(Is_timing_Xmillisec(buffer[1]*1000,6))
 				{
@@ -1023,30 +1083,29 @@ void check_selectedMode_ouputPWM()
 		//6.开始输出波形
 		if(state==OUTPUT_PWM) //按照设定的参数，输出PWM1,PWM2,PWM3
 		{			
-			if(pwm1_state==PWM_OUTPUT_FINISH&&pwm2_state==PWM_OUTPUT_FINISH&&pwm3_state==PWM_OUTPUT_FINISH)
+			if(pwm1_state==PWM_OUTPUT_FINISH&&pwm2_state==PWM_OUTPUT_FINISH)
 			{
 				PWM1_serial_cnt=0;
 				PWM2_serial_cnt=0;
 				PWM3_serial_cnt=0;
 				state=CHECK_BAT_VOL;
+				
+				//一次有效触发的治疗结束
+				record_dateTime(CODE_ONE_CYCLE_FINISHED);
 			}		
 			else
 			{
 				//if(adc_value[1]<=PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)
-				if(adc_value[1]<=PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))
+//				if(adc_value[1]<=PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))
+	
+				if(adc_pressure_value<=trans_xmmHg_2_adc_value(PRESSURE_SAFETY_THRESHOLD))
 				{
 					PaintPWM(1,pwm1_buffer); 
 					PaintPWM(2,pwm2_buffer);
-					PaintPWM(3,pwm3_buffer);
+					//PaintPWM(3,pwm3_buffer);
 				}
 				else
 				{
-//					Motor_PWM_Freq_Dudy_Set(1,100,0);
-//					Motor_PWM_Freq_Dudy_Set(2,100,0);
-//					Motor_PWM_Freq_Dudy_Set(3,100,0);
-//					pwm1_state=PWM_START;
-//					pwm2_state=PWM_START;
-//					pwm3_state=PWM_START;
 					state=OVER_THRESHOLD_SAFETY;
 				}
 			}
@@ -1057,6 +1116,9 @@ void check_selectedMode_ouputPWM()
 		{
 	//		Motor_shake_for_sleep();
 			
+			//记录过压
+			record_dateTime(CODE_OVER_PRESSURE);
+			
 			set_led(LED_RED);
 			for(uint8_t i=0;i<5;i++)
 			//for(uint8_t i=0;i<3;i++)
@@ -1064,14 +1126,13 @@ void check_selectedMode_ouputPWM()
 				//set_led(LED_CLOSE);
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
-				Motor_PWM_Freq_Dudy_Set(3,100,0);
+//				Motor_PWM_Freq_Dudy_Set(3,100,0);
 				Delay_ms(500);
-				//IWDG_Feed();
+				//IWDG_Feed(); 
 				//set_led(LED_RED);
 				Motor_PWM_Freq_Dudy_Set(1,100,50);
 				Motor_PWM_Freq_Dudy_Set(2,100,50);
-				Motor_PWM_Freq_Dudy_Set(2,100,50);
-				Motor_PWM_Freq_Dudy_Set(3,100,50);
+//				Motor_PWM_Freq_Dudy_Set(3,100,50);
 				Delay_ms(500);
 				IWDG_Feed();
 			}
@@ -1185,8 +1246,15 @@ void check_selectedMode_ouputPWM()
 void CMD_ProcessTask (void)
 {
 	//循環
-	ReceiveData(&g_CmdReceive);//接收数据到缓冲区
-	ModuleUnPackFrame();//命令处理
+	#ifdef _DEBUG
+	#else
+	if(mcu_state==POWER_ON)
+	#endif
+	{
+		ReceiveData(&g_CmdReceive);//接收数据到缓冲区
+		ModuleUnPackFrame();//命令处理
+	}
+	
 	os_delay_ms(RECEIVE_TASK_ID, 100);
 	//os_delay_ms(RECEIVE_TASK_ID, 300);
 }

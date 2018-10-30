@@ -10,7 +10,7 @@
 /**********************************
 *宏定义
 ***********************************/
-
+//#define _DEBUG
 /***********************************
 * 全局变量
 ***********************************/
@@ -22,7 +22,8 @@
 
 typedef enum{
 	INIT_TASK_ID = 0,
-	TASK_ADC_VALUE_SAMPLE,
+//	TASK_ADC_VALUE_SAMPLE,
+	HONEYWELL_SAMPLING_DATA_TASK_ID,
 	KEY_LED_TASK_ID,
 	TASK_BAT_CHECK,
 	TASK_GET_SWITCH_MODE,

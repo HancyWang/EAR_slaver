@@ -23,11 +23,11 @@
 #define EXP_DETECT_PIN    GPIO_Pin_9
 #define EXP_DETECT_PORT   GPIOA
 //LED ÂÌÉ«    
-#define GREEN_LED_PIN    GPIO_Pin_1
-#define GREEN_LED_PORT   GPIOF
+#define GREEN_LED_PIN    GPIO_Pin_9
+#define GREEN_LED_PORT   GPIOB
 //LED ºìÉ«    
-#define RED_LED_PIN    GPIO_Pin_0
-#define RED_LED_PORT   GPIOF
+#define RED_LED_PIN    GPIO_Pin_8
+#define RED_LED_PORT   GPIOB
 ////LED À¶É«    
 //#define BLUE_LED_PIN    GPIO_Pin_1
 //#define BLUE_LED_PORT   GPIOB

@@ -4,7 +4,7 @@
 ..\obj\app.o: ..\OS\os_core.h
 ..\obj\app.o: ..\User\stm32f0xx.h
 ..\obj\app.o: ..\CORE\core_cm0.h
-..\obj\app.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\app.o: D:\Program Files (x86)\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\app.o: ..\CORE\core_cmInstr.h
 ..\obj\app.o: ..\CORE\core_cmFunc.h
 ..\obj\app.o: ..\User\system_stm32f0xx.h
@@ -26,3 +26,5 @@
 ..\obj\app.o: ..\MODULE\protocol_module.h
 ..\obj\app.o: ..\STM32F03x_FWLib\inc\stm32f0xx_rtc.h
 ..\obj\app.o: ..\APP\key_led_task.h
+..\obj\app.o: ..\SYSTEM\delay.h
+..\obj\app.o: ..\APP\honeywell_sampling_data.h

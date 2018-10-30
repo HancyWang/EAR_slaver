@@ -28,6 +28,9 @@
 //#include "exp_task.h" 
 #include "stm32f0xx_usart.h"
 //#include "store_fifo.h"
+#include "delay.h"
+#include "honeywell_sampling_data.h"
+
 /**********************************
 *宏定义
 ***********************************/
@@ -70,7 +73,8 @@ void init_task(void)
 	init_hardware();	
 	Motor_PWM_Init();
 	
-	Calibrate_pressure_sensor(&zero_point_of_pressure_sensor);
+	//现在使用honeywell sensor，不需要校验了
+	//Calibrate_pressure_sensor(&zero_point_of_pressure_sensor);
 	
 	//初始化通信相关
 	fifoInit(&send_fifo,send_buf,SEND_BUF_LEN);
@@ -81,11 +85,21 @@ void init_task(void)
 	os_create_task(TaskDataSend, OS_TRUE, SEND_TASK_ID);
 	os_create_task(CMD_ProcessTask, OS_TRUE, RECEIVE_TASK_ID);
 	
+	#ifdef _DEBUG
+	os_create_task(key_led_task, OS_TRUE, KEY_LED_TASK_ID);
+	os_create_task(honeywell_sampling_data,OS_TRUE,HONEYWELL_SAMPLING_DATA_TASK_ID);
+	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
+	#else
 	os_create_task(key_led_task, OS_TRUE, KEY_LED_TASK_ID);
 	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
 	os_create_task(get_switch_mode,OS_TRUE,TASK_GET_SWITCH_MODE);
-	os_create_task(adc_value_sample,OS_TRUE,TASK_ADC_VALUE_SAMPLE);
+	
+	os_create_task(honeywell_sampling_data,OS_TRUE,HONEYWELL_SAMPLING_DATA_TASK_ID);
+	//os_create_task(adc_value_sample,OS_TRUE,TASK_ADC_VALUE_SAMPLE);  //这个条不要了，换sensor了
 	os_create_task(bat_check,OS_TRUE,TASK_BAT_CHECK);
+	#endif
+	
+	
 	os_pend_task(INIT_TASK_ID);
 }
 

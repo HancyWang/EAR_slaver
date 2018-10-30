@@ -15,6 +15,9 @@
 //#include "device_type.h"
 #include "stm32f0xx_dma.h"
 #include "iwtdg.h"
+#include "app.h"
+
+
 
  const uint8_t default_parameter_buf[PARAMETER_BUF_LEN] = {
 #if 1
@@ -101,10 +104,14 @@ int main(void)
   delay_init();
 	os_init();
 	
+	#ifdef _DEBUG
+	#else
 	//进入stop模式
 	EnterStopMode();
 	//唤醒之后先初始化系统
 	init_system_afterWakeUp();
+	#endif
+
 		
 	os_create_task(init_task, OS_TRUE, INIT_TASK_ID);
 	os_start();
