@@ -101,7 +101,7 @@ _Bool Set_RTC(uint8_t* pdata)
 //		RTC_DateStructure.RTC_Month=chage_to_RCT_month(pdata[6]);
 		RTC_DateStructure.RTC_Month=pdata[6];
 		RTC_DateStructure.RTC_Date=pdata[7];
-//		RTC_DateStructure.RTC_WeekDay=pdata[8]==0?7:pdata[8];  //这个可以不需要
+		RTC_DateStructure.RTC_WeekDay=pdata[8]==0?7:pdata[8];  //这个可以不需要
 		
 		RTC_TimeStructure.RTC_Hours=pdata[9];
 		RTC_TimeStructure.RTC_Minutes=pdata[10];

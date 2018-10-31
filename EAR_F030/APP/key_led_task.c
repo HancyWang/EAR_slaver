@@ -34,6 +34,7 @@
 #include "delay.h"
 #include "comm_task.h"
 #include "iwtdg.h"
+#include "honeywell_sampling_data.h"
 /**********************************
 *宏定义
 ***********************************/
@@ -45,6 +46,8 @@
 /***********************************
 * 局部变量
 ***********************************/
+extern HONEYWELL_STATE honeywell_state;
+
 extern uint32_t os_ticks;
 extern CMD_Receive g_CmdReceive;  // 命令接收控制对象
 
@@ -74,13 +77,17 @@ volatile KEY_STATE key_state=KEY_UPING;
 
 extern uint16_t RegularConvData_Tab[2];
 extern uint8_t adc_state;
-extern THERMAL_STATE thermal_state;
+//extern THERMAL_STATE thermal_state;
 
 static uint8_t wakeup_Cnt;
 
 LED_STATE led_state=LED_NONE;
 
 extern uint8_t prev_mode;
+
+extern BOOL b_getHoneywellZeroPoint;
+extern uint32_t adc_pressure_value;
+extern uint32_t HONEYWELL_ZERO_POINT;
 /***********************************
 * 局部函数
 ***********************************/
@@ -318,15 +325,21 @@ void CfgALLPins4StopMode()
 
 void init_global_variant()
 {
+	//honeywell相关参数
+	honeywell_state=HONEYWELL_START;
+	HONEYWELL_ZERO_POINT=0;
+	adc_pressure_value=0;
+	b_getHoneywellZeroPoint=0;
+	
 	b_Is_PCB_PowerOn=FALSE;
 	wakeup_Cnt=0;
 	key_state=KEY_UPING;
 //	b_check_bat=FALSE;
 	led_state=LED_NONE;
 	led_high_cnt=0;
- led_low_cnt=0;
-	thermal_state=THERMAL_NONE;
-	adc_state=1;
+	led_low_cnt=0;
+//	thermal_state=THERMAL_NONE;
+	//adc_state=1;
 	mcu_state=POWER_OFF;
 	state=LOAD_PARA;
 }

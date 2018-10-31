@@ -33,3 +33,4 @@
 ..\obj\key_led_task.o: ..\SYSTEM\delay.h
 ..\obj\key_led_task.o: ..\APP\comm_task.h
 ..\obj\key_led_task.o: ..\User\iwtdg.h
+..\obj\key_led_task.o: ..\APP\honeywell_sampling_data.h

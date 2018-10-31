@@ -27,7 +27,7 @@ extern BOOL b_getHoneywellZeroPoint;
 //#define PRESSURE_RATE (FlashReadWord(FLASH_PRESSURE_RATE_ADDR))
 uint16_t PRESSURE_RATE;
 
-#define PRESSURE_SAFETY_THRESHOLD 160   //A0表示10.0，对于十进制160
+#define PRESSURE_SAFETY_THRESHOLD 160   //0xA0表示10.0，对应十进制160
 //y=ax+b
 #define PRESSURE_SENSOR_VALUE(x) ((int16_t)(((PRESSURE_RATE)*(x))+zero_point_of_pressure_sensor))
 
@@ -119,11 +119,11 @@ uint16_t checkPressAgain_cnt=0;
 uint8_t wait_cnt=0;
 
 
-THERMAL_STATE thermal_state=THERMAL_NONE;
+//THERMAL_STATE thermal_state=THERMAL_NONE;
 
 //uint32_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
 uint32_t adc_pressure_value=0;
-uint8_t adc_state=1;
+//uint8_t adc_state=1;
 
 uint8_t led_high_cnt=0;
 uint8_t led_low_cnt=0;
@@ -661,8 +661,6 @@ void get_switch_mode()
 			switch_mode_cnt=0;
 		}
 	}
-	
-	
 	os_delay_ms(TASK_GET_SWITCH_MODE, 20);
 }
 
@@ -1030,7 +1028,8 @@ void check_selectedMode_ouputPWM()
 						checkPressAgain_cnt=0;
 						//state=LOAD_PARA;
 						//if(adc_value[1]>PRESSURE_SAFETY_THRESHOLD*PRESSURE_RATE)  
-	//					if(adc_value[1]>PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD))  
+	//					if(adc_value[1]>PRESSURE_SENSOR_VALUE(PRESSURE_SAFETY_THRESHOLD)) 
+
 						if(adc_pressure_value>trans_xmmHg_2_adc_value(PRESSURE_SAFETY_THRESHOLD))  
 						{
 							state=OVER_THRESHOLD_SAFETY;
@@ -1143,7 +1142,11 @@ void check_selectedMode_ouputPWM()
 		//7.波形输出完毕，检测电池电压
 		if(state==CHECK_BAT_VOL) 
 		{
+			#ifdef _DEBUG
+			#else
 			led_state=Check_Bat();
+			#endif
+			
 			state=LOAD_PARA;
 			pwm1_state=PWM_START;
 			pwm2_state=PWM_START;

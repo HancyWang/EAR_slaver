@@ -30,5 +30,6 @@ extern void SENSOR_IIC_uMultipleRead(INT8U slaveaddr,INT8U regaddr,INT8U len,INT
 
 void Init_honeywell_sensor(void);
 INT32U honeywell_readByte(void);
+BOOLEAN Is_honeywell_free(void);
 #endif
 

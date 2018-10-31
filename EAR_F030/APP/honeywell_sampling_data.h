@@ -3,7 +3,7 @@
 
 #include "datatype.h"
 
-#define HONEYWELL_SAMPLING_DATA_PERIOD 15
+#define HONEYWELL_SAMPLING_DATA_PERIOD 10
 
 typedef enum 
 {

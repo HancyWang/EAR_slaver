@@ -261,6 +261,21 @@ void Init_honeywell_sensor(void)
   I2C_Stop();
 }
 
+BOOLEAN Is_honeywell_free(void)
+{
+	INT8U data_status;
+	I2C_Start();
+	I2C_SendByte(0x31);
+	I2C_RecAck();
+	data_status=I2C_RecByte();
+	I2C_SendNak();
+	I2C_Stop();
+	if(data_status==0x40)
+		return 1;
+	else
+		return 0;
+}
+
 INT32U honeywell_readByte()
 {
 	INT8U data_staus,data23_16,data15_8,data7_0;

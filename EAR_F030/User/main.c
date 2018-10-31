@@ -17,12 +17,11 @@
 #include "iwtdg.h"
 #include "app.h"
 
-
-
  const uint8_t default_parameter_buf[PARAMETER_BUF_LEN] = {
 #if 1
-		//common para
-2,1,
+//common parameter
+8,//0.8,0*16+8=8
+1,
 
 //MODE1
 0x11,1,100,40,30,1,0,0,
@@ -94,7 +93,7 @@
 
 
 //Checksum
-0x2C,0xCB
+0x2C,0xD1
 		#endif
 	};
 	
