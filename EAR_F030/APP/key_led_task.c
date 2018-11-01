@@ -288,12 +288,12 @@ void CfgALLPins4StopMode()
 	GPIO_InitStructure_PA5.GPIO_Pin = GPIO_Pin_5;                       
 	GPIO_InitStructure_PA5.GPIO_Speed = GPIO_Speed_50MHz;   
 	GPIO_InitStructure_PA5.GPIO_Mode = GPIO_Mode_IN;	
-	//GPIO_InitStructure_PA5.GPIO_Mode = GPIO_Mode_OUT;
-//	GPIO_InitStructure_PA5.GPIO_OType=GPIO_OType_PP;
 	GPIO_InitStructure_PA5.GPIO_PuPd=GPIO_PuPd_DOWN;
-	//GPIO_InitStructure_PA5.GPIO_PuPd=GPIO_PuPd_NOPULL;
+//	GPIO_InitStructure_PA5.GPIO_Mode = GPIO_Mode_OUT;
+//	GPIO_InitStructure_PA5.GPIO_OType=GPIO_OType_PP;
+//	GPIO_InitStructure_PA5.GPIO_PuPd=GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOA, &GPIO_InitStructure_PA5);
-//	GPIO_ResetBits(GPIOA,GPIO_Pin_5);
+//	GPIO_SetBits(GPIOA,GPIO_Pin_5);
 	
 	//PWM1(PA6)
 	GPIO_InitTypeDef GPIO_InitStructure_PWM_1;
