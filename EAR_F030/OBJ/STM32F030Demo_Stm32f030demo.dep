@@ -334,7 +334,7 @@ I (..\APP\key_led_task.h)(0x5BD665C3)
 I (..\APP\app.h)(0x5BD95445)
 I (..\HARDWARE\rtc.h)(0x5BC6D683)
 I (..\STM32F03x_FWLib\inc\stm32f0xx_rtc.h)(0x5BC6DEA3)
-F (..\HARDWARE\Motor_pwm.c)(0x5BD6910C)(--c99 -c --cpu Cortex-M0 -g -O3 --apcs=interwork -I ..\APP -I ..\OS -I ..\CORE -I ..\HARDWARE -I ..\MODULE -I ..\STM32F03x_FWLib\inc -I ..\STM32F03x_FWLib\src -I ..\User -I ..\SYSTEM -I ..\SYSTEM\cmd -I ..\SYSTEM\fifo-I.\RTE\_Stm32f030demo-I"D:\Program Files (x86)\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include"-I"D:\Program Files (x86)\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include"-D__UVISION_VERSION="525" -D_RTE_ -DSTM32F071xB -DUSE_STDPERIPH_DRIVER -DSTM32F0XX-o ..\obj\motor_pwm.o --omf_browse ..\obj\motor_pwm.crf --depend ..\obj\motor_pwm.d)
+F (..\HARDWARE\Motor_pwm.c)(0x5BFDEECA)(--c99 -c --cpu Cortex-M0 -g -O3 --apcs=interwork -I ..\APP -I ..\OS -I ..\CORE -I ..\HARDWARE -I ..\MODULE -I ..\STM32F03x_FWLib\inc -I ..\STM32F03x_FWLib\src -I ..\User -I ..\SYSTEM -I ..\SYSTEM\cmd -I ..\SYSTEM\fifo-I.\RTE\_Stm32f030demo-I"D:\Program Files (x86)\Keil_v5\ARM\PACK\ARM\CMSIS\5.4.0\CMSIS\Core\Include"-I"D:\Program Files (x86)\Keil_v5\ARM\PACK\Keil\STM32F0xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32F0xx\Include"-D__UVISION_VERSION="525" -D_RTE_ -DSTM32F071xB -DUSE_STDPERIPH_DRIVER -DSTM32F0XX-o ..\obj\motor_pwm.o --omf_browse ..\obj\motor_pwm.crf --depend ..\obj\motor_pwm.d)
 I (..\HARDWARE\Motor_pwm.h)(0x5BC6DEA3)
 I (..\SYSTEM\fifo\datatype.h)(0x5BC6DEA3)
 I (..\User\stm32f0xx.h)(0x5BC6DEA3)
