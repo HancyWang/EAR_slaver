@@ -699,7 +699,7 @@ uint32_t get_rtc_record_number()
 	return pageInfo[2];
 }
 
-void send_RTC_SYN_finish(BOOL success)
+void send_RTC_SYN_finish()
 {
 	uint8_t buffer[7];
 	
@@ -708,7 +708,7 @@ void send_RTC_SYN_finish(BOOL success)
 	buffer[2] = MODULE_CMD_TYPE;      //0x00
 	buffer[3] = RTC_SYN_FINISHED; //0x66
 	
-	buffer[4]=success;
+	buffer[4]=1;
 	
 	CalcCheckSum(buffer);
 	fifoWriteData(&send_fifo, buffer, buffer[1]+2);
@@ -939,11 +939,7 @@ void protocol_module_process(uint8_t* pdata)
 			reset_dateTime();
 			Init_RecordPage();
 			record_dateTime(CODE_PC_SYN_RTC);
-			send_RTC_SYN_finish(1);
-		}
-		else
-		{
-			send_RTC_SYN_finish(0);
+			send_RTC_SYN_finish();
 		}
 		break;
 	case GET_RTC_RECORD_NUMBERS:
