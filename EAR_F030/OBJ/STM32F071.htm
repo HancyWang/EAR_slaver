@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F071.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F071.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Nov 01 09:49:17 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed Nov 28 09:14:40 2018
 <BR><P>
 <H3>Maximum Stack Usage =        852 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -714,7 +714,7 @@ Global Symbols
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_RTC_record_numbers
 </UL>
 
-<P><STRONG><a name="[a9]"></a>send_RTC_SYN_finish</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[a9]"></a>send_RTC_SYN_finish</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = send_RTC_SYN_finish &rArr; fifoWriteData
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fifoWriteData
@@ -768,7 +768,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
 </UL>
 
-<P><STRONG><a name="[64]"></a>protocol_module_process</STRONG> (Thumb, 150 bytes, Stack size 8 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[64]"></a>protocol_module_process</STRONG> (Thumb, 152 bytes, Stack size 8 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 820<LI>Call Chain = protocol_module_process &rArr; send_prameter_fram1_to_PC &rArr; CheckFlashData &rArr; ResetParameter &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_RTC
@@ -1186,7 +1186,8 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_GetTime
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_GetDate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<BR>[Called By]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_RTC
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 </UL>
 
 <P><STRONG><a name="[14e]"></a>chage_to_RCT_month</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, rtc.o(.text), UNUSED)
@@ -1205,14 +1206,15 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_RTC
 </UL>
 
-<P><STRONG><a name="[af]"></a>Set_RTC</STRONG> (Thumb, 98 bytes, Stack size 32 bytes, rtc.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = Set_RTC &rArr; RTC_SetTime &rArr; RTC_WaitForSynchro
+<P><STRONG><a name="[af]"></a>Set_RTC</STRONG> (Thumb, 158 bytes, Stack size 40 bytes, rtc.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 76<LI>Call Chain = Set_RTC &rArr; RTC_SetTime &rArr; RTC_WaitForSynchro
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_SetTime
 <LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_SetDate
 <LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Init
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWR_BackupAccessCmd
 <LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Config
+<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_DataTime
 </UL>
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
 </UL>
