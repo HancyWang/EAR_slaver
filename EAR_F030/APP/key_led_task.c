@@ -233,8 +233,8 @@ void CfgALLPins4StopMode()
 //	GPIO_InitStructure_PF.GPIO_Mode = GPIO_Mode_AF;	
 //	GPIO_InitStructure_PF.GPIO_Mode = GPIO_Mode_OUT;
 //	GPIO_InitStructure_PF.GPIO_OType=GPIO_OType_PP;
-//	GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_UP;
-	GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_DOWN;
+	GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_UP;
+//	GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_DOWN;
 //	GPIO_InitStructure_PF.GPIO_PuPd=GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOF, &GPIO_InitStructure_PF);
 //	GPIO_SetBits(GPIOF, GPIO_Pin_0|GPIO_Pin_1);
@@ -291,9 +291,10 @@ void CfgALLPins4StopMode()
 	GPIO_InitStructure_PA5.GPIO_PuPd=GPIO_PuPd_DOWN;
 //	GPIO_InitStructure_PA5.GPIO_Mode = GPIO_Mode_OUT;
 //	GPIO_InitStructure_PA5.GPIO_OType=GPIO_OType_PP;
-//	GPIO_InitStructure_PA5.GPIO_PuPd=GPIO_PuPd_NOPULL;
+//	GPIO_InitStructure_PA5.GPIO_PuPd=GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure_PA5);
-//	GPIO_SetBits(GPIOA,GPIO_Pin_5);
+////	GPIO_SetBits(GPIOA,GPIO_Pin_5);
+//	GPIO_ResetBits(GPIOA,GPIO_Pin_5);
 	
 	//PWM1(PA6)
 	GPIO_InitTypeDef GPIO_InitStructure_PWM_1;
@@ -302,8 +303,8 @@ void CfgALLPins4StopMode()
 	GPIO_InitStructure_PWM_1.GPIO_Mode = GPIO_Mode_IN;	
 //	GPIO_InitStructure_PWM_1.GPIO_Mode = GPIO_Mode_OUT;
 //	GPIO_InitStructure_PWM_1.GPIO_OType=GPIO_OType_PP;
-	GPIO_InitStructure_PWM_1.GPIO_PuPd=GPIO_PuPd_NOPULL;
-//	GPIO_InitStructure_PWM_1.GPIO_PuPd=GPIO_PuPd_DOWN;
+//	GPIO_InitStructure_PWM_1.GPIO_PuPd=GPIO_PuPd_NOPULL;
+	GPIO_InitStructure_PWM_1.GPIO_PuPd=GPIO_PuPd_DOWN;
 	GPIO_Init(GPIOA, &GPIO_InitStructure_PWM_1);
 	//GPIO_SetBits(GPIOA,GPIO_Pin_6|GPIO_Pin_7);
 	
@@ -313,8 +314,8 @@ void CfgALLPins4StopMode()
 	GPIO_InitStructure_PWM2.GPIO_Speed = GPIO_Speed_50MHz;       
 	GPIO_InitStructure_PWM2.GPIO_Mode = GPIO_Mode_IN;
 //	GPIO_InitStructure_PWM2.GPIO_OType=GPIO_OType_PP;
-	GPIO_InitStructure_PWM2.GPIO_PuPd=GPIO_PuPd_NOPULL;
-//	GPIO_InitStructure_PWM2.GPIO_PuPd=GPIO_PuPd_DOWN;
+//	GPIO_InitStructure_PWM2.GPIO_PuPd=GPIO_PuPd_NOPULL;
+	GPIO_InitStructure_PWM2.GPIO_PuPd=GPIO_PuPd_DOWN;
 	GPIO_Init(GPIOB, &GPIO_InitStructure_PWM2);
 	//GPIO_SetBits(GPIOB,GPIO_Pin_1);
 	
@@ -399,6 +400,9 @@ void EnterStopMode()
 
 LED_STATE Check_Bat()
 {
+	#ifdef _DEBUG_BATTERY
+	return LED_NONE;
+	#else
 	uint16_t result;
 	result=RegularConvData_Tab[0];
 	if(result<3003) //如果电压小于2.2v,没电了 ，直接进入低功耗
@@ -407,12 +411,12 @@ LED_STATE Check_Bat()
 		record_dateTime(CODE_LOW_POWER);
 		return LED_RED_SOLID;
 	}
-	else if(result>=3003&&result<3549)  //2.2-2.6 ，提醒用户电量不足了
+	else if(result>=3003&&result<3208)  //2.2-2.35 ，提醒用户电量不足了
 	{
 		//led_state=LED_RED_FLASH;
 		return LED_RED_FLASH;
 	}
-	else if(result>=3549)
+	else if(result>=3208)
 	{
 		//solid green,常亮绿灯，表示电量充值
 		//led_state=LED_GREEN_SOLID;
@@ -423,6 +427,7 @@ LED_STATE Check_Bat()
 		//do nothing
 		return LED_NONE;
 	}
+	#endif
 }
 
 
@@ -485,19 +490,27 @@ void key_led_task(void)
 		//b_check_bat=TRUE;
 		//if(b_Is_PCB_PowerOn)
 		{
+			#ifdef _DEBUG_BATTERY
+			if(RegularConvData_Tab[0]>1)
+			#else
 			if(RegularConvData_Tab[0]>3003)
+			#endif
 //			if(RegularConvData_Tab[0]>0)
 			{
 				//开机
 				//set_led(LED_GREEN);
-				if(RegularConvData_Tab[0]>3549)
+				#ifdef _DEBUG_BATTERY
+				if(RegularConvData_Tab[0]>100)
+				#else
+				if(RegularConvData_Tab[0]>3208)  //3208对应2.35V
+				#endif
 				{
 					set_led(LED_GREEN);
 				}
 				
 				//记录开机时间
 				record_dateTime(CODE_SYSTEM_POWER_ON);
-				
+#if 0				
 //				//记录当前按键模式
 //				if(prev_mode==1)
 //				{
@@ -515,7 +528,7 @@ void key_led_task(void)
 //				{
 //				//do nothing
 //				}
-				
+#endif				
 				Motor_PWM_Freq_Dudy_Set(1,100,80);
 				Motor_PWM_Freq_Dudy_Set(2,100,80);
 				//Motor_PWM_Freq_Dudy_Set(3,100,80);

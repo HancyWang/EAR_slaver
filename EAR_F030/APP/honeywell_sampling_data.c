@@ -6,6 +6,7 @@
 #include "protocol_module.h"
 
 #define HONEYWELL_RATE			11185   //斜率,根据公式算出来的
+//#define HONEYWELL_RATE			9000
 
 //extern uint32_t adc_value[2];
 extern uint32_t adc_pressure_value;

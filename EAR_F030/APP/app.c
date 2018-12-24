@@ -88,7 +88,7 @@ void init_task(void)
 	#ifdef _DEBUG
 	os_create_task(key_led_task, OS_TRUE, KEY_LED_TASK_ID);
 	os_create_task(honeywell_sampling_data,OS_TRUE,HONEYWELL_SAMPLING_DATA_TASK_ID);
-	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
+	//os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
 	#else
 	os_create_task(key_led_task, OS_TRUE, KEY_LED_TASK_ID);
 	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
