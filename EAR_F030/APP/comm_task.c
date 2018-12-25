@@ -124,9 +124,12 @@ uint8_t wait_cnt=0;
 //uint32_t adc_value[2]={0xFFFF,0x00}; //[0]对应NTC，[1]对应pressure
 uint32_t adc_pressure_value=0;
 //uint8_t adc_state=1;
+BOOL b_check_BAT_ok=FALSE;
 
 uint8_t led_high_cnt=0;
 uint8_t led_low_cnt=0;
+uint8_t vabirate_cnt=0;
+BOOL b_vabirate=TRUE;
 /*******************************************************************************
 *                                内部函数声明
 *******************************************************************************/
@@ -442,7 +445,7 @@ BOOL Is_timing_Xmillisec(uint32_t n_ms,uint8_t num)
 
 
 
-void bat_check()
+void led_show()
 {
 	if(mcu_state==POWER_ON)
 	{
@@ -473,10 +476,31 @@ void bat_check()
 			init_system_afterWakeUp();
 		}
 		
-		if(led_state==LED_RED_FLASH)
+		if(led_state==LED_RED_FLASH)  //电量快要耗尽了
 		{
-			
 			//static BOOL b_led_red=TRUE;
+			if(b_vabirate==TRUE)
+			{
+				if(vabirate_cnt==10)
+				{
+					vabirate_cnt=0;
+					b_vabirate=FALSE;
+					b_check_BAT_ok=TRUE;
+					
+					Motor_PWM_Freq_Dudy_Set(1,100,0);
+					Motor_PWM_Freq_Dudy_Set(2,100,0);
+//					Delay_ms(10);
+					
+				}
+				else
+				{
+					vabirate_cnt++;
+					Motor_PWM_Freq_Dudy_Set(1,100,80);
+					Motor_PWM_Freq_Dudy_Set(2,100,80);
+				}
+			}
+			
+			
 			if(led_high_cnt==10)
 			{
 				//set_led(LED_RED);
@@ -498,13 +522,25 @@ void bat_check()
 			}
 		}
 		
-		if(led_state==LED_GREEN_SOLID)
+		if(led_state==LED_GREEN_SOLID)  //电量充足，开机
 		{
 			set_led(LED_GREEN);
+			
+			//记录开机时间
+			record_dateTime(CODE_SYSTEM_POWER_ON);
+			
+			//马达震动
+			Motor_PWM_Freq_Dudy_Set(1,100,80);
+			Motor_PWM_Freq_Dudy_Set(2,100,80);
+			Delay_ms(500);
+			Motor_PWM_Freq_Dudy_Set(1,100,0);
+			Motor_PWM_Freq_Dudy_Set(2,100,0);
+			
+			b_check_BAT_ok=TRUE;
 		}
 	}
 	
-	os_delay_ms(TASK_BAT_CHECK, 50);
+	os_delay_ms(TASK_LED_SHOW, 50);
 }
 
 ////采集ADS115的ADC值
@@ -942,7 +978,7 @@ void check_selectedMode_ouputPWM()
 //	static uint16_t pressure_result; 
 	#ifdef _DEBUG
 	#else
-	if(mcu_state==POWER_ON)
+	if(mcu_state==POWER_ON&&b_check_BAT_ok==TRUE)
 	#endif
 	{
 		//1.从flash中加载参数到内存
@@ -1016,6 +1052,42 @@ void check_selectedMode_ouputPWM()
 				}
 				else
 				{
+					if(b_getHoneywellZeroPoint)
+					{
+						if(adc_pressure_value<=trans_xmmHg_2_adc_value(buffer[0]))
+						{
+							checkPressAgain_cnt++;
+						}
+						else	
+						{
+							checkPressAgain_cnt=0;
+
+							if(adc_pressure_value>trans_xmmHg_2_adc_value(PRESSURE_SAFETY_THRESHOLD))  
+							{
+								state=OVER_THRESHOLD_SAFETY;
+							}
+
+							else if(adc_pressure_value>=trans_xmmHg_2_adc_value(buffer[0])&&adc_pressure_value<=trans_xmmHg_2_adc_value(PRESSURE_SAFETY_THRESHOLD))
+							{
+								//触发成功，记录治疗开始时间
+								record_dateTime(CODE_SYSTEM_BEEN_TRIGGERED);
+								
+								state=PREV_OUTPUT_PWM;
+								checkPressAgain_cnt=0;
+								waitBeforeStart_timing_flag=TRUE;
+								prev_WaitBeforeStart_os_tick=0;
+							}
+							else
+							{
+								//do nothing
+							}
+						}
+					}
+					else  //如果得不到honeywell零点，说明sensor坏了，不用在进行数据比较了，直接60s倒计时
+					{
+						checkPressAgain_cnt++;
+					}
+					#if 0
 					//if(adc_value[1]<buffer[0]*PRESSURE_RATE)
 	//				if(adc_value[1]<PRESSURE_SENSOR_VALUE(buffer[0]))
 
@@ -1051,6 +1123,7 @@ void check_selectedMode_ouputPWM()
 							//do nothing
 						}
 					}
+					#endif
 				}
 			}
 			
@@ -1149,7 +1222,7 @@ void check_selectedMode_ouputPWM()
 		{
 			#ifdef _DEBUG
 			#else
-			led_state=Check_Bat();
+//			led_state=Check_Bat();
 			#endif
 			
 			state=LOAD_PARA;

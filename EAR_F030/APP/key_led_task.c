@@ -38,7 +38,8 @@
 /**********************************
 *宏定义
 ***********************************/
-
+#define BATTERY_NO_POWER_THRESHOLD 		3345  //3345对应2.45V
+#define BATTERY_LOW_POWER_THRESHOLD		3549  //3549对应2.6V
 /***********************************
 * 全局变量
 ***********************************/
@@ -61,6 +62,9 @@ extern PWM_STATE pwm3_state;
 
 extern uint8_t led_high_cnt;
 extern uint8_t led_low_cnt;
+extern uint8_t vabirate_cnt;
+extern BOOL b_vabirate;
+extern BOOL b_check_BAT_ok;
 //KEY值，这里点按为确认蓝牙连接
 typedef enum {
 	NO_KEY,
@@ -359,9 +363,11 @@ void CfgALLPins4StopMode()
 	GPIO_Init(GPIOB, &GPIO_InitStructure_PB_0_2_3_4_5_6_7_10_11_12_13_14_15);
 }
 
-
 void init_global_variant()
 {
+	b_check_BAT_ok=FALSE;
+	vabirate_cnt=0;
+	b_vabirate=TRUE;
 	//honeywell相关参数
 	honeywell_state=HONEYWELL_START;
 	HONEYWELL_ZERO_POINT=0;
@@ -405,18 +411,18 @@ LED_STATE Check_Bat()
 	#else
 	uint16_t result;
 	result=RegularConvData_Tab[0];
-	if(result<3003) //如果电压小于2.2v,没电了 ，直接进入低功耗
+	if(result<BATTERY_NO_POWER_THRESHOLD) //如果电压小于2.45v,没电了 ，直接进入低功耗
 	{
 		//led_state=LED_RED_SOLID;
 		record_dateTime(CODE_LOW_POWER);
 		return LED_RED_SOLID;
 	}
-	else if(result>=3003&&result<3208)  //2.2-2.35 ，提醒用户电量不足了
+	else if(result>=BATTERY_NO_POWER_THRESHOLD&&result<BATTERY_LOW_POWER_THRESHOLD)  //2.45-2.6 ，提醒用户电量不足了
 	{
 		//led_state=LED_RED_FLASH;
 		return LED_RED_FLASH;
 	}
-	else if(result>=3208)
+	else if(result>=BATTERY_LOW_POWER_THRESHOLD)
 	{
 		//solid green,常亮绿灯，表示电量充值
 		//led_state=LED_GREEN_SOLID;
@@ -487,6 +493,10 @@ void key_led_task(void)
 	//按键被按下，检查电池电压
 	if(key_state==KEY_WAKE_UP)
 	{
+		led_state=Check_Bat();
+		key_state=KEY_UPING;
+		
+		#if 0
 		//b_check_bat=TRUE;
 		//if(b_Is_PCB_PowerOn)
 		{
@@ -502,7 +512,7 @@ void key_led_task(void)
 				#ifdef _DEBUG_BATTERY
 				if(RegularConvData_Tab[0]>100)
 				#else
-				if(RegularConvData_Tab[0]>3208)  //3208对应2.35V
+				if(RegularConvData_Tab[0]>3549)  //3208对应2.35V，3549对应2.6V
 				#endif
 				{
 					set_led(LED_GREEN);
@@ -529,18 +539,29 @@ void key_led_task(void)
 //				//do nothing
 //				}
 #endif				
+//				Delay_ms(1000);
+				
 				Motor_PWM_Freq_Dudy_Set(1,100,80);
 				Motor_PWM_Freq_Dudy_Set(2,100,80);
-				//Motor_PWM_Freq_Dudy_Set(3,100,80);
+//				Motor_PWM_Freq_Dudy_Set(2,100,80);
+////				//Motor_PWM_Freq_Dudy_Set(3,100,80);
 				Delay_ms(500);
 				Motor_PWM_Freq_Dudy_Set(1,100,0);
 				Motor_PWM_Freq_Dudy_Set(2,100,0);
 				//Motor_PWM_Freq_Dudy_Set(3,100,0);
+//				for(uint8_t i=0;i<50;i++)
+//				{
+//					Motor_PWM_Freq_Dudy_Set(1,100,20+i);
+//					Motor_PWM_Freq_Dudy_Set(2,100,20+i);
+//					Delay_ms(10);
+//				}
+//				Motor_PWM_Freq_Dudy_Set(1,100,0);
+//				Motor_PWM_Freq_Dudy_Set(2,100,0);
 				
 				key_state=KEY_UPING;
 				mcu_state=POWER_ON;
 				
-				led_state=Check_Bat();
+//				led_state=Check_Bat();
 			}
 			else
 			{
@@ -565,6 +586,7 @@ void key_led_task(void)
 				init_system_afterWakeUp();
 			}
 		}
+		#endif
 	}
 
 	//IWDG_Feed();   //喂狗

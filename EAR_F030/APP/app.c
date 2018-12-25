@@ -94,7 +94,7 @@ void init_task(void)
 	os_create_task(check_selectedMode_ouputPWM,OS_TRUE,TASK_OUTPUT_PWM);
 	os_create_task(get_switch_mode,OS_TRUE,TASK_GET_SWITCH_MODE);
 	os_create_task(honeywell_sampling_data,OS_TRUE,HONEYWELL_SAMPLING_DATA_TASK_ID);
-	os_create_task(bat_check,OS_TRUE,TASK_BAT_CHECK);
+	os_create_task(led_show,OS_TRUE,TASK_LED_SHOW);
 	
 	//os_create_task(adc_value_sample,OS_TRUE,TASK_ADC_VALUE_SAMPLE);  //这个条不要了，换成honeywell sensor了
 	#endif

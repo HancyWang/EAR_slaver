@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F071.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F071.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Dec 21 17:01:39 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Dec 25 14:30:33 2018
 <BR><P>
 <H3>Maximum Stack Usage =        852 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -64,12 +64,12 @@ Function Pointers
  <LI><a href="#[26]">USART2_IRQHandler</a> from startup_stm32f0xx.o(.text) referenced from startup_stm32f0xx.o(RESET)
  <LI><a href="#[b]">WWDG_IRQHandler</a> from startup_stm32f0xx.o(.text) referenced from startup_stm32f0xx.o(RESET)
  <LI><a href="#[33]">__main</a> from __main.o(!!!main) referenced from startup_stm32f0xx.o(.text)
- <LI><a href="#[2f]">bat_check</a> from comm_task.o(.text) referenced from app.o(.text)
  <LI><a href="#[2c]">check_selectedMode_ouputPWM</a> from comm_task.o(.text) referenced from app.o(.text)
  <LI><a href="#[2d]">get_switch_mode</a> from comm_task.o(.text) referenced from app.o(.text)
  <LI><a href="#[2e]">honeywell_sampling_data</a> from honeywell_sampling_data.o(.text) referenced from app.o(.text)
  <LI><a href="#[28]">init_task</a> from app.o(.text) referenced from main.o(.text)
  <LI><a href="#[2b]">key_led_task</a> from key_led_task.o(.text) referenced from app.o(.text)
+ <LI><a href="#[2f]">led_show</a> from comm_task.o(.text) referenced from app.o(.text)
 </UL>
 <P>
 <H3>
@@ -211,7 +211,7 @@ Global Symbols
 <P><STRONG><a name="[63]"></a>__aeabi_memcpy4</STRONG> (Thumb, 56 bytes, Stack size 0 bytes, rt_memcpy.o(.emb_text))
 <BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ModuleUnPackFrame
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 
 <P><STRONG><a name="[141]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, rt_memcpy.o(.emb_text), UNUSED)
@@ -287,9 +287,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[55]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IWDG_ReloadCounter
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bat_check
 </UL>
 
 <P><STRONG><a name="[28]"></a>init_task</STRONG> (Thumb, 114 bytes, Stack size 8 bytes, app.o(.text))
@@ -311,7 +310,7 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
 </UL>
 
-<P><STRONG><a name="[6d]"></a>init_PWMState</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, comm_task.o(.text))
+<P><STRONG><a name="[6e]"></a>init_PWMState</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, comm_task.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
@@ -340,17 +339,18 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[6f]"></a>Is_timing_Xmillisec</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, comm_task.o(.text))
+<P><STRONG><a name="[70]"></a>Is_timing_Xmillisec</STRONG> (Thumb, 122 bytes, Stack size 16 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = Is_timing_Xmillisec
 </UL>
-<BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
+<BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[2f]"></a>bat_check</STRONG> (Thumb, 176 bytes, Stack size 16 bytes, comm_task.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = bat_check &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
+<P><STRONG><a name="[2f]"></a>led_show</STRONG> (Thumb, 292 bytes, Stack size 24 bytes, comm_task.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = led_show &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
@@ -364,69 +364,68 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = get_switch_mode &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
-<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetModeSelected
-<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_PWMState
+<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetModeSelected
+<LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_PWMState
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[6e]"></a>PaintPWM</STRONG> (Thumb, 490 bytes, Stack size 24 bytes, comm_task.o(.text))
+<P><STRONG><a name="[6f]"></a>PaintPWM</STRONG> (Thumb, 492 bytes, Stack size 24 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = PaintPWM &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
-<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Is_timing_Xmillisec
+<LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Is_timing_Xmillisec
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[70]"></a>ResetParameter</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, comm_task.o(.text))
+<P><STRONG><a name="[71]"></a>ResetParameter</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = ResetParameter &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
-<BR>[Calls]<UL><LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
+<BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
 </UL>
-<BR>[Called By]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckFlashData
+<BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckFlashData
 </UL>
 
-<P><STRONG><a name="[72]"></a>CheckFlashData</STRONG> (Thumb, 88 bytes, Stack size 0 bytes, comm_task.o(.text))
+<P><STRONG><a name="[73]"></a>CheckFlashData</STRONG> (Thumb, 88 bytes, Stack size 0 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 60<LI>Call Chain = CheckFlashData &rArr; ResetParameter &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
-<BR>[Calls]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetParameter
+<BR>[Calls]<UL><LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetParameter
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_prameter_fram1_to_PC
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[78]"></a>FillUpPWMbuffer</STRONG> (Thumb, 52 bytes, Stack size 20 bytes, comm_task.o(.text))
+<P><STRONG><a name="[79]"></a>FillUpPWMbuffer</STRONG> (Thumb, 52 bytes, Stack size 20 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = FillUpPWMbuffer
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[73]"></a>get_pressure_sensor_rate</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, comm_task.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashReadWord
+<P><STRONG><a name="[74]"></a>get_pressure_sensor_rate</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, comm_task.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashReadWord
 </UL>
 
-<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 594 bytes, Stack size 464 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 592 bytes, Stack size 464 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 656<LI>Call Chain = check_selectedMode_ouputPWM &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;trans_xmmHg_2_adc_value
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 <LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Bat
-<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FillUpPWMbuffer
-<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckFlashData
-<LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
-<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Is_timing_Xmillisec
+<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FillUpPWMbuffer
+<LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckFlashData
+<LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
+<LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Is_timing_Xmillisec
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
 <LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IWDG_Feed
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_system_afterWakeUp
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
-<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 <LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
@@ -434,36 +433,36 @@ Global Symbols
 <P><STRONG><a name="[2a]"></a>CMD_ProcessTask</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 852<LI>Call Chain = CMD_ProcessTask &rArr; ModuleUnPackFrame &rArr; protocol_module_process &rArr; send_prameter_fram1_to_PC &rArr; CheckFlashData &rArr; ResetParameter &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReceiveData
+<BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReceiveData
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ModuleUnPackFrame
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[7d]"></a>CfgPA0ASWFI</STRONG> (Thumb, 102 bytes, Stack size 32 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[7c]"></a>CfgPA0ASWFI</STRONG> (Thumb, 102 bytes, Stack size 32 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = CfgPA0ASWFI &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SYSCFG_EXTILineConfig
-<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
-<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
+<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SYSCFG_EXTILineConfig
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
 
-<P><STRONG><a name="[85]"></a>Check_wakeUpKey_pressed</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, key_led_task.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
+<P><STRONG><a name="[84]"></a>Check_wakeUpKey_pressed</STRONG> (Thumb, 44 bytes, Stack size 8 bytes, key_led_task.o(.text), UNUSED)
+<BR><BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
 <LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 </UL>
 
 <P><STRONG><a name="[10]"></a>EXTI0_1_IRQHandler</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI0_1_IRQHandler
 </UL>
-<BR>[Calls]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_GetITStatus
-<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_ClearFlag
+<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_GetITStatus
+<LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI_ClearFlag
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f0xx.o(RESET)
 </UL>
@@ -476,67 +475,62 @@ Global Symbols
 <LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_task
 <LI><a href="#[44]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
+<LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bat_check
 <LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[89]"></a>CfgALLPins4StopMode</STRONG> (Thumb, 316 bytes, Stack size 112 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[88]"></a>CfgALLPins4StopMode</STRONG> (Thumb, 316 bytes, Stack size 112 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 132<LI>Call Chain = CfgALLPins4StopMode &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Cmd
-<LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_DMACmd
-<LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Cmd
+<BR>[Calls]<UL><LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Cmd
+<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_DMACmd
+<LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Cmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
 
-<P><STRONG><a name="[8f]"></a>init_global_variant</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[8e]"></a>init_global_variant</STRONG> (Thumb, 58 bytes, Stack size 0 bytes, key_led_task.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
 
 <P><STRONG><a name="[46]"></a>EnterStopMode</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 140<LI>Call Chain = EnterStopMode &rArr; CfgALLPins4StopMode &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
-<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWR_EnterSTOPMode
-<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_global_variant
-<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
-<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_PWMState
+<BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[8f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWR_EnterSTOPMode
+<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_global_variant
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_PWMState
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
+<LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bat_check
 <LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[7b]"></a>Check_Bat</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[90]"></a>Check_Bat</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = Check_Bat &rArr; record_dateTime &rArr; FlashWriteUIntBuffer &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
-<BR>[Calls]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 </UL>
 <BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
-<LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[2b]"></a>key_led_task</STRONG> (Thumb, 316 bytes, Stack size 24 bytes, key_led_task.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = key_led_task &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
+<P><STRONG><a name="[2b]"></a>key_led_task</STRONG> (Thumb, 152 bytes, Stack size 16 bytes, key_led_task.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 208<LI>Call Chain = key_led_task &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
-<BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
-<LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
-<LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
-<LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Bat
-<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_PWMState
+<BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
+<LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Bat
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_PWMState
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
-<LI><a href="#[57]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;IWDG_Feed
 <LI><a href="#[47]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_system_afterWakeUp
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
@@ -568,12 +562,12 @@ Global Symbols
 <P><STRONG><a name="[97]"></a>get_comm_para_to_buf</STRONG> (Thumb, 48 bytes, Stack size 24 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = get_comm_para_to_buf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+<BR>[Calls]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 </UL>
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
 </UL>
 
-<P><STRONG><a name="[71]"></a>FlashWrite</STRONG> (Thumb, 80 bytes, Stack size 24 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[72]"></a>FlashWrite</STRONG> (Thumb, 80 bytes, Stack size 24 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 52<LI>Call Chain = FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_Unlock
@@ -583,15 +577,15 @@ Global Symbols
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ClearFlag
 </UL>
 <BR>[Called By]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_parameter_to_buf_by_frameId
-<LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetParameter
+<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ResetParameter
 </UL>
 
 <P><STRONG><a name="[9d]"></a>get_parameter_to_buf_by_frameId</STRONG> (Thumb, 458 bytes, Stack size 72 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 124<LI>Call Chain = get_parameter_to_buf_by_frameId &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
-<BR>[Calls]<UL><LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
+<BR>[Calls]<UL><LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
 </UL>
@@ -605,18 +599,18 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
 </UL>
 
-<P><STRONG><a name="[74]"></a>FlashReadWord</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, protocol_module.o(.text), UNUSED)
-<BR><BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pressure_sensor_rate
+<P><STRONG><a name="[75]"></a>FlashReadWord</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, protocol_module.o(.text), UNUSED)
+<BR><BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_pressure_sensor_rate
 </UL>
 
-<P><STRONG><a name="[75]"></a>FlashRead</STRONG> (Thumb, 26 bytes, Stack size 12 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[76]"></a>FlashRead</STRONG> (Thumb, 26 bytes, Stack size 12 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = FlashRead
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_rtc_info
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_rtc_record_number
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reset_dateTime
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_prameter_fram1_to_PC
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
@@ -624,11 +618,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 812<LI>Call Chain = send_prameter_fram1_to_PC &rArr; CheckFlashData &rArr; ResetParameter &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fifoWriteData
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
-<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckFlashData
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
+<LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CheckFlashData
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CalcCheckSum
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
+<LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
 </UL>
@@ -644,7 +638,7 @@ Global Symbols
 
 <P><STRONG><a name="[142]"></a>FlashReadByte</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, protocol_module.o(.text), UNUSED)
 
-<P><STRONG><a name="[6c]"></a>GetModeSelected</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[6d]"></a>GetModeSelected</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, protocol_module.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_hardware
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
 </UL>
@@ -665,14 +659,14 @@ Global Symbols
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FLASH_ClearFlag
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reset_dateTime
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 </UL>
 
 <P><STRONG><a name="[a4]"></a>reset_dateTime</STRONG> (Thumb, 58 bytes, Stack size 32 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = reset_dateTime &rArr; FlashWriteUIntBuffer &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWriteUIntBuffer
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
 </UL>
 <BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
@@ -691,16 +685,17 @@ Global Symbols
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_hardware
 </UL>
 
-<P><STRONG><a name="[79]"></a>record_dateTime</STRONG> (Thumb, 166 bytes, Stack size 40 bytes, protocol_module.o(.text))
+<P><STRONG><a name="[6c]"></a>record_dateTime</STRONG> (Thumb, 166 bytes, Stack size 40 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = record_dateTime &rArr; FlashWriteUIntBuffer &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_DataTime
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWriteUIntBuffer
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
 </UL>
-<BR>[Called By]<UL><LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Bat
+<BR>[Called By]<UL><LI><a href="#[90]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_Bat
+<LI><a href="#[64]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;protocol_module_process
+<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
 <LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
@@ -708,7 +703,7 @@ Global Symbols
 <P><STRONG><a name="[a8]"></a>get_rtc_record_number</STRONG> (Thumb, 24 bytes, Stack size 16 bytes, protocol_module.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 28<LI>Call Chain = get_rtc_record_number &rArr; FlashRead
 </UL>
-<BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
+<BR>[Calls]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_rtc_info
 <LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_RTC_record_numbers
@@ -757,7 +752,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_one_frame_data
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_page_num
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_rtc_record_number
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
+<LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashRead
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
 </UL>
@@ -783,7 +778,7 @@ Global Symbols
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_para_rcv_result
 <LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_parameter_to_buf_by_frameId
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_comm_para_to_buf
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 </UL>
 <BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ModuleUnPackFrame
 </UL>
@@ -809,9 +804,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[65]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;delay_ms
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bat_check
 </UL>
 
 <P><STRONG><a name="[44]"></a>delay_init</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, delay.o(.text))
@@ -829,7 +823,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[65]"></a>delay_ms</STRONG> (Thumb, 46 bytes, Stack size 0 bytes, delay.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_wakeUpKey_pressed
+<BR><BR>[Called By]<UL><LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_wakeUpKey_pressed
 <LI><a href="#[6b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Delay_ms
 <LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ModuleUnPackFrame
 <LI><a href="#[29]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskDataSend
@@ -868,7 +862,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[b4]"></a>Buf2Write</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, cmd_receive.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReceiveData
+<BR><BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReceiveData
 </UL>
 
 <P><STRONG><a name="[62]"></a>Buf2Read</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, cmd_receive.o(.text))
@@ -879,7 +873,7 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ModuleUnPackFrame
 </UL>
 
-<P><STRONG><a name="[7c]"></a>ReceiveData</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, cmd_receive.o(.text))
+<P><STRONG><a name="[7b]"></a>ReceiveData</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, cmd_receive.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = ReceiveData &rArr; GetUartReceiverResidualCnt
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetUartReceiverResidualCnt
@@ -896,11 +890,11 @@ Global Symbols
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_PinAFConfig
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Init
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_DeInit
-<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Cmd
+<LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART_Cmd
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Cmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_task
 </UL>
@@ -914,14 +908,14 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_GetCurrDataCounter
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReceiveData
+<BR>[Called By]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReceiveData
 </UL>
 
 <P><STRONG><a name="[bb]"></a>I2C_uConfiguration</STRONG> (Thumb, 40 bytes, Stack size 16 bytes, i2c.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = I2C_uConfiguration &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_honeywell_sensor
 </UL>
@@ -929,7 +923,7 @@ Global Symbols
 <P><STRONG><a name="[bc]"></a>I2C_SDA_OUT</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, i2c.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = I2C_SDA_OUT &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_RecAck
 <LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_SendNak
@@ -940,7 +934,7 @@ Global Symbols
 <P><STRONG><a name="[bd]"></a>I2C_SDA_IN</STRONG> (Thumb, 34 bytes, Stack size 16 bytes, i2c.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 36<LI>Call Chain = I2C_SDA_IN &rArr; GPIO_Init
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR>[Calls]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_RecByte
 <LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_RecAck
@@ -1064,20 +1058,20 @@ Global Symbols
 <LI><a href="#[c8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ITConfig
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ClearFlag
-<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NVIC_Init
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 </UL>
 <BR>[Called By]<UL><LI><a href="#[45]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_init
 </UL>
 
 <P><STRONG><a name="[ca]"></a>Init_LED</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, hardware.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR><BR>[Calls]<UL><LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 
 <P><STRONG><a name="[cb]"></a>Init_PWRSAVE</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, hardware.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 
 <P><STRONG><a name="[cd]"></a>ADC1_Init</STRONG> (Thumb, 228 bytes, Stack size 96 bytes, hardware.o(.text))
@@ -1093,12 +1087,12 @@ Global Symbols
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_ChannelConfig
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Init
 <LI><a href="#[b7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_DeInit
-<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
-<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Cmd
-<LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_DMACmd
-<LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Cmd
+<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB2PeriphClockCmd
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;DMA_Cmd
+<LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_DMACmd
+<LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC_Cmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_hardware
 </UL>
@@ -1107,12 +1101,11 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = set_led
 </UL>
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
-<LI><a href="#[8e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
+<LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_SetBits
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_hardware
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bat_check
 </UL>
 
 <P><STRONG><a name="[58]"></a>init_hardware</STRONG> (Thumb, 128 bytes, Stack size 32 bytes, hardware.o(.text))
@@ -1121,20 +1114,20 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ResetBits
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Init
 <LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RecordPage
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
-<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetModeSelected
+<LI><a href="#[6d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GetModeSelected
 </UL>
 <BR>[Called By]<UL><LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_task
 </UL>
 
 <P><STRONG><a name="[d6]"></a>get_exp_status</STRONG> (Thumb, 16 bytes, Stack size 8 bytes, hardware.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
+<BR><BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
 </UL>
 
 <P><STRONG><a name="[d7]"></a>get_key_status</STRONG> (Thumb, 14 bytes, Stack size 8 bytes, hardware.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
+<BR><BR>[Calls]<UL><LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_ReadInputDataBit
 </UL>
 
 <P><STRONG><a name="[148]"></a>save_one_page_to_flash</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, hardware.o(.text), UNUSED)
@@ -1150,8 +1143,8 @@ Global Symbols
 <P><STRONG><a name="[14d]"></a>read_half_word_buf_from_eeprom</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, hardware.o(.text), UNUSED)
 
 <P><STRONG><a name="[d8]"></a>Key_WakeUp_Init</STRONG> (Thumb, 30 bytes, Stack size 16 bytes, hardware.o(.text), UNUSED)
-<BR><BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<BR><BR>[Calls]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 
 <P><STRONG><a name="[59]"></a>Motor_PWM_Init</STRONG> (Thumb, 82 bytes, Stack size 24 bytes, motor_pwm.o(.text))
@@ -1159,8 +1152,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Config
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_PinAFConfig
-<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
+<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphClockCmd
+<LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[28]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_task
 </UL>
@@ -1173,11 +1166,10 @@ Global Symbols
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 </UL>
-<BR>[Called By]<UL><LI><a href="#[6e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
-<LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
+<BR>[Called By]<UL><LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PaintPWM
+<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bat_check
 </UL>
 
 <P><STRONG><a name="[a7]"></a>Get_DataTime</STRONG> (Thumb, 20 bytes, Stack size 8 bytes, rtc.o(.text))
@@ -1186,7 +1178,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_GetTime
 <LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_GetDate
 </UL>
-<BR>[Called By]<UL><LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<BR>[Called By]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 </UL>
 
 <P><STRONG><a name="[14e]"></a>chage_to_RCT_month</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, rtc.o(.text), UNUSED)
@@ -1200,7 +1192,7 @@ Global Symbols
 <LI><a href="#[e1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_LSEConfig
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_GetFlagStatus
 <LI><a href="#[e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWR_BackupAccessCmd
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[af]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_RTC
 </UL>
@@ -1239,11 +1231,11 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_uidivmod
 </UL>
-<BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
+<BR>[Called By]<UL><LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;led_show
+<LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;honeywell_sampling_data
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
-<LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;bat_check
 <LI><a href="#[29]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TaskDataSend
 <LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CMD_ProcessTask
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;test_task
@@ -1357,7 +1349,7 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_AHBPeriphResetCmd
 </UL>
 
-<P><STRONG><a name="[81]"></a>GPIO_Init</STRONG> (Thumb, 112 bytes, Stack size 20 bytes, stm32f0xx_gpio.o(.text))
+<P><STRONG><a name="[80]"></a>GPIO_Init</STRONG> (Thumb, 112 bytes, Stack size 20 bytes, stm32f0xx_gpio.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 20<LI>Call Chain = GPIO_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Key_WakeUp_Init
@@ -1367,8 +1359,8 @@ Global Symbols
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_SDA_IN
 <LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_SDA_OUT
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_uConfiguration
-<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_hardware
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UARTInit
 <LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
@@ -1378,10 +1370,10 @@ Global Symbols
 
 <P><STRONG><a name="[151]"></a>GPIO_PinLockConfig</STRONG> (Thumb, 26 bytes, Stack size 8 bytes, stm32f0xx_gpio.o(.text), UNUSED)
 
-<P><STRONG><a name="[86]"></a>GPIO_ReadInputDataBit</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(.text))
+<P><STRONG><a name="[85]"></a>GPIO_ReadInputDataBit</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[d7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_key_status
 <LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_exp_status
-<LI><a href="#[85]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_wakeUpKey_pressed
+<LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Check_wakeUpKey_pressed
 <LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 </UL>
 
@@ -1391,8 +1383,8 @@ Global Symbols
 
 <P><STRONG><a name="[154]"></a>GPIO_ReadOutputData</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(.text), UNUSED)
 
-<P><STRONG><a name="[8e]"></a>GPIO_SetBits</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<P><STRONG><a name="[8d]"></a>GPIO_SetBits</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, stm32f0xx_gpio.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
 <LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
 </UL>
 
@@ -1490,27 +1482,27 @@ Global Symbols
 
 <P><STRONG><a name="[16c]"></a>RCC_BackupResetCmd</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text), UNUSED)
 
-<P><STRONG><a name="[7e]"></a>RCC_AHBPeriphClockCmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text))
+<P><STRONG><a name="[7d]"></a>RCC_AHBPeriphClockCmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Key_WakeUp_Init
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Init
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;I2C_uConfiguration
-<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
 <LI><a href="#[58]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_hardware
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UARTInit
 <LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
 </UL>
 
-<P><STRONG><a name="[80]"></a>RCC_APB2PeriphClockCmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text))
+<P><STRONG><a name="[7f]"></a>RCC_APB2PeriphClockCmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Init
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_tim
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
 </UL>
 
-<P><STRONG><a name="[7f]"></a>RCC_APB1PeriphClockCmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text))
+<P><STRONG><a name="[7e]"></a>RCC_APB1PeriphClockCmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RTC_Config
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Config
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UARTInit
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
@@ -1539,11 +1531,11 @@ Global Symbols
 
 <P><STRONG><a name="[170]"></a>RCC_ClearITPendingBit</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f0xx_rcc.o(.text), UNUSED)
 
-<P><STRONG><a name="[84]"></a>NVIC_Init</STRONG> (Thumb, 70 bytes, Stack size 12 bytes, stm32f0xx_misc.o(.text))
+<P><STRONG><a name="[83]"></a>NVIC_Init</STRONG> (Thumb, 70 bytes, Stack size 12 bytes, stm32f0xx_misc.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = NVIC_Init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;init_tim
-<LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
 </UL>
 
 <P><STRONG><a name="[171]"></a>NVIC_SystemLPConfig</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_misc.o(.text), UNUSED)
@@ -1572,8 +1564,8 @@ Global Symbols
 
 <P><STRONG><a name="[174]"></a>USART_ClockStructInit</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f0xx_usart.o(.text), UNUSED)
 
-<P><STRONG><a name="[8d]"></a>USART_Cmd</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_usart.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<P><STRONG><a name="[8c]"></a>USART_Cmd</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_usart.o(.text))
+<BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UARTInit
 </UL>
 
@@ -1927,9 +1919,9 @@ Global Symbols
 
 <P><STRONG><a name="[1e3]"></a>DMA_StructInit</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, stm32f0xx_dma.o(.text), UNUSED)
 
-<P><STRONG><a name="[8a]"></a>DMA_Cmd</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_dma.o(.text))
+<P><STRONG><a name="[89]"></a>DMA_Cmd</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_dma.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Init
-<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
 <LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UARTInit
 </UL>
 
@@ -1966,7 +1958,7 @@ Global Symbols
 
 <P><STRONG><a name="[1ed]"></a>PWR_EnterSleepMode</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, stm32f0xx_pwr.o(.text), UNUSED)
 
-<P><STRONG><a name="[90]"></a>PWR_EnterSTOPMode</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, stm32f0xx_pwr.o(.text))
+<P><STRONG><a name="[8f]"></a>PWR_EnterSTOPMode</STRONG> (Thumb, 40 bytes, Stack size 0 bytes, stm32f0xx_pwr.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
 </UL>
 
@@ -1985,13 +1977,13 @@ Global Symbols
 <P><STRONG><a name="[98]"></a>FLASH_Unlock</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_flash.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RecordPage
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWriteUIntBuffer
-<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
+<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
 </UL>
 
 <P><STRONG><a name="[9c]"></a>FLASH_Lock</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f0xx_flash.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RecordPage
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWriteUIntBuffer
-<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
+<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
 </UL>
 
 <P><STRONG><a name="[101]"></a>FLASH_GetStatus</STRONG> (Thumb, 34 bytes, Stack size 0 bytes, stm32f0xx_flash.o(.text))
@@ -2025,7 +2017,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RecordPage
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWriteUIntBuffer
-<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
+<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
 </UL>
 
 <P><STRONG><a name="[102]"></a>FLASH_EraseAllPages</STRONG> (Thumb, 48 bytes, Stack size 16 bytes, stm32f0xx_flash.o(.text), UNUSED)
@@ -2039,7 +2031,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RecordPage
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWriteUIntBuffer
-<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
+<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
 </UL>
 
 <P><STRONG><a name="[103]"></a>FLASH_ProgramHalfWord</STRONG> (Thumb, 48 bytes, Stack size 20 bytes, stm32f0xx_flash.o(.text), UNUSED)
@@ -2104,7 +2096,7 @@ Global Symbols
 <P><STRONG><a name="[99]"></a>FLASH_ClearFlag</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f0xx_flash.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[a6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Init_RecordPage
 <LI><a href="#[a3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWriteUIntBuffer
-<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
+<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashWrite
 </UL>
 
 <P><STRONG><a name="[ce]"></a>ADC_DeInit</STRONG> (Thumb, 28 bytes, Stack size 8 bytes, stm32f0xx_adc.o(.text))
@@ -2125,9 +2117,9 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Init
 </UL>
 
-<P><STRONG><a name="[8c]"></a>ADC_Cmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_adc.o(.text))
+<P><STRONG><a name="[8b]"></a>ADC_Cmd</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_adc.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Init
-<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
 </UL>
 
 <P><STRONG><a name="[1fb]"></a>ADC_JitterCmd</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, stm32f0xx_adc.o(.text), UNUSED)
@@ -2172,9 +2164,9 @@ Global Symbols
 
 <P><STRONG><a name="[209]"></a>ADC_GetConversionValue</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f0xx_adc.o(.text), UNUSED)
 
-<P><STRONG><a name="[8b]"></a>ADC_DMACmd</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_adc.o(.text))
+<P><STRONG><a name="[8a]"></a>ADC_DMACmd</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_adc.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ADC1_Init
-<LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
+<LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgALLPins4StopMode
 </UL>
 
 <P><STRONG><a name="[cf]"></a>ADC_DMARequestModeConfig</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, stm32f0xx_adc.o(.text))
@@ -2195,10 +2187,10 @@ Global Symbols
 
 <P><STRONG><a name="[20e]"></a>EXTI_DeInit</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, stm32f0xx_exti.o(.text), UNUSED)
 
-<P><STRONG><a name="[83]"></a>EXTI_Init</STRONG> (Thumb, 102 bytes, Stack size 8 bytes, stm32f0xx_exti.o(.text))
+<P><STRONG><a name="[82]"></a>EXTI_Init</STRONG> (Thumb, 102 bytes, Stack size 8 bytes, stm32f0xx_exti.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = EXTI_Init
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
 </UL>
 
 <P><STRONG><a name="[20f]"></a>EXTI_StructInit</STRONG> (Thumb, 14 bytes, Stack size 0 bytes, stm32f0xx_exti.o(.text), UNUSED)
@@ -2207,11 +2199,11 @@ Global Symbols
 
 <P><STRONG><a name="[211]"></a>EXTI_GetFlagStatus</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, stm32f0xx_exti.o(.text), UNUSED)
 
-<P><STRONG><a name="[88]"></a>EXTI_ClearFlag</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f0xx_exti.o(.text))
+<P><STRONG><a name="[87]"></a>EXTI_ClearFlag</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, stm32f0xx_exti.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_1_IRQHandler
 </UL>
 
-<P><STRONG><a name="[87]"></a>EXTI_GetITStatus</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32f0xx_exti.o(.text))
+<P><STRONG><a name="[86]"></a>EXTI_GetITStatus</STRONG> (Thumb, 24 bytes, Stack size 0 bytes, stm32f0xx_exti.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[10]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EXTI0_1_IRQHandler
 </UL>
 
@@ -2225,10 +2217,10 @@ Global Symbols
 
 <P><STRONG><a name="[216]"></a>SYSCFG_I2CFastModePlusConfig</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, stm32f0xx_syscfg.o(.text), UNUSED)
 
-<P><STRONG><a name="[82]"></a>SYSCFG_EXTILineConfig</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f0xx_syscfg.o(.text))
+<P><STRONG><a name="[81]"></a>SYSCFG_EXTILineConfig</STRONG> (Thumb, 34 bytes, Stack size 8 bytes, stm32f0xx_syscfg.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = SYSCFG_EXTILineConfig
 </UL>
-<BR>[Called By]<UL><LI><a href="#[7d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
+<BR>[Called By]<UL><LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;CfgPA0ASWFI
 </UL>
 
 <P><STRONG><a name="[217]"></a>SYSCFG_BreakConfig</STRONG> (Thumb, 10 bytes, Stack size 0 bytes, stm32f0xx_syscfg.o(.text), UNUSED)
@@ -2431,7 +2423,7 @@ Global Symbols
 
 <P><STRONG><a name="[23c]"></a>RTC_ClearITPendingBit</STRONG> (Thumb, 22 bytes, Stack size 0 bytes, stm32f0xx_rtc.o(.text), UNUSED)
 
-<P><STRONG><a name="[77]"></a>__aeabi_memcpy</STRONG> (Thumb, 130 bytes, Stack size 24 bytes, rt_memcpy.o(.text))
+<P><STRONG><a name="[78]"></a>__aeabi_memcpy</STRONG> (Thumb, 130 bytes, Stack size 24 bytes, rt_memcpy.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = __aeabi_memcpy
 </UL>
 <BR>[Calls]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
@@ -2450,7 +2442,7 @@ Global Symbols
 </UL>
 <BR>[Called By]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send_rtc_info
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;reset_dateTime
-<LI><a href="#[79]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
+<LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime
 </UL>
 
 <P><STRONG><a name="[119]"></a>_memset_w</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, rt_memclr.o(.text))
@@ -2461,11 +2453,11 @@ Global Symbols
 <P><STRONG><a name="[118]"></a>_memset</STRONG> (Thumb, 30 bytes, Stack size 0 bytes, rt_memclr.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[119]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_memset_w
 </UL>
-<BR>[Called By]<UL><LI><a href="#[76]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
+<BR>[Called By]<UL><LI><a href="#[77]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr
 <LI><a href="#[a5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memset
 </UL>
 
-<P><STRONG><a name="[76]"></a>__aeabi_memclr</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, rt_memclr.o(.text))
+<P><STRONG><a name="[77]"></a>__aeabi_memclr</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, rt_memclr.o(.text))
 <BR><BR>[Calls]<UL><LI><a href="#[118]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_memset
 </UL>
 <BR>[Called By]<UL><LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_comm_para_to_buf
@@ -2586,7 +2578,7 @@ Local Symbols
 <LI><a href="#[dc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_ARRPreloadConfig
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_TimeBaseInit
 <LI><a href="#[c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TIM_Cmd
-<LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
+<LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RCC_APB1PeriphClockCmd
 </UL>
 <BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Init
 </UL>
