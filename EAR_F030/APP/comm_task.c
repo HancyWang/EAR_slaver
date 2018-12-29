@@ -1260,7 +1260,7 @@ void check_selectedMode_ouputPWM()
 			
 			Motor_PWM_Freq_Dudy_Set(1,100,0);
 			Motor_PWM_Freq_Dudy_Set(2,100,0);
-			Delay_ms(5);
+//			Delay_ms(5);
 			
 			EnterStopMode();
 			init_system_afterWakeUp();

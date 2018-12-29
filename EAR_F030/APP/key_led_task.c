@@ -502,8 +502,10 @@ void key_led_task(void)
 			wakeup_Cnt=0;
 			if(!b_Is_PCB_PowerOn)  //b_Is_PCB_PowerOn为FALSE是才进行判断，按键时间过短，不允许启动
 			{
-				NVIC_SystemReset();
-				//key_state=KEY_FAIL_WAKEUP;
+//				NVIC_SystemReset();
+//				//key_state=KEY_FAIL_WAKEUP;
+				EnterStopMode();
+				init_system_afterWakeUp();
 			}
 		}
 	}
