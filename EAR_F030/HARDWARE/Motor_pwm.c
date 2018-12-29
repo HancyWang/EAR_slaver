@@ -165,7 +165,7 @@ void Motor_PWM_Freq_Dudy_Set(UINT8 PWM_NUMBER, UINT16 Freq,UINT16 Duty)			//PWM1
 	
 	UINT32 i;	
 	
-	if((Freq >=1) && (Freq <=3000)// Frequency  1 - 255Hz
+	if((Freq >=1) && (Freq <=50000)// Frequency  1 - 255Hz
 		&& (Duty <= 100))//Duty cycle 10 - 90
 	{
 		TIM_TimeBaseStructure.TIM_Period = 48000/Freq - 1;       //

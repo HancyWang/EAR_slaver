@@ -38,8 +38,10 @@
 /**********************************
 *宏定义
 ***********************************/
-#define BATTERY_NO_POWER_THRESHOLD 		3345  //3345对应2.45V
+#define BATTERY_NO_POWER_THRESHOLD 		3276  //3345对应2.45V  3303对应2.2V  3276 2.4v
 #define BATTERY_LOW_POWER_THRESHOLD		3549  //3549对应2.6V
+//#define BATTERY_DIFF_VOLTAGE_NO_POWE 	819
+//#define BATTERY_DIFF_VOLTAGE_LOW_POWE 682
 /***********************************
 * 全局变量
 ***********************************/
@@ -403,8 +405,11 @@ void EnterStopMode()
 	PWR_EnterSTOPMode(PWR_Regulator_LowPower, PWR_STOPEntry_WFI);
 }
 
-
+#ifdef DEBUG_BATTERY
+LED_STATE Check_Bat(uint16_t diff_voltage)
+#else
 LED_STATE Check_Bat()
+#endif
 {
 	#ifdef _DEBUG_BATTERY
 	return LED_NONE;
@@ -433,7 +438,20 @@ LED_STATE Check_Bat()
 		//do nothing
 		return LED_NONE;
 	}
-	#endif
+
+//	if(diff_voltage>=BATTERY_DIFF_VOLTAGE_NO_POWE) //压差大于0.6V，说明没有电了
+//	{
+//		return LED_RED_SOLID;
+//	}
+//	else if(diff_voltage>=BATTERY_DIFF_VOLTAGE_LOW_POWE&&diff_voltage<BATTERY_DIFF_VOLTAGE_NO_POWE)  //压差在0.5-0.6V之间，说明快没电了
+//	{
+//		return LED_RED_FLASH;
+//	}
+//	else   //电量充足
+//	{
+//		return LED_GREEN_SOLID;
+//	}
+#endif
 }
 
 
@@ -495,7 +513,28 @@ void key_led_task(void)
 	{
 		led_state=Check_Bat();
 		key_state=KEY_UPING;
+		#ifdef DEBUG_BATTERY
+		//debug 加负载
+		uint16_t before_voltage=0;
+		uint16_t after_voltage=0;
 		
+		before_voltage=RegularConvData_Tab[0];  //起始电压
+		
+		GPIO_SetBits(GPIOA,GPIO_Pin_8);   //开管，加负载
+		Motor_PWM_Freq_Dudy_Set(1,20,1);        //将马达震动当中负载
+		Motor_PWM_Freq_Dudy_Set(2,20,1);
+		Delay_us(150);
+		after_voltage=RegularConvData_Tab[0];  //截至电压
+		
+		Delay_ms(1);
+		GPIO_ResetBits(GPIOA,GPIO_Pin_8);
+		
+		led_state=Check_Bat(after_voltage-before_voltage);
+		key_state=KEY_UPING;
+
+//		led_state=Check_Bat();
+//		key_state=KEY_UPING;
+#endif
 		#if 0
 		//b_check_bat=TRUE;
 		//if(b_Is_PCB_PowerOn)

@@ -211,7 +211,17 @@ void init_hardware()
 	GPIO_Init(KEY_PWR_SAVE_PORT, &GPIO_InitStructure);
 	GPIO_ResetBits(KEY_PWR_SAVE_PORT,KEY_PWR_SAVE_PIN);
 
-	
+	#ifdef DEBUG_BATTERY
+	//PA8   debug
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOA,GPIO_Pin_8);
+	#endif
+
 	//≥ı ºªØADC   PA1 PA4
 	ADC1_Init();
 

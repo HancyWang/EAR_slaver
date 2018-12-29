@@ -165,22 +165,22 @@
         <Ww>
           <count>0</count>
           <WinNumber>2</WinNumber>
-          <ItemText>HONEYWELL_ZERO_POINT,0x0A</ItemText>
+          <ItemText>test001,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>2</WinNumber>
-          <ItemText>buffer</ItemText>
+          <ItemText>before_voltage,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>2</WinNumber>
-          <ItemText>adc_pressure_value,0x0A</ItemText>
+          <ItemText>after_voltage,0x0A</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>2</WinNumber>
-          <ItemText>test001,0x0A</ItemText>
+          <ItemText>diff,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <MemoryWindow1>

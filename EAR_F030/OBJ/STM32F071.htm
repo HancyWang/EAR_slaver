@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F071.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F071.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Tue Dec 25 14:30:33 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Dec 29 12:14:16 2018
 <BR><P>
 <H3>Maximum Stack Usage =        852 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -310,7 +310,7 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;os_delay_ms
 </UL>
 
-<P><STRONG><a name="[6e]"></a>init_PWMState</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, comm_task.o(.text))
+<P><STRONG><a name="[6e]"></a>init_PWMState</STRONG> (Thumb, 66 bytes, Stack size 0 bytes, comm_task.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[2b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;key_led_task
 <LI><a href="#[2d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_switch_mode
 <LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;EnterStopMode
@@ -346,7 +346,7 @@ Global Symbols
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[2f]"></a>led_show</STRONG> (Thumb, 292 bytes, Stack size 24 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2f]"></a>led_show</STRONG> (Thumb, 310 bytes, Stack size 24 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = led_show &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
@@ -370,8 +370,8 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[6f]"></a>PaintPWM</STRONG> (Thumb, 492 bytes, Stack size 24 bytes, comm_task.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 84<LI>Call Chain = PaintPWM &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
+<P><STRONG><a name="[6f]"></a>PaintPWM</STRONG> (Thumb, 584 bytes, Stack size 32 bytes, comm_task.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = PaintPWM &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Is_timing_Xmillisec
@@ -406,7 +406,7 @@ Global Symbols
 <BR><BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashReadWord
 </UL>
 
-<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 592 bytes, Stack size 464 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 638 bytes, Stack size 464 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 656<LI>Call Chain = check_selectedMode_ouputPWM &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;trans_xmmHg_2_adc_value
@@ -430,7 +430,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[2a]"></a>CMD_ProcessTask</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2a]"></a>CMD_ProcessTask</STRONG> (Thumb, 30 bytes, Stack size 8 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 852<LI>Call Chain = CMD_ProcessTask &rArr; ModuleUnPackFrame &rArr; protocol_module_process &rArr; send_prameter_fram1_to_PC &rArr; CheckFlashData &rArr; ResetParameter &rArr; FlashWrite &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ReceiveData
@@ -515,7 +515,7 @@ Global Symbols
 <LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[90]"></a>Check_Bat</STRONG> (Thumb, 52 bytes, Stack size 8 bytes, key_led_task.o(.text))
+<P><STRONG><a name="[90]"></a>Check_Bat</STRONG> (Thumb, 54 bytes, Stack size 8 bytes, key_led_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 100<LI>Call Chain = Check_Bat &rArr; record_dateTime &rArr; FlashWriteUIntBuffer &rArr; FLASH_ProgramWord &rArr; FLASH_WaitForLastOperation
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;record_dateTime

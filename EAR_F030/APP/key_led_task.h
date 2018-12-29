@@ -50,6 +50,7 @@ void CfgPA0ASWFI(void);
 void CfgALLPins4StopMode(void);
 void init_system_afterWakeUp(void);
 //extern INT8U I2C_RecByte(void);
+//LED_STATE Check_Bat(unsigned short int diff_voltage);
 LED_STATE Check_Bat(void);
 
 

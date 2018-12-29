@@ -5,8 +5,17 @@
 #include "comm_task.h"
 #include "protocol_module.h"
 
-#define HONEYWELL_RATE			11185   //斜率,根据公式算出来的
-//#define HONEYWELL_RATE			9000
+#ifdef _DEBUG
+#include "Motor_pwm.h"
+
+extern uint16_t RegularConvData_Tab[2]; 
+#endif
+
+//#define HONEYWELL_RATE			11185   //斜率,根据公式算出来的
+#define HONEYWELL_RATE			9000
+
+
+
 
 //extern uint32_t adc_value[2];
 extern uint32_t adc_pressure_value;
@@ -55,6 +64,24 @@ void honeywell_sampling_data()
 				honeywell_state=HONEYWELL_START;
 			}
 		}
+		#ifdef _DEBUG
+		static uint16_t before_voltage=0;
+		static uint16_t after_voltage=0;
+		static uint16_t diff=0;
+		before_voltage=RegularConvData_Tab[0];  //起始电压
+		Delay_us(50);
+		
+		Motor_PWM_Freq_Dudy_Set(1,20,100);        //将马达震动当中负载
+		Motor_PWM_Freq_Dudy_Set(2,20,100);
+		Delay_us(600);
+		
+		after_voltage=RegularConvData_Tab[0];  //截至电压
+		
+		diff=before_voltage-after_voltage;
+		
+		Motor_PWM_Freq_Dudy_Set(1,20,0);        
+		Motor_PWM_Freq_Dudy_Set(2,20,0);
+		#endif
 	}
 	
 	os_delay_ms(HONEYWELL_SAMPLING_DATA_TASK_ID,HONEYWELL_SAMPLING_DATA_PERIOD);  //10ms循环一次任务
