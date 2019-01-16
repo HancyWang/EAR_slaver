@@ -419,7 +419,7 @@ LED_STATE Check_Bat()
 	if(result<BATTERY_NO_POWER_THRESHOLD) //如果电压小于2.45v,没电了 ，直接进入低功耗
 	{
 		//led_state=LED_RED_SOLID;
-		record_dateTime(CODE_LOW_POWER);
+		record_dateTime(CODE_NO_POWER);
 		return LED_RED_SOLID;
 	}
 	else if(result>=BATTERY_NO_POWER_THRESHOLD&&result<BATTERY_LOW_POWER_THRESHOLD)  //2.45-2.6 ，提醒用户电量不足了

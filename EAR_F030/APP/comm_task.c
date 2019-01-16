@@ -505,6 +505,8 @@ void led_show()
 					
 					Motor_PWM_Freq_Dudy_Set(1,100,0);
 					Motor_PWM_Freq_Dudy_Set(2,100,0);
+					
+					record_dateTime(CODE_SYSTEM_POWER_ON);  //低电量的时候也要记录开机动作
 					Delay_ms(10);
 				}
 				else

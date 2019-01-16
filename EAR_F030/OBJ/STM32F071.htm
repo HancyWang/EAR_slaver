@@ -3,7 +3,7 @@
 <title>Static Call Graph - [..\OBJ\STM32F071.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image ..\OBJ\STM32F071.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Sat Dec 29 16:13:42 2018
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Wed Jan 16 18:13:36 2019
 <BR><P>
 <H3>Maximum Stack Usage =        852 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -346,7 +346,7 @@ Global Symbols
 <LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[2f]"></a>led_show</STRONG> (Thumb, 310 bytes, Stack size 24 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2f]"></a>led_show</STRONG> (Thumb, 316 bytes, Stack size 24 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = led_show &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[69]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;set_led
@@ -370,7 +370,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> app.o(.text)
 </UL>
-<P><STRONG><a name="[6f]"></a>PaintPWM</STRONG> (Thumb, 584 bytes, Stack size 32 bytes, comm_task.o(.text))
+<P><STRONG><a name="[6f]"></a>PaintPWM</STRONG> (Thumb, 582 bytes, Stack size 32 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 92<LI>Call Chain = PaintPWM &rArr; Motor_PWM_Freq_Dudy_Set &rArr; TIM_OC1Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[6a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Motor_PWM_Freq_Dudy_Set
@@ -402,11 +402,11 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[2c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;check_selectedMode_ouputPWM
 </UL>
 
-<P><STRONG><a name="[74]"></a>get_pressure_sensor_rate</STRONG> (Thumb, 42 bytes, Stack size 16 bytes, comm_task.o(.text), UNUSED)
+<P><STRONG><a name="[74]"></a>get_pressure_sensor_rate</STRONG> (Thumb, 44 bytes, Stack size 16 bytes, comm_task.o(.text), UNUSED)
 <BR><BR>[Calls]<UL><LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;FlashReadWord
 </UL>
 
-<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 632 bytes, Stack size 464 bytes, comm_task.o(.text))
+<P><STRONG><a name="[2c]"></a>check_selectedMode_ouputPWM</STRONG> (Thumb, 634 bytes, Stack size 464 bytes, comm_task.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 656<LI>Call Chain = check_selectedMode_ouputPWM &rArr; init_system_afterWakeUp &rArr; init_task &rArr; UARTInit &rArr; USART_Init &rArr; RCC_GetClocksFreq
 </UL>
 <BR>[Calls]<UL><LI><a href="#[7a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;trans_xmmHg_2_adc_value

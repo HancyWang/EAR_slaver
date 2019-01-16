@@ -102,7 +102,7 @@ typedef enum
 	CODE_ONE_CYCLE_FINISHED											=	0x12,
 	CODE_MANUAL_POWER_OFF												=	0x13,
 //	CODE_NO_TRIGGER_IN_60S_BEFORE_TREAT_START		=	0x14,
-	CODE_LOW_POWER															=	0x15,
+	CODE_NO_POWER															=	0x15,
 	CODE_OVER_PRESSURE													=	0x16,
 	CODE_SYSTEM_BEEN_TRIGGERED									=	0x17,
 //	CODE_SELFTEST_FAIL					=	0x18,
