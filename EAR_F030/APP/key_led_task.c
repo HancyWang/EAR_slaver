@@ -94,6 +94,8 @@ extern uint8_t prev_mode;
 extern BOOL b_getHoneywellZeroPoint;
 extern uint32_t adc_pressure_value;
 extern uint32_t HONEYWELL_ZERO_POINT;
+
+extern uint16_t checkPressAgain_cnt;
 /***********************************
 * ¾Ö²¿º¯Êý
 ***********************************/
@@ -367,6 +369,8 @@ void CfgALLPins4StopMode()
 
 void init_global_variant()
 {
+	checkPressAgain_cnt=0;
+	
 	b_check_BAT_ok=FALSE;
 	vabirate_cnt=0;
 	b_vabirate=TRUE;
