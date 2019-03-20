@@ -4,7 +4,7 @@
 ..\obj\honeywell_sampling_data.o: ..\OS\os_core.h
 ..\obj\honeywell_sampling_data.o: ..\User\stm32f0xx.h
 ..\obj\honeywell_sampling_data.o: ..\CORE\core_cm0.h
-..\obj\honeywell_sampling_data.o: D:\Program Files (x86)\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\honeywell_sampling_data.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\honeywell_sampling_data.o: ..\CORE\core_cmInstr.h
 ..\obj\honeywell_sampling_data.o: ..\CORE\core_cmFunc.h
 ..\obj\honeywell_sampling_data.o: ..\User\system_stm32f0xx.h
